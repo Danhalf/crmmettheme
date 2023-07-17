@@ -47,7 +47,7 @@ export function Login() {
       try {
         const {data: auth} = await login(values.username, values.password)
         saveAuth(auth)
-        const user = await {username: values.username, password: values.password}
+        const user = await {id: auth.useruid, username: values.username, password: values.password}
         setCurrentUser(user)
       } catch (error) {
         console.error(error)
