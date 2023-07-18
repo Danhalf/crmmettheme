@@ -7,10 +7,7 @@ import {login} from '../core/_requests'
 import {useAuth} from '../core/Auth'
 
 const loginSchema = Yup.object().shape({
-  username: Yup.string()
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
-    .required('Username is required'),
+  username: Yup.string().trim().required('Username is required'),
   password: Yup.string()
     .min(3, 'Minimum 3 symbols')
     .max(50, 'Maximum 50 symbols')
@@ -58,18 +55,9 @@ export function Login() {
       noValidate
       id='kt_login_signin_form'
     >
-      {/* begin::Heading */}
       <div className='text-center mb-11'>
         <h1 className='text-dark fw-bolder mb-3'>Sign In</h1>
       </div>
-      {/* begin::Heading */}
-
-      {/* begin::Login options */}
-
-      {/* end::Login options */}
-
-      {/* begin::Separator */}
-      {/* end::Separator */}
 
       {formik.status && (
         <div className='mb-lg-15 alert alert-danger'>
@@ -77,7 +65,6 @@ export function Login() {
         </div>
       )}
 
-      {/* begin::Form group */}
       <div className='fv-row mb-8'>
         <label className='form-label fs-6 fw-bolder text-dark'>Username</label>
         <input
@@ -100,9 +87,7 @@ export function Login() {
           </div>
         )}
       </div>
-      {/* end::Form group */}
 
-      {/* begin::Form group */}
       <div className='fv-row mb-3'>
         <label className='form-label fw-bolder text-dark fs-6 mb-0'>Password</label>
         <input
@@ -127,18 +112,11 @@ export function Login() {
           </div>
         )}
       </div>
-      {/* end::Form group */}
 
-      {/* begin::Wrapper */}
       <div className='d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8'>
         <div />
-
-        {/* begin::Link */}
-        {/* end::Link */}
       </div>
-      {/* end::Wrapper */}
 
-      {/* begin::Action */}
       <div className='d-grid mb-10'>
         <button
           type='submit'
@@ -155,7 +133,6 @@ export function Login() {
           )}
         </button>
       </div>
-      {/* end::Action */}
 
       <div className='text-gray-500 text-center fw-semibold fs-6'></div>
     </form>
