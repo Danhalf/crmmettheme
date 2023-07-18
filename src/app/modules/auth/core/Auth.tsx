@@ -10,7 +10,6 @@ import {
 } from 'react'
 import {LayoutSplashScreen} from '../../../../_metronic/layout/core'
 import {AuthModel, UserModel} from './_models'
-import * as authHelper from './AuthHelpers'
 import {getUserByToken} from './_requests'
 import {WithChildren} from '../../../../_metronic/helpers'
 
@@ -23,7 +22,7 @@ type AuthContextProps = {
 }
 
 const initAuthContextPropsState = {
-  auth: authHelper.getAuth(),
+  auth: undefined,
   saveAuth: () => {},
   currentUser: undefined,
   setCurrentUser: () => {},
@@ -37,15 +36,10 @@ const useAuth = () => {
 }
 
 const AuthProvider: FC<WithChildren> = ({children}) => {
-  const [auth, setAuth] = useState<AuthModel | undefined>(authHelper.getAuth())
+  const [auth, setAuth] = useState<AuthModel | undefined>()
   const [currentUser, setCurrentUser] = useState<UserModel | undefined>()
   const saveAuth = (auth: AuthModel | undefined) => {
     setAuth(auth)
-    if (auth) {
-      authHelper.setAuth(auth)
-    } else {
-      authHelper.removeAuth()
-    }
   }
 
   const logout = () => {
