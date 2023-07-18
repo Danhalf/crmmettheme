@@ -71,16 +71,9 @@ export function Login() {
       {/* begin::Separator */}
       {/* end::Separator */}
 
-      {formik.status ? (
+      {formik.status && (
         <div className='mb-lg-15 alert alert-danger'>
           <div className='alert-text font-weight-bold'>{formik.status}</div>
-        </div>
-      ) : (
-        <div className='mb-10 bg-light-info p-8 rounded'>
-          <div className='text-info'>
-            Use account <strong>username</strong> and password <strong>password</strong> to
-            continue.
-          </div>
         </div>
       )}
 
