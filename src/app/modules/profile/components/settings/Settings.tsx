@@ -204,29 +204,6 @@ export function Settings() {
                   New membership approval
                 </label>
               </div>
-              <div className='form-check form-check-custom form-check-solid'>
-                <input
-                  className='form-check-input'
-                  type='checkbox'
-                  id='kt_checkbox_6'
-                  checked={data.activityRelatedEmail.whenToEscalateEmails.memberRegistration}
-                  onChange={() =>
-                    updateData({
-                      activityRelatedEmail: {
-                        ...data.activityRelatedEmail,
-                        whenToEscalateEmails: {
-                          ...data.activityRelatedEmail.whenToEscalateEmails,
-                          memberRegistration:
-                            !data.activityRelatedEmail.whenToEscalateEmails.memberRegistration,
-                        },
-                      },
-                    })
-                  }
-                />
-                <label className='form-check-label fw-bold text-gray-600' htmlFor='kt_checkbox_6'>
-                  Member registration
-                </label>
-              </div>
             </div>
           </div>
 

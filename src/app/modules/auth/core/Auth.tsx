@@ -58,7 +58,6 @@ const AuthInit: FC<WithChildren> = ({children}) => {
   const {auth, logout, setCurrentUser} = useAuth()
   const didRequest = useRef(false)
   const [showSplashScreen, setShowSplashScreen] = useState(true)
-  // We should request user by authToken (IN OUR EXAMPLE IT'S TOKEN) before rendering the application
   useEffect(() => {
     const requestUser = async (uid: string) => {
       try {
