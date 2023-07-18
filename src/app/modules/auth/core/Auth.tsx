@@ -10,7 +10,7 @@ import {
 } from 'react'
 import {LayoutSplashScreen} from '../../../../_metronic/layout/core'
 import {AuthModel, UserModel} from './_models'
-import {getUserByToken} from './_requests'
+import {getUserByUserId} from './_requests'
 import {WithChildren} from '../../../../_metronic/helpers'
 
 type AuthContextProps = {
@@ -60,10 +60,10 @@ const AuthInit: FC<WithChildren> = ({children}) => {
   const [showSplashScreen, setShowSplashScreen] = useState(true)
   // We should request user by authToken (IN OUR EXAMPLE IT'S TOKEN) before rendering the application
   useEffect(() => {
-    const requestUser = async (uid: string, apiToken: string) => {
+    const requestUser = async (uid: string) => {
       try {
         if (!didRequest.current) {
-          const {data} = await getUserByToken(uid, apiToken)
+          const {data} = await getUserByUserId(uid)
           if (data) {
             setCurrentUser(data)
           }
@@ -80,8 +80,8 @@ const AuthInit: FC<WithChildren> = ({children}) => {
       return () => (didRequest.current = true)
     }
 
-    if (auth && auth.useruid && auth.token) {
-      requestUser(auth.useruid, auth.token)
+    if (auth && auth.useruid) {
+      requestUser(auth.useruid)
     } else {
       logout()
       setShowSplashScreen(false)
