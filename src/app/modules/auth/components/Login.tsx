@@ -3,7 +3,7 @@ import {useState} from 'react'
 import * as Yup from 'yup'
 import clsx from 'clsx'
 import {useFormik} from 'formik'
-import {getUserByToken, login} from '../core/_requests'
+import {login} from '../core/_requests'
 import {useAuth} from '../core/Auth'
 
 const loginSchema = Yup.object().shape({
@@ -141,9 +141,6 @@ export function Login() {
         <div />
 
         {/* begin::Link */}
-        {/* <Link to='/auth/forgot-password' className='link-primary'>
-          Forgot Password ?
-        </Link> */}
         {/* end::Link */}
       </div>
       {/* end::Wrapper */}
@@ -167,12 +164,7 @@ export function Login() {
       </div>
       {/* end::Action */}
 
-      <div className='text-gray-500 text-center fw-semibold fs-6'>
-        {/* Not a Member yet?{' '}
-        <Link to='/auth/registration' className='link-primary'>
-          Sign up
-        </Link> */}
-      </div>
+      <div className='text-gray-500 text-center fw-semibold fs-6'></div>
     </form>
   )
 }

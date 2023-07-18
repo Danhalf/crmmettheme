@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import {useEffect} from 'react'
-import {Outlet, Link} from 'react-router-dom'
-
+import {Outlet} from 'react-router-dom'
 
 const AuthLayout = () => {
   useEffect(() => {
