@@ -8,10 +8,7 @@ import {useAuth} from '../core/Auth'
 
 const loginSchema = Yup.object().shape({
   username: Yup.string().trim().required('Username is required'),
-  password: Yup.string()
-    .min(3, 'Minimum 3 symbols')
-    .max(50, 'Maximum 50 symbols')
-    .required('Password is required'),
+  password: Yup.string().trim().required('Password is required'),
 })
 
 const initialValues = {
@@ -38,6 +35,7 @@ export function Login() {
         const {data: auth} = await login(values.username, values.password)
         saveAuth(auth)
         const user = await {id: auth.useruid, username: values.username, password: values.password}
+        localStorage.setItem('user', String(user.id))
         setCurrentUser(user)
       } catch (error) {
         console.error(error)

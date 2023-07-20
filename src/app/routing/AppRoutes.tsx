@@ -21,20 +21,22 @@ const {PUBLIC_URL} = process.env
 
 const AppRoutes: FC = () => {
   const {currentUser} = useAuth()
+
+  const userId = localStorage.getItem('user')?.length
   return (
     <BrowserRouter basename={PUBLIC_URL}>
       <Routes>
         <Route element={<App />}>
           <Route path='error/*' element={<ErrorsPage />} />
           <Route path='logout' element={<Logout />} />
-          {currentUser ? (
+          {currentUser || userId ? (
             <>
               <Route path='/*' element={<PrivateRoutes />} />
               <Route index element={<Navigate to='/dashboard' />} />
             </>
           ) : (
             <>
-              <Route path='/' element={<AuthPage />} />
+              <Route index element={<AuthPage />} />
               <Route path='*' element={<Navigate to='/' />} />
             </>
           )}
