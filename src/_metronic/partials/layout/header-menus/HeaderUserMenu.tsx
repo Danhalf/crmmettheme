@@ -1,9 +1,10 @@
+import { useLocalStorage } from '_metronic/helpers/crud-helper/helpers'
 import { FC } from 'react'
 
 const HeaderUserMenu: FC = () => {
-
+    const [, , removeUserId] = useLocalStorage('userId', null)
     const userLogout = (): void => {
-
+        removeUserId()
     }
     return (
         <div
