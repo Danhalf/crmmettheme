@@ -9,6 +9,6 @@ export function login(user: string, secret: string, magic = 'avansoft') {
     return axios.post<AuthModel>(LOGIN_URL, {
         user,
         secret,
-        magic
+        magic,
     })
 }

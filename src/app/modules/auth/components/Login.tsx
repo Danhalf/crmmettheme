@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import { useFormik } from 'formik'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as Yup from 'yup'
 import { login } from '../../auth/core/_requests'
 import { UserModel } from '../core/_models'
@@ -21,6 +21,11 @@ export function Login() {
     const [loading, setLoading] = useState(false)
     const [, userIdToLocalStorage] = useLocalStorage('userId')
     const { setUserId } = useAuth()
+
+    useEffect(() => {
+        document.getElementById('splash-screen')?.remove()
+    }, [])
+
     const formik = useFormik({
         initialValues,
         validationSchema: loginSchema,
