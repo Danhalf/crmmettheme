@@ -5,21 +5,23 @@ import { AuthPage } from '../modules/auth'
 import { ErrorsPage } from '../modules/errors/ErrorsPage'
 import { PrivateRoutes } from './PrivateRoutes'
 import { useAuth } from 'app/modules/auth/AuthContex'
+import { useLocalStorage } from '_metronic/helpers/crud-helper/helpers'
 
 const AppRoutes: FC = () => {
     const dashboard = '/dashboard'
+    const [savedUser] = useLocalStorage('userId')
 
     const { userId } = useAuth()
 
     useEffect(() => {
-        if (userId === null && window.location.pathname === dashboard) {
+        if (userId === null && !savedUser && window.location.pathname === dashboard) {
             window.location.href = '/'
         }
     }, [userId])
 
     return (
         <Routes>
-            {!userId ? (
+            {!userId && !savedUser ? (
                 <Route path='/' element={<AuthPage />} />
             ) : (
                 <Route element={<App />}>

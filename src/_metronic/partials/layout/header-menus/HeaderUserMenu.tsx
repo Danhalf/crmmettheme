@@ -3,12 +3,14 @@ import { useAuth } from 'app/modules/auth/AuthContex'
 import { FC } from 'react'
 
 const HeaderUserMenu: FC = () => {
-    const [, , removeUserId] = useLocalStorage('userId', null)
+    const [, , removeLocalStorageUserId] = useLocalStorage('userId')
 
     const { setUserId } = useAuth()
     const userLogout = (): void => {
-        removeUserId()
+        window.location.href = '/'
+        removeLocalStorageUserId()
         setUserId(null)
+        window.location.reload()
     }
     return (
         <div

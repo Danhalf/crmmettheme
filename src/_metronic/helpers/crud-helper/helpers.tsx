@@ -116,7 +116,7 @@ const getLocalStorageValue = (key, initialValue) => {
     return storedValue ? JSON.parse(storedValue) : initialValue
 }
 
-const useLocalStorage = (key, initialValue) => {
+const useLocalStorage = (key, initialValue = null) => {
     const [value, setValue] = useState(() => getLocalStorageValue(key, initialValue))
     const updateValue = (newValue) => {
         setValue(newValue)
