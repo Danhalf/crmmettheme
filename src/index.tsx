@@ -8,12 +8,20 @@ import './_metronic/assets/sass/plugins.scss'
 import './_metronic/assets/sass/style.react.scss'
 import './_metronic/assets/sass/style.scss'
 import { AppRoutes } from './app/routing/AppRoutes'
+import { AuthProvider } from 'app/modules/auth/AuthContex'
+import { BrowserRouter } from 'react-router-dom'
+
+const { PUBLIC_URL } = process.env
 
 Chart.register(...registerables)
 
 const container = document.getElementById('root')
 if (container) {
     createRoot(container).render(
-        <AppRoutes />
+        <AuthProvider>
+            <BrowserRouter basename={PUBLIC_URL}>
+                <AppRoutes />
+            </BrowserRouter>
+        </AuthProvider>
     )
 }

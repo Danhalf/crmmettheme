@@ -4,7 +4,8 @@ import { useState } from 'react'
 import * as Yup from 'yup'
 import { login } from '../../auth/core/_requests'
 import { UserModel } from '../core/_models'
-import { useLocalStorage } from '_metronic/helpers/crud-helper/helpers'
+// import { useLocalStorage } from '_metronic/helpers/crud-helper/helpers'
+import { useAuth } from '../AuthContex'
 
 const loginSchema = Yup.object().shape({
     username: Yup.string().trim().required('Username is required'),
@@ -18,8 +19,8 @@ const initialValues: UserModel = {
 
 export function Login() {
     const [loading, setLoading] = useState(false)
-    const [, setUserId] = useLocalStorage('userId', null)
-
+    // const [, setUserId] = useLocalStorage('userId', null)
+    const { setUserId } = useAuth()
     const formik = useFormik({
         initialValues,
         validationSchema: loginSchema,
@@ -34,6 +35,9 @@ export function Login() {
                 if (typeof error === 'object' && error !== null) {
                     setStatus(error?.['response']?.['data']?.['error'])
                 }
+                setSubmitting(false)
+                setLoading(false)
+            } finally {
                 setSubmitting(false)
                 setLoading(false)
             }
