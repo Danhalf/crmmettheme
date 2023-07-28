@@ -10,7 +10,6 @@ const PrivateRoutes = () => {
         <Routes>
             <Route element={<MasterLayout />}>
                 <Route path='/*' element={<Navigate to='/dashboard' />} />
-                {/* <Route index element={<Navigate to='/' />} /> */}
                 <Route index element={<DashboardWrapper />} />
                 <Route path='users' element={<UsersWrapper />} />
                 <Route path='reports' element={<ReportsWrapper />} />

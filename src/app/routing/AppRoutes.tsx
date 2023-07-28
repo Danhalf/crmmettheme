@@ -14,15 +14,15 @@ const AppRoutes: FC = () => {
     const { userId } = useAuth()
 
     useEffect(() => {
-        if (userId === null && !savedUser && window.location.pathname === dashboard) {
+        if (userId === null && !savedUser && window.location.pathname.includes(dashboard)) {
             window.location.href = '/'
         }
-    }, [userId])
+    }, [userId, savedUser])
 
     return (
         <Routes>
             {!userId && !savedUser ? (
-                <Route path='/' element={<AuthPage />} />
+                <Route path='*' element={<AuthPage />} />
             ) : (
                 <Route element={<App />}>
                     <Route path='error/*' element={<ErrorsPage />} />
