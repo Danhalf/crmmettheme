@@ -13,6 +13,11 @@ export default function Users() {
             })
         }
     }, [users, loaded])
+
+    const moveToTrash = (userId: string) => {
+        console.log(`${userId} moved to trash`)
+    }
+
     return (
         <>
             <div className='mb-10'>
@@ -27,6 +32,7 @@ export default function Users() {
                                 <thead>
                                     <tr className='text-start text-muted fw-bolder fs-7 text-uppercase gs-0'>
                                         <th>User name</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody className='text-gray-600 fw-bold'>
@@ -40,6 +46,14 @@ export default function Users() {
                                                     >
                                                         {user.username}
                                                     </Link>
+                                                </td>
+                                                <td>
+                                                    <button
+                                                        className='btn btn-danger'
+                                                        onClick={() => moveToTrash(user.useruid)}
+                                                    >
+                                                        Delete user
+                                                    </button>
                                                 </td>
                                             </tr>
                                         )
