@@ -1,6 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { LoginResponse, logout } from '../../services/auth.service'
-import { Billing } from './Billing'
 
 export function DashboardHeader() {
     const navigate = useNavigate()
