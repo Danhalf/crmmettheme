@@ -6,9 +6,6 @@ export const Billing = () => {
                     <div className='card-header'>
                         <h3 className='card-title fw-bolder text-dark'>Billing</h3>
                     </div>
-                </div>
-
-                <div className='card card-custom'>
                     <div className='card-body'>We're still working on this page</div>
                 </div>
             </div>

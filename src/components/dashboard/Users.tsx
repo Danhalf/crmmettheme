@@ -1,24 +1,53 @@
 import { useEffect, useState } from 'react'
-import { listUsers, User } from '../../services/user.service'
 import { Link } from 'react-router-dom'
+import { User, deleteUser, getDeletedUsers, getUsers, undeleteUser } from 'services/user.service'
 
 export default function Users() {
     const [users, setUsers] = useState<User[]>([])
+    const [deletedUsers, setDeletedUsers] = useState<User[]>([])
     const [loaded, setLoaded] = useState<boolean>(false)
+
     useEffect(() => {
         if (!loaded) {
-            listUsers().then((response) => {
+            getUsers().then((response) => {
                 setUsers(response)
+                setLoaded(true)
+            })
+            getDeletedUsers().then((response) => {
+                setDeletedUsers(response)
                 setLoaded(true)
             })
         }
     }, [users, loaded])
 
     const moveToTrash = (userId: string) => {
-        console.log(`${userId} moved to trash`)
+        deleteUser(userId).then((response) => {
+            if (response.status === 'OK') {
+                getUsers().then((response) => {
+                    setUsers(response)
+                    setLoaded(true)
+                })
+                getDeletedUsers().then((response) => {
+                    setDeletedUsers(response)
+                    setLoaded(true)
+                })
+            }
+        })
     }
-    const handleRestoreUser = (userId: string) => {
-        console.log(`${userId} was restored from trash`)
+
+    const restoreUser = (userId: string) => {
+        undeleteUser(userId).then((response) => {
+            if (response.status === 'OK') {
+                getUsers().then((response) => {
+                    setUsers(response)
+                    setLoaded(true)
+                })
+                getDeletedUsers().then((response) => {
+                    setDeletedUsers(response)
+                    setLoaded(true)
+                })
+            }
+        })
     }
 
     return (
@@ -83,7 +112,7 @@ export default function Users() {
                                 </tr>
                             </thead>
                             <tbody className='text-gray-600 fw-bold'>
-                                {users.map((user) => {
+                                {deletedUsers.map((user) => {
                                     return (
                                         <tr key={user.useruid}>
                                             <td>
@@ -97,7 +126,7 @@ export default function Users() {
                                             <td>
                                                 <button
                                                     className='btn btn-success'
-                                                    onClick={() => handleRestoreUser(user.useruid)}
+                                                    onClick={() => restoreUser(user.useruid)}
                                                 >
                                                     Restore user
                                                 </button>
