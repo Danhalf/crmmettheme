@@ -54,30 +54,10 @@ export const getUsers = () => {
         .then((response) => response.data)
 }
 
-export const getDeletedUsers = () => {
-    return axios
-        .get<User[]>(`${API_URL}user/0/listdeleted`, {
-            headers: { Authorization: `Bearer ${getToken()}` },
-        })
-        .then((response) => response.data)
-}
-
 export const deleteUser = (uid: string) => {
     return axios
         .post<ActionStatus>(
             `${API_URL}user/${uid}/delete`,
-            {},
-            {
-                headers: { Authorization: `Bearer ${getToken()}` },
-            }
-        )
-        .then((response) => response.data)
-}
-
-export const undeleteUser = (uid: string) => {
-    return axios
-        .post<ActionStatus>(
-            `${API_URL}user/${uid}/undelete`,
             {},
             {
                 headers: { Authorization: `Bearer ${getToken()}` },
