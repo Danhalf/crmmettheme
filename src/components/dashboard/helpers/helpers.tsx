@@ -1,5 +1,4 @@
 import clsx from 'clsx'
-import { useState } from 'react'
 import { ITabValues } from '../interfaces/interfaces'
 import { CustomCheckbox } from './renderInputsHelper'
 import { renderTable } from './renderTableHelper'
@@ -87,17 +86,6 @@ export const TabDataWrapper = ({
     data: string
     checkbox?: boolean
 }) => {
-    enum ViewTypes {
-        GENERAL = 'General view',
-    }
-    const viewTypesArray: string[] = Object.values(ViewTypes) as string[]
-
-    const [activeTab, setActiveTab] = useState(ViewTypes.GENERAL)
-
-    const handleTabClick = (tab: any) => {
-        setActiveTab(tab)
-    }
-
     if (!data) return <></>
     const parsedData = JSON.parse(data)
     const renderContent = () => {
@@ -113,24 +101,8 @@ export const TabDataWrapper = ({
             <div className='row g-5 g-xl-10 mb-5 mb-xl-10'>
                 <div className='col-12'>
                     <div className='card card-custom mb-5 vw-90 mx-auto'>
-                        <div className='card-header d-flex flex-column justify-content-end pb-0'>
-                            <ul className='nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bolder flex-nowrap'>
-                                {viewTypesArray.map((tab) => (
-                                    <TabNavigate
-                                        key={tab}
-                                        activeTab={activeTab}
-                                        tab={tab}
-                                        onTabClick={handleTabClick}
-                                    />
-                                ))}
-                            </ul>
-                        </div>
-                        <div className='tab-content' id='myTabContentInner'>
-                            <TabPanel activeTab={activeTab} tabName={ViewTypes.GENERAL}>
-                                <div className='card-body'>
-                                    {parsedData ? renderContent() : 'No data available'}
-                                </div>
-                            </TabPanel>
+                        <div className='card-body'>
+                            {parsedData ? renderContent() : 'No data available'}
                         </div>
                     </div>
                 </div>
