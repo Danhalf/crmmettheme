@@ -102,7 +102,7 @@ export const TabDataWrapper = ({
                 <div className='col-12'>
                     <div className='card card-custom mb-5 vw-90 mx-auto'>
                         <div className='card-body'>
-                            {parsedData ? renderContent() : 'No data available'}
+                            {parsedData ? renderContent() : 'No data available!'}
                         </div>
                     </div>
                 </div>
