@@ -1,10 +1,18 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { User, deleteUser, getUsers } from 'services/user.service'
+import { CustomDropdown, TableHead } from './helpers/helpers'
 
 export default function Users() {
     const [users, setUsers] = useState<User[]>([])
     const [loaded, setLoaded] = useState<boolean>(false)
+
+    enum UsersColumns {
+        Microservice = 'User name',
+        Actions = 'Actions',
+    }
+
+    const usersColumnsArray: string[] = Object.values(UsersColumns) as string[]
 
     useEffect(() => {
         if (!loaded) {
@@ -36,12 +44,7 @@ export default function Users() {
                             id='kt_table_users'
                             className='table align-middle table-row-dashed fs-6 gy-5 no-footer'
                         >
-                            <thead>
-                                <tr className='text-start text-muted fw-bolder fs-7 text-uppercase gs-0'>
-                                    <th>User name</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
+                            <TableHead columns={usersColumnsArray} />
                             <tbody className='text-gray-600 fw-bold'>
                                 {users.map((user) => {
                                     return (
@@ -55,12 +58,16 @@ export default function Users() {
                                                 </Link>
                                             </td>
                                             <td>
-                                                <button
-                                                    className='btn btn-danger'
-                                                    onClick={() => moveToTrash(user.useruid)}
-                                                >
-                                                    Delete user
-                                                </button>
+                                                <CustomDropdown
+                                                    title='Actions'
+                                                    items={[
+                                                        {
+                                                            menuItemName: 'Delete user',
+                                                            menuItemAction: () =>
+                                                                moveToTrash(user.useruid),
+                                                        },
+                                                    ]}
+                                                />
                                             </td>
                                         </tr>
                                     )
