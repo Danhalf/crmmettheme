@@ -50,14 +50,7 @@ export default function Users() {
                                 {users.map((user) => {
                                     return (
                                         <tr key={user.useruid}>
-                                            <td>
-                                                <Link
-                                                    to={`user/${user.useruid}`}
-                                                    className='text-gray-800 text-hover-primary mb-1 text-decoration-underline'
-                                                >
-                                                    {user.index}
-                                                </Link>
-                                            </td>
+                                            <td>{user.index}</td>
                                             <td>
                                                 <Link
                                                     to={`user/${user.useruid}`}
