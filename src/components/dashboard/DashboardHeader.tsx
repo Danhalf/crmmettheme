@@ -1,19 +1,19 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { LoginResponse, logout } from '../../services/auth.service'
+import { Link, useNavigate } from 'react-router-dom';
+import { LoginResponse, logout } from '../../services/auth.service';
 
 export function DashboardHeader() {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     const signOut = () => {
-        const user: LoginResponse = JSON.parse(localStorage.getItem('admss-admin-user') ?? '')
+        const user: LoginResponse = JSON.parse(localStorage.getItem('admss-admin-user') ?? '');
         if (user) {
             logout(user.useruid).then((response) => {
                 if (response.status) {
-                    navigate('/')
-                    localStorage.removeItem('admss-admin-user')
+                    navigate('/');
+                    localStorage.removeItem('admss-admin-user');
                 }
-            })
+            });
         }
-    }
+    };
     return (
         <div id='kt_app_header' className='app-header'>
             <div className='container flex-lg-grow-1 d-flex align-items-stretch justify-content-between'>
@@ -45,5 +45,5 @@ export function DashboardHeader() {
                 </div>
             </div>
         </div>
-    )
+    );
 }

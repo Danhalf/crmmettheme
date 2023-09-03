@@ -10,5 +10,5 @@ export const Billing = () => {
                 </div>
             </div>
         </>
-    )
-}
+    );
+};

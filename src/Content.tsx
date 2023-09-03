@@ -1,25 +1,25 @@
-import { Billing } from 'components/dashboard/Billing'
-import { Reports } from 'components/dashboard/Reports'
-import { UserCard } from 'components/dashboard/UserCard'
-import Users from 'components/dashboard/Users'
-import { useEffect } from 'react'
-import { Routes, Route } from 'react-router-dom'
-import { Dashboard } from './components/dashboard/Dashboard'
-import { Login } from './components/Login'
-import { MenuComponent } from './_metronic/assets/ts/components'
+import { Billing } from 'components/dashboard/Billing';
+import { Reports } from 'components/dashboard/Reports';
+import { UserCard } from 'components/dashboard/UserCard';
+import Users from 'components/dashboard/Users';
+import { useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { Dashboard } from './components/dashboard/Dashboard';
+import { Login } from './components/Login';
+import { MenuComponent } from './_metronic/assets/ts/components';
 
 export function MasterInit() {
     const pluginsInitialization = () => {
         setTimeout(() => {
-            MenuComponent.bootstrap()
-        }, 1500)
-    }
+            MenuComponent.bootstrap();
+        }, 1500);
+    };
 
     useEffect(() => {
-        pluginsInitialization()
-    }, [])
+        pluginsInitialization();
+    }, []);
 
-    return <></>
+    return <></>;
 }
 
 const Content = () => (
@@ -35,6 +35,6 @@ const Content = () => (
             </Route>
         </Routes>
     </div>
-)
+);
 
-export default Content
+export default Content;

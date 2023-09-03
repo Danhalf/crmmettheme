@@ -1,18 +1,18 @@
-import axios from "axios";
-import {getToken} from "./utils";
-import {API_URL} from "../app-consts";
+import axios from 'axios';
+import { getToken } from './utils';
+import { API_URL } from '../app-consts';
 
 export interface LoginResponse {
     modified: string;
     sessionuid: string;
     started: string;
-    status: "OK";
+    status: 'OK';
     token: string;
     useruid: string;
 }
 
 export interface LogoutResponse {
-    status: "OK";
+    status: 'OK';
 }
 
 export const login = (username: string, password: string) => {
@@ -20,7 +20,7 @@ export const login = (username: string, password: string) => {
         .post<LoginResponse>(`${API_URL}user`, {
             user: username,
             secret: password,
-            magic: "avansoft",
+            magic: 'avansoft',
         })
         .then((response) => response.data);
 };
@@ -28,7 +28,7 @@ export const login = (username: string, password: string) => {
 export const logout = (userId: string) => {
     return axios
         .post<LogoutResponse>(`${API_URL}user/${userId}/logout`, null, {
-            headers: {Authorization: `Bearer ${getToken()}`},
+            headers: { Authorization: `Bearer ${getToken()}` },
         })
         .then((response) => response.data);
 };

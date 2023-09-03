@@ -1,42 +1,44 @@
-import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
-import { User, deleteUser, getUsers } from 'services/user.service'
-import { CustomDropdown, TableHead } from './helpers/helpers'
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { deleteUser, getUsers, User } from 'services/user.service';
+import { CustomDropdown, TableHead } from './helpers/helpers';
+
+// eslint-disable-next-line no-unused-vars
+enum UsersColumns {
+    // eslint-disable-next-line
+    Microservice = 'User name',
+    // eslint-disable-next-line
+    Actions = 'Actions',
+}
 
 export default function Users() {
-    const [users, setUsers] = useState<User[]>([])
-    const [loaded, setLoaded] = useState<boolean>(false)
+    const [users, setUsers] = useState<User[]>([]);
+    const [loaded, setLoaded] = useState<boolean>(false);
 
-    enum UsersColumns {
-        Microservice = 'User name',
-        Actions = 'Actions',
-    }
-
-    const usersColumnsArray: string[] = Object.values(UsersColumns) as string[]
+    const usersColumnsArray: string[] = Object.values(UsersColumns) as string[];
 
     useEffect(() => {
         if (!loaded) {
             getUsers().then((response) => {
-                setUsers(response)
-                setLoaded(true)
-            })
+                setUsers(response);
+                setLoaded(true);
+            });
         }
-    }, [users, loaded])
+    }, [users, loaded]);
 
     const moveToTrash = (userId: string) => {
         deleteUser(userId).then((response) => {
             if (response.status === 'OK') {
                 getUsers().then((response) => {
-                    setUsers(response)
-                    setLoaded(true)
-                })
+                    setUsers(response);
+                    setLoaded(true);
+                });
             }
-        })
-    }
+        });
+    };
 
     return (
         <div className='mb-10'>
-            <h1 className='mb-5'>Users</h1>
             <div className='card'>
                 <div className='card-body'>
                     <div className='table-responsive'>
@@ -70,7 +72,7 @@ export default function Users() {
                                                 />
                                             </td>
                                         </tr>
-                                    )
+                                    );
                                 })}
                             </tbody>
                         </table>
@@ -78,5 +80,5 @@ export default function Users() {
                 </div>
             </div>
         </div>
-    )
+    );
 }

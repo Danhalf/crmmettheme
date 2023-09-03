@@ -1,21 +1,21 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC, useEffect } from 'react'
-import { MenuComponent } from '../../../_metronic/assets/ts/components'
+import { FC, useEffect } from 'react';
+import { MenuComponent } from '../../../_metronic/assets/ts/components';
 
 interface PropsItems {
-    menuItemName: string
-    menuItemAction: () => void
+    menuItemName: string;
+    menuItemAction: () => void;
 }
 
 interface Props {
-    title: string
-    items: PropsItems[]
+    title: string;
+    items: PropsItems[];
 }
 
 export const CustomDropdown: FC<Props> = ({ title, items }) => {
     useEffect(() => {
-        MenuComponent.reinitialization()
-    }, [])
+        MenuComponent.reinitialization();
+    }, []);
 
     return (
         <>
@@ -38,5 +38,5 @@ export const CustomDropdown: FC<Props> = ({ title, items }) => {
                 ))}
             </div>
         </>
-    )
-}
+    );
+};

@@ -1,14 +1,14 @@
 const getUniqValues = ({ values }: { values: string[] }) => {
-    const columns = new Set<string>()
+    const columns = new Set<string>();
 
     values.forEach((obj: string): void => {
         Object.keys(obj).forEach((key: string): void => {
-            columns.add(key)
-        })
-    })
+            columns.add(key);
+        });
+    });
 
-    return [...columns]
-}
+    return [...columns];
+};
 
 const TableHead = ({ columns }: { columns: string[] }): JSX.Element => (
     <thead>
@@ -18,7 +18,7 @@ const TableHead = ({ columns }: { columns: string[] }): JSX.Element => (
             ))}
         </tr>
     </thead>
-)
+);
 
 const TableBody = ({ data }: { data: string[] }) => (
     <tbody>
@@ -30,10 +30,10 @@ const TableBody = ({ data }: { data: string[] }) => (
             </tr>
         ))}
     </tbody>
-)
+);
 
 const renderTable = (data: string[]) => {
-    const columns = getUniqValues({ values: data })
+    const columns = getUniqValues({ values: data });
     return (
         <div className='w-100 table-responsive table-responsive-horizontal'>
             <table className='table table-row-dashed table-row-gray-300 gy-7'>
@@ -41,7 +41,7 @@ const renderTable = (data: string[]) => {
                 <TableBody data={data} />
             </table>
         </div>
-    )
-}
+    );
+};
 
-export { TableHead, renderTable }
+export { TableHead, renderTable };

@@ -1,6 +1,6 @@
-import { DashboardHeader } from './DashboardHeader'
-import React from 'react'
-import { Outlet } from 'react-router-dom'
+import { DashboardHeader } from './DashboardHeader';
+import React from 'react';
+import { Outlet } from 'react-router-dom';
 
 export function Dashboard() {
     return (
@@ -20,5 +20,5 @@ export function Dashboard() {
                 </div>
             </div>
         </div>
-    )
+    );
 }

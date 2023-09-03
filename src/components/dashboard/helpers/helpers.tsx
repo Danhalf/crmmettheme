@@ -1,9 +1,9 @@
-import clsx from 'clsx'
-import { useState } from 'react'
-import { renderTable } from './renderTableHelper'
-import { ITabValues } from '../interfaces/interfaces'
-import { CustomCheckbox } from './renderInputsHelper'
-import { CustomDropdown } from './renderDropdownHelper'
+import clsx from 'clsx';
+import { useState } from 'react';
+import { renderTable } from './renderTableHelper';
+import { ITabValues } from '../interfaces/interfaces';
+import { CustomCheckbox } from './renderInputsHelper';
+import { CustomDropdown } from './renderDropdownHelper';
 
 const renderList = (data: any, checkbox: boolean = false) => {
     if (typeof data !== 'object' || data === null) {
@@ -11,23 +11,23 @@ const renderList = (data: any, checkbox: boolean = false) => {
             <div>
                 <span className='text-muted d-block fw-semibold mb-6'>{data}</span>
             </div>
-        )
+        );
     }
 
-    const properties = Object.entries(data)
+    const properties = Object.entries(data);
 
     return properties.map(([key, value]: [string, any], index: number) => {
         const title = key.replace(/^[^a-zа-яё]*([a-zа-яё])/i, (letter: string) =>
             letter.toUpperCase()
-        )
+        );
 
         if (typeof value === 'object' && value !== null) {
             if (Array.isArray(value)) {
-                return <div key={`${key}-${index}`}>{renderTable(value)}</div>
+                return <div key={`${key}-${index}`}>{renderTable(value)}</div>;
             }
-            return <div key={`${key}-${index}`}>{renderList(value)}</div>
+            return <div key={`${key}-${index}`}>{renderList(value)}</div>;
         } else {
-            const activeCheckbox = checkbox && (Number(value) === 0 || Number(value) === 1)
+            const activeCheckbox = checkbox && (Number(value) === 0 || Number(value) === 1);
             return activeCheckbox ? (
                 <CustomCheckbox
                     key={`${key}-${index}`}
@@ -42,19 +42,19 @@ const renderList = (data: any, checkbox: boolean = false) => {
                         <span className='text-muted d-block fw-semibold'>{value}</span>
                     </div>
                 </div>
-            )
+            );
         }
-    })
-}
+    });
+};
 
 export const TabNavigate = ({
     activeTab,
     tab,
     onTabClick,
 }: {
-    activeTab: string
-    tab: string
-    onTabClick: (tab: string) => void
+    activeTab: string;
+    tab: string;
+    onTabClick: (tab: string) => void;
 }) => (
     <li className='nav-item'>
         <button
@@ -67,7 +67,7 @@ export const TabNavigate = ({
             {tab}
         </button>
     </li>
-)
+);
 
 export const TabPanel = ({ activeTab, tabName, children, tabId }: ITabValues) => (
     <div
@@ -79,36 +79,39 @@ export const TabPanel = ({ activeTab, tabName, children, tabId }: ITabValues) =>
     >
         {children}
     </div>
-)
+);
 
 export const TabDataWrapper = ({
     data,
     checkbox = false,
 }: {
-    data: string
-    checkbox?: boolean
+    data: string;
+    checkbox?: boolean;
 }) => {
+    // eslint-disable-next-line no-unused-vars
     enum ViewTypes {
+        // eslint-disable-next-line no-unused-vars
         JSON = 'JSON view',
+        // eslint-disable-next-line no-unused-vars
         GENERAL = 'General view',
     }
-    const viewTypesArray: string[] = Object.values(ViewTypes) as string[]
+    const viewTypesArray: string[] = Object.values(ViewTypes) as string[];
 
-    const [activeTab, setActiveTab] = useState(ViewTypes.JSON)
+    const [activeTab, setActiveTab] = useState(ViewTypes.JSON);
 
     const handleTabClick = (tab: any) => {
-        setActiveTab(tab)
-    }
+        setActiveTab(tab);
+    };
 
-    if (!data) return <></>
-    const parsedData = JSON.parse(data)
+    if (!data) return <></>;
+    const parsedData = JSON.parse(data);
     const renderContent = () => {
         if (typeof parsedData === 'object' && !Array.isArray(parsedData)) {
-            return renderList(parsedData, checkbox)
+            return renderList(parsedData, checkbox);
         } else {
-            return renderTable(parsedData)
+            return renderTable(parsedData);
         }
-    }
+    };
 
     return (
         <>
@@ -143,8 +146,8 @@ export const TabDataWrapper = ({
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export { CustomDropdown }
-export { TableHead } from './renderTableHelper'
+export { CustomDropdown };
+export { TableHead } from './renderTableHelper';

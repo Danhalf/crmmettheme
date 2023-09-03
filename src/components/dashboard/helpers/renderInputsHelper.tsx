@@ -1,19 +1,19 @@
-import { useState } from 'react'
+import { useState } from 'react';
 
 interface ICustomInput {
-    currentValue: number
-    id: string
-    title: string
+    currentValue: number;
+    id: string;
+    title: string;
 }
 
 interface ICustomCheckbox extends ICustomInput {}
 
 const CustomCheckbox = ({ currentValue, id, title }: ICustomCheckbox) => {
-    const [value, setValue] = useState<number>(currentValue)
+    const [value, setValue] = useState<number>(currentValue);
 
     const handleChange = () => {
-        setValue((prevValue: any) => (prevValue === 1 ? 0 : 1))
-    }
+        setValue((prevValue: any) => (prevValue === 1 ? 0 : 1));
+    };
 
     return (
         <div className='mb-10'>
@@ -31,7 +31,7 @@ const CustomCheckbox = ({ currentValue, id, title }: ICustomCheckbox) => {
                 </label>
             </div>
         </div>
-    )
-}
+    );
+};
 
-export { CustomCheckbox }
+export { CustomCheckbox };
