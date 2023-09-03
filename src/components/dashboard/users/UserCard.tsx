@@ -1,52 +1,42 @@
+/* eslint-disable no-unused-vars */
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { TabDataWrapper, TabNavigate, TabPanel } from 'components/dashboard/helpers/helpers';
+import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/PrimaryButton';
 import {
-    getAllUIPermissions,
-    getAllUITypes,
+    getUserProfile,
     getUserExtendedInfo,
+    getUserShortInfo,
     getUserLocations,
     getUserPermissions,
-    getUserProfile,
     getUserSettings,
-    getUserShortInfo,
-    listSalesPersons,
-    listSubusers,
-    listUserLogins,
     listUserSessions,
+    listUserLogins,
+    listSubusers,
+    listSalesPersons,
+    getAllUIPermissions,
+    getAllUITypes,
+    setUserPermissions,
 } from 'services/user.service';
-import { TabPanel, TabNavigate, TabDataWrapper } from './helpers/helpers';
 
-// eslint-disable-next-line no-unused-vars
 enum UserCardTabs {
-    // eslint-disable-next-line no-unused-vars
     Profile = 'Profile',
-    // eslint-disable-next-line no-unused-vars
     ExtendedInfo = 'Extended info',
-    // eslint-disable-next-line no-unused-vars
     ShortInfo = 'Short info',
-    // eslint-disable-next-line no-unused-vars
     Locations = 'Locations',
-    // eslint-disable-next-line no-unused-vars
     UserPermissions = 'User permissions',
-    // eslint-disable-next-line no-unused-vars
     Settings = 'Settings',
-    // eslint-disable-next-line no-unused-vars
     Sessions = 'Sessions',
-    // eslint-disable-next-line no-unused-vars
     Logins = 'Logins',
-    // eslint-disable-next-line no-unused-vars
     Subusers = 'Subusers',
-    // eslint-disable-next-line no-unused-vars
     SalesPersons = 'Sales persons',
-    // eslint-disable-next-line no-unused-vars
     Permissions = 'Permissions',
-    // eslint-disable-next-line no-unused-vars
     UserTypes = 'User types',
 }
 
 const userCardTabsArray: string[] = Object.values(UserCardTabs) as string[];
 
-export const UserCard = (): JSX.Element => {
+export function UserCard() {
     const { id } = useParams();
     const [activeTab, setActiveTab] = useState('Profile');
     const [profileJson, setProfileJson] = useState<string>('');
@@ -61,6 +51,10 @@ export const UserCard = (): JSX.Element => {
     const [userSalesPersonsJSON, setSalesPersonsJSON] = useState<string>('');
     const [permissionsJSON, setPermissionsJSON] = useState<string>('');
     const [userTypesJSON, setUserTypesJSON] = useState<string>('');
+
+    const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+    const [buttonPermissionsText, setButtonPermissionsText] = useState<string>('Save permissions');
+    const [initialUserPermissionsJSON, setInitialUserPermissionsJSON] = useState<string>('');
 
     useEffect(() => {
         if (id) {
@@ -77,7 +71,9 @@ export const UserCard = (): JSX.Element => {
                 setLocationsJSON(JSON.stringify(response, null, 2));
             });
             getUserPermissions(id).then((response) => {
-                setUserPermissionsJSON(JSON.stringify(response, null, 2));
+                const stringifiedResponse = JSON.stringify(response, null, 2);
+                setUserPermissionsJSON(stringifiedResponse);
+                setInitialUserPermissionsJSON(stringifiedResponse);
             });
             getUserSettings(id).then((response) => {
                 setUserSettingsJSON(JSON.stringify(response, null, 2));
@@ -117,6 +113,37 @@ export const UserCard = (): JSX.Element => {
         } catch (err) {}
 
         return jsonString;
+    };
+
+    useEffect(() => {
+        if (initialUserPermissionsJSON !== userPermissionsJSON) {
+            setIsButtonDisabled(false);
+        } else {
+            setIsButtonDisabled(true);
+        }
+    }, [userPermissionsJSON, initialUserPermissionsJSON]);
+
+    const handleChangeUserPermissions = ([fieldName, fieldValue]: [string, number]): void => {
+        const parsedUserPermission = JSON.parse(userPermissionsJSON);
+        parsedUserPermission[fieldName] = fieldValue;
+        setUserPermissionsJSON(JSON.stringify(parsedUserPermission, null, 2));
+    };
+
+    const handleSetUserPermissions = (): void => {
+        if (id) {
+            setUserPermissions(id, JSON.parse(userPermissionsJSON)).then((response) => {
+                try {
+                    setButtonPermissionsText('Success!');
+                    setIsButtonDisabled(true);
+                    setInitialUserPermissionsJSON(userPermissionsJSON);
+                    setButtonPermissionsText('Save permissions');
+                } catch (error) {
+                    setButtonPermissionsText('Error!');
+                    setIsButtonDisabled(true);
+                    setButtonPermissionsText('Save permissions');
+                }
+            });
+        }
     };
 
     const handleTabClick = (tab: string) => {
@@ -161,7 +188,15 @@ export const UserCard = (): JSX.Element => {
                         <TabDataWrapper
                             data={mutateJson(userPermissionsJSON, 'useruid')}
                             checkbox={true}
-                        />
+                            action={handleChangeUserPermissions}
+                        >
+                            <PrimaryButton
+                                buttonText={buttonPermissionsText}
+                                icon='check'
+                                disabled={isButtonDisabled}
+                                buttonClickAction={handleSetUserPermissions}
+                            />
+                        </TabDataWrapper>
                     </TabPanel>
                     <TabPanel activeTab={activeTab} tabName={UserCardTabs.Settings}>
                         <TabDataWrapper data={mutateJson(userSettingsJSON, 'status')} />
@@ -188,4 +223,4 @@ export const UserCard = (): JSX.Element => {
             </div>
         </div>
     );
-};
+}

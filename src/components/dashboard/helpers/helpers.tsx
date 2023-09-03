@@ -1,10 +1,16 @@
 import clsx from 'clsx';
-import { renderTable } from './renderTableHelper';
-import { ITabValues } from '../interfaces/interfaces';
-import { CustomCheckbox } from './renderInputsHelper';
-import { CustomDropdown } from './renderDropdownHelper';
+import { PropsWithChildren } from 'react';
+import { ITabValues } from 'common/interfaces/ITabValues';
+import { CustomCheckbox } from 'components/dashboard/helpers/renderInputsHelper';
+import { renderTable } from 'components/dashboard/helpers/renderTableHelper';
 
-const renderList = (data: any, checkbox: boolean = false) => {
+interface IRenderListArgs {
+    data: string[] | string;
+    checkbox?: boolean;
+    action?: (value: [string, number]) => void;
+}
+
+export const renderList = ({ data, checkbox, action }: IRenderListArgs) => {
     if (typeof data !== 'object' || data === null) {
         return (
             <div>
@@ -24,15 +30,16 @@ const renderList = (data: any, checkbox: boolean = false) => {
             if (Array.isArray(value)) {
                 return <div key={`${key}-${index}`}>{renderTable(value)}</div>;
             }
-            return <div key={`${key}-${index}`}>{renderList(value)}</div>;
+            return <div key={`${key}-${index}`}>{renderList({ data: value })}</div>;
         } else {
             const activeCheckbox = checkbox && (Number(value) === 0 || Number(value) === 1);
             return activeCheckbox ? (
                 <CustomCheckbox
-                    key={`${key}-${index}`}
+                    key={key}
                     currentValue={value}
                     id={key}
-                    title={title}
+                    title={key}
+                    action={action}
                 />
             ) : (
                 <div key={`${key}-${index}`} className='d-flex align-items-center mb-4'>
@@ -82,18 +89,15 @@ export const TabPanel = ({ activeTab, tabName, children, tabId }: ITabValues) =>
 
 export const TabDataWrapper = ({
     data,
-    checkbox = false,
-}: {
-    data: string;
-    checkbox?: boolean;
-}) => {
-    // eslint-disable-next-line no-unused-vars
-
+    checkbox,
+    action,
+    children,
+}: PropsWithChildren<IRenderListArgs>) => {
     if (!data) return <></>;
-    const parsedData = JSON.parse(data);
+    const parsedData = typeof data === 'string' && JSON.parse(data);
     const renderContent = () => {
         if (typeof parsedData === 'object' && !Array.isArray(parsedData)) {
-            return renderList(parsedData, checkbox);
+            return renderList({ data: parsedData, checkbox, action });
         } else {
             return renderTable(parsedData);
         }
@@ -107,6 +111,7 @@ export const TabDataWrapper = ({
                         <div className='tab-content' id='myTabContentInner'>
                             <div className='card-body'>
                                 {parsedData ? renderContent() : 'No data available'}
+                                {children}
                             </div>
                         </div>
                     </div>
@@ -115,6 +120,3 @@ export const TabDataWrapper = ({
         </>
     );
 };
-
-export { CustomDropdown };
-export { TableHead } from './renderTableHelper';

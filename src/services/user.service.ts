@@ -26,7 +26,7 @@ export const createUser = (loginname: string, loginpassword: string) => {
     );
 };
 
-export const updateUser = (uid: string, loginname: string, loginpassword: string) => {
+export const createOrUpdateUser = (loginname: string, loginpassword: string, uid: string = '0') => {
     return axios.post(
         API_URL + 'user/' + uid + '/user',
         { loginname: loginname, loginpassword: loginpassword },
@@ -34,6 +34,18 @@ export const updateUser = (uid: string, loginname: string, loginpassword: string
             headers: { Authorization: `Bearer ${getToken()}` },
         }
     );
+};
+
+export const copyUser = (srcuid: string) => {
+    return axios
+        .post<ActionStatus>(
+            `${API_URL}user/${srcuid}/copyuser`,
+            {},
+            {
+                headers: { Authorization: `Bearer ${getToken()}` },
+            }
+        )
+        .then((response) => response.data);
 };
 
 export const setUserOptionalData = (uid: string, data: any) => {
@@ -146,8 +158,8 @@ export const listUserSessions = (uid: string) => {
         .then((response) => response.data);
 };
 
-export const killSession = (id: number) => {
-    return axios.post(API_URL + 'user/' + id.toString() + '/session', {
+export const killSession = (uid: string) => {
+    return axios.post(`${API_URL}user/${uid}/session`, null, {
         headers: { Authorization: `Bearer ${getToken()}` },
     });
 };

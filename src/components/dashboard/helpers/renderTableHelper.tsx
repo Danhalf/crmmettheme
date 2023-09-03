@@ -1,7 +1,7 @@
-const getUniqValues = ({ values }: { values: string[] }) => {
+const getUniqValues = ({ values }: { values: any[] }) => {
     const columns = new Set<string>();
 
-    values.forEach((obj: string): void => {
+    values.forEach((obj: any): void => {
         Object.keys(obj).forEach((key: string): void => {
             columns.add(key);
         });
@@ -10,7 +10,7 @@ const getUniqValues = ({ values }: { values: string[] }) => {
     return [...columns];
 };
 
-const TableHead = ({ columns }: { columns: string[] }): JSX.Element => (
+export const TableHead = ({ columns }: { columns: string[] }): JSX.Element => (
     <thead>
         <tr className='fw-bold fs-6 text-gray-800 border-bottom border-gray-200'>
             {columns.map((column: string) => (
@@ -20,11 +20,11 @@ const TableHead = ({ columns }: { columns: string[] }): JSX.Element => (
     </thead>
 );
 
-const TableBody = ({ data }: { data: string[] }) => (
+const TableBody = ({ data }: { data: any[] }) => (
     <tbody>
-        {data.map((row: string, index: number) => (
+        {data.map((row: any, index: number) => (
             <tr key={index}>
-                {Object.values(row).map((cell: string, cellIndex: number) => (
+                {Object.values(row).map((cell: any, cellIndex: number) => (
                     <td key={`${index}-${cellIndex}`}>{cell}</td>
                 ))}
             </tr>
@@ -32,7 +32,7 @@ const TableBody = ({ data }: { data: string[] }) => (
     </tbody>
 );
 
-const renderTable = (data: string[]) => {
+export const renderTable = (data: any[]) => {
     const columns = getUniqValues({ values: data });
     return (
         <div className='w-100 table-responsive table-responsive-horizontal'>
@@ -43,5 +43,3 @@ const renderTable = (data: string[]) => {
         </div>
     );
 };
-
-export { TableHead, renderTable };
