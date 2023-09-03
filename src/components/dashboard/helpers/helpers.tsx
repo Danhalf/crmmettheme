@@ -1,5 +1,4 @@
 import clsx from 'clsx';
-import { useState } from 'react';
 import { renderTable } from './renderTableHelper';
 import { ITabValues } from '../interfaces/interfaces';
 import { CustomCheckbox } from './renderInputsHelper';

@@ -6,7 +6,9 @@ import { CustomDropdown, TableHead } from './helpers/helpers';
 // eslint-disable-next-line no-unused-vars
 enum UsersColumns {
     // eslint-disable-next-line
-    Microservice = 'User name',
+    UserID = 'User ID',
+    // eslint-disable-next-line
+    Username = 'User name',
     // eslint-disable-next-line
     Actions = 'Actions',
 }
@@ -44,7 +46,7 @@ export default function Users() {
                     <div className='table-responsive'>
                         <table
                             id='kt_table_users'
-                            className='table align-middle table-row-dashed fs-6 gy-5 no-footer'
+                            className='table align-middle table-row-dashed fs-6 gy-2 no-footer'
                         >
                             <TableHead columns={usersColumnsArray} />
                             <tbody className='text-gray-600 fw-bold'>
@@ -54,7 +56,15 @@ export default function Users() {
                                             <td>
                                                 <Link
                                                     to={`user/${user.useruid}`}
-                                                    className='text-gray-800 text-hover-primary mb-1'
+                                                    className='text-gray-800 text-hover-primary mb-1 text-decoration-underline'
+                                                >
+                                                    {user.useruid}
+                                                </Link>
+                                            </td>
+                                            <td>
+                                                <Link
+                                                    to={`user/${user.useruid}`}
+                                                    className='text-gray-800 text-hover-primary mb-1 text-decoration-underline'
                                                 >
                                                     {user.username}
                                                 </Link>
