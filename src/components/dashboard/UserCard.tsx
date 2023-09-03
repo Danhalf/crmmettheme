@@ -16,18 +16,31 @@ import {
 } from 'services/user.service';
 import { TabPanel, TabNavigate, TabDataWrapper } from './helpers/helpers';
 
+// eslint-disable-next-line no-unused-vars
 enum UserCardTabs {
+    // eslint-disable-next-line no-unused-vars
     Profile = 'Profile',
+    // eslint-disable-next-line no-unused-vars
     ExtendedInfo = 'Extended info',
+    // eslint-disable-next-line no-unused-vars
     ShortInfo = 'Short info',
+    // eslint-disable-next-line no-unused-vars
     Locations = 'Locations',
+    // eslint-disable-next-line no-unused-vars
     UserPermissions = 'User permissions',
+    // eslint-disable-next-line no-unused-vars
     Settings = 'Settings',
+    // eslint-disable-next-line no-unused-vars
     Sessions = 'Sessions',
+    // eslint-disable-next-line no-unused-vars
     Logins = 'Logins',
+    // eslint-disable-next-line no-unused-vars
     Subusers = 'Subusers',
+    // eslint-disable-next-line no-unused-vars
     SalesPersons = 'Sales persons',
+    // eslint-disable-next-line no-unused-vars
     Permissions = 'Permissions',
+    // eslint-disable-next-line no-unused-vars
     UserTypes = 'User types',
 }
 
