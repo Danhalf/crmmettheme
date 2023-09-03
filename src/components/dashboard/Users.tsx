@@ -44,10 +44,7 @@ export default function Users() {
             <div className='card'>
                 <div className='card-body'>
                     <div className='table-responsive'>
-                        <table
-                            id='kt_table_users'
-                            className='table align-middle table-row-dashed fs-6 gy-2 no-footer'
-                        >
+                        <table className='table align-middle table-row-dashed fs-6 gy-3 no-footer'>
                             <TableHead columns={usersColumnsArray} />
                             <tbody className='text-gray-600 fw-bold'>
                                 {users.map((user) => {
@@ -58,7 +55,7 @@ export default function Users() {
                                                     to={`user/${user.useruid}`}
                                                     className='text-gray-800 text-hover-primary mb-1 text-decoration-underline'
                                                 >
-                                                    {user.useruid}
+                                                    {user.index}
                                                 </Link>
                                             </td>
                                             <td>
