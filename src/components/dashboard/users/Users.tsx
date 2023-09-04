@@ -12,7 +12,9 @@ import { User, getUsers, copyUser, deleteUser, killSession } from 'services/user
 
 enum UsersColumns {
     ID = 'Index',
-    Microservice = 'User name',
+    Username = 'User name',
+    ParrentUser = 'Created by user',
+    isAdmin = 'Is admin',
     Actions = 'Actions',
 }
 
@@ -30,9 +32,11 @@ export default function Users() {
         createdbyuid: '',
         index: 0,
         parentuid: '',
+        parentusername: '',
         updated: '',
         username: '',
         useruid: '',
+        isAdmin: 0,
     };
 
     const [selectedUser, setSelectedUser] = useState<User>(initialUserState);
@@ -157,6 +161,15 @@ export default function Users() {
                                                         {user.username}
                                                     </Link>
                                                 </td>
+                                                <td>
+                                                    <Link
+                                                        to={`user/${user.parentuid}`}
+                                                        className='text-gray-800 text-hover-primary mb-1 text-decoration-underline'
+                                                    >
+                                                        {user.parentusername}
+                                                    </Link>
+                                                </td>
+                                                <td>{user.isAdmin ? 'yes' : 'no'}</td>
                                                 <td>
                                                     <CustomDropdown
                                                         title='Actions'

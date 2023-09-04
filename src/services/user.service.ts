@@ -7,9 +7,11 @@ export interface User {
     createdbyuid: string;
     index: number;
     parentuid: string;
+    parentusername: string;
     updated: string;
     username: string;
     useruid: string;
+    isAdmin: number;
 }
 
 export interface ActionStatus {
