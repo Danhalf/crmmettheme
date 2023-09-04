@@ -29,8 +29,6 @@ const CustomModal = ({
     onClose,
     children,
 }: PropsWithChildren<CustomModalProps>): JSX.Element => {
-    // eslint-disable-next-line no-console
-    console.log(children);
     return (
         <>
             <div

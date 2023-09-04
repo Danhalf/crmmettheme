@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { FC, useEffect } from 'react';
 import { MenuComponent } from '_metronic/assets/ts/components';
 
@@ -33,9 +34,7 @@ export const CustomDropdown: FC<Props> = ({ title, items }) => {
             >
                 {items.map(({ menuItemName, menuItemAction }) => (
                     <div key={menuItemName} className='menu-item px-3' onClick={menuItemAction}>
-                        <a href='/#' className='menu-link px-3'>
-                            {menuItemName}
-                        </a>
+                        <a className='menu-link px-3'>{menuItemName}</a>
                     </div>
                 ))}
             </div>
