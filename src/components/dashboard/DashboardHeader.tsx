@@ -3,8 +3,8 @@ import { LoginResponse, logout } from 'services/auth.service';
 
 export function DashboardHeader() {
     const navigate = useNavigate();
+    const user: LoginResponse = JSON.parse(localStorage.getItem('admss-admin-user') ?? '');
     const signOut = () => {
-        const user: LoginResponse = JSON.parse(localStorage.getItem('admss-admin-user') ?? '');
         if (user) {
             logout(user.useruid).then((response) => {
                 if (response.status) {
@@ -46,6 +46,9 @@ export function DashboardHeader() {
                                     <i className='ki-outline ki-notepad fs-2 m-2'></i>
                                     <span className='menu-title'>Reports</span>
                                 </Link>
+                            </div>
+                            <div className='menu-item me-lg-1'>
+                                <span className='menu-title'>{user.useruid}</span>
                             </div>
                             <div className='menu-item me-lg-1'>
                                 <span
