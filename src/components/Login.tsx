@@ -82,7 +82,7 @@ export function Login() {
                             </div>
                         )}
 
-                        <div className='fv-row mb-8'>
+                        <div className='fv-row mb-10 position-relative'>
                             <label className='form-label fs-6 fw-bolder text-dark'>Username</label>
                             <input
                                 placeholder='Username'
@@ -90,11 +90,11 @@ export function Login() {
                                 className={clsx(
                                     'form-control bg-transparent',
                                     {
-                                        'is-invalid':
+                                        'border-danger':
                                             formik.touched.username && formik.errors.username,
                                     },
                                     {
-                                        'is-valid':
+                                        'border-success':
                                             formik.touched.username && !formik.errors.username,
                                     }
                                 )}
@@ -103,14 +103,16 @@ export function Login() {
                                 autoComplete='off'
                             />
                             {formik.touched.username && formik.errors.username && (
-                                <div className='fv-plugins-message-container'>
-                                    <span role='alert'>{formik.errors.username}</span>
+                                <div className='fv-plugins-message-container position-absolute'>
+                                    <div className='fv-help-block'>
+                                        <span role='alert'>{formik.errors.username}</span>
+                                    </div>
                                 </div>
                             )}
                         </div>
 
-                        <div className='fv-row mb-8 position-relative'>
-                            <label className='form-label fw-bolder text-dark fs-6 mb-0'>
+                        <div className='fv-row mb-10 position-relative'>
+                            <label className='form-label fw-bolder text-dark fs-6 mb-0 w-100'>
                                 Password
                             </label>
                             <input
@@ -121,17 +123,17 @@ export function Login() {
                                 className={clsx(
                                     'form-control bg-transparent',
                                     {
-                                        'is-invalid':
+                                        'border-danger':
                                             formik.touched.password && formik.errors.password,
                                     },
                                     {
-                                        'is-valid':
+                                        'border-success':
                                             formik.touched.password && !formik.errors.password,
                                     }
                                 )}
                             />
                             {formik.touched.password && formik.errors.password && (
-                                <div className='fv-plugins-message-container'>
+                                <div className='fv-plugins-message-container position-absolute'>
                                     <div className='fv-help-block'>
                                         <span role='alert'>{formik.errors.password}</span>
                                     </div>
