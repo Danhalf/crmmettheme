@@ -141,16 +141,12 @@ export default function Users() {
             <div className='card'>
                 <div className='tab-content' id='myTabContentInner'>
                     <div className='card-body'>
-                        <div
-                            className='d-flex justify-content-end'
-                            data-kt-user-table-toolbar='base'
-                        ></div>
-                        <div className='table-responsive'>
-                            <table className='table align-middle table-row-dashed fs-6 gy-3 no-footer'>
-                                <TableHead columns={usersColumnsArray} />
-                                <tbody className='text-gray-600 fw-bold'>
-                                    {Array.isArray(users) ? (
-                                        users.map((user: User) => {
+                        {Array.isArray(users) ? (
+                            <div className='table-responsive'>
+                                <table className='table align-middle table-row-dashed fs-6 gy-3 no-footer'>
+                                    <TableHead columns={usersColumnsArray} />
+                                    <tbody className='text-gray-600 fw-bold'>
+                                        {users.map((user: User) => {
                                             return (
                                                 <tr key={user.useruid}>
                                                     <td className='text-gray-800'>{user.index}</td>
@@ -229,15 +225,19 @@ export default function Users() {
                                                     </td>
                                                 </tr>
                                             );
-                                        })
-                                    ) : (
-                                        <div className='error'>
-                                            Error: {JSON.parse(JSON.stringify(users))?.error}
-                                        </div>
-                                    )}
-                                </tbody>
-                            </table>
-                        </div>
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        ) : (
+                            <div className='alert alert-danger fs-6' role='alert'>
+                                <div className='bold'>Error: </div>
+                                <span>
+                                    {JSON.parse(JSON.stringify(users))?.error ||
+                                        'Incorrect type of data received from the server'}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>
