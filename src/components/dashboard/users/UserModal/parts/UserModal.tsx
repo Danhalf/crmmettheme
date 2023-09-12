@@ -2,8 +2,8 @@ import clsx from 'clsx';
 import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useState } from 'react';
-import { IUserData } from 'common/interfaces/IUserData';
-import { User, createOrUpdateUser } from 'services/user.service';
+import { UserData } from 'common/interfaces/UserData';
+import { createOrUpdateUser, User } from 'services/user.service';
 
 interface UserModalProps {
     onClose: () => void;
@@ -12,12 +12,12 @@ interface UserModalProps {
 }
 
 export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.Element => {
-    const initialUserData: IUserData = {
+    const initialUserData: UserData = {
         username: user?.username || '',
         password: '',
     };
 
-    const [userData] = useState<IUserData>(initialUserData);
+    const [userData] = useState<UserData>(initialUserData);
 
     const addUserSchema = Yup.object().shape({
         username: Yup.string().trim().required('Username is required'),

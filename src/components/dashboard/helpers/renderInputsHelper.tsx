@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
 
-interface ICustomInput {
+interface CustomInput {
     currentValue: number;
     id: string;
     title: string;
     action?: (value: [string, number]) => void;
 }
 
-interface ICustomCheckbox extends ICustomInput {}
+interface CustomCheckbox extends CustomInput {}
 
-export const CustomCheckbox = ({ currentValue, id, title, action }: ICustomCheckbox) => {
+export const CustomCheckbox = ({ currentValue, id, title, action }: CustomCheckbox) => {
     const [value, setValue] = useState<number>(currentValue);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 

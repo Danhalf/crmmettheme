@@ -5,8 +5,8 @@ import { Routes, Route } from 'react-router-dom';
 import { Dashboard } from './components/dashboard/Dashboard';
 import { Login } from './components/Login';
 import { MenuComponent } from './_metronic/assets/ts/components';
-import { UserCard } from 'components/dashboard/users/UserCard';
-import Users from 'components/dashboard/users/Users';
+import { UserCard } from './components/dashboard/users/UserCard';
+import Users from './components/dashboard/users/Users';
 
 export function MasterInit() {
     const pluginsInitialization = () => {

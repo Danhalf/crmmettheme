@@ -1,11 +1,11 @@
-interface IButtonProps {
+interface ButtonProps {
     buttonText: string;
     disabled?: boolean;
     icon?: string;
     buttonClickAction?: () => void;
 }
 
-export const PrimaryButton = ({ buttonText, icon, disabled, buttonClickAction }: IButtonProps) => {
+export const PrimaryButton = ({ buttonText, icon, disabled, buttonClickAction }: ButtonProps) => {
     return (
         <button
             type='button'
