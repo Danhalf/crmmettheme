@@ -33,12 +33,13 @@ const TableBody = ({ data }: { data: any[] }) => (
 );
 
 export const renderTable = (data: any[]) => {
-    const columns = getUniqValues({ values: data });
+    const filteredData = data.map(({ status, ...rest }) => rest);
+    const columns = getUniqValues({ values: filteredData });
     return (
         <div className='w-100 table-responsive table-responsive-horizontal'>
             <table className='table table-row-dashed table-row-gray-300 gy-7'>
                 <TableHead columns={columns} />
-                <TableBody data={data} />
+                <TableBody data={filteredData} />
             </table>
         </div>
     );

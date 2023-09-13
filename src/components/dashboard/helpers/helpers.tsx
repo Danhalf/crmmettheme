@@ -22,6 +22,7 @@ export const renderList = ({ data, checkbox, action }: RenderListArgs) => {
     const properties = Object.entries(data);
 
     return properties.map(([key, value]: [string, any], index: number) => {
+        if (key === 'status') return null;
         const title = key.replace(/^[^a-zа-яё]*([a-zа-яё])/i, (letter: string) =>
             letter.toUpperCase()
         );

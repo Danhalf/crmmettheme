@@ -182,7 +182,7 @@ export function UserCard() {
                         <TabDataWrapper data={shortInfoJSON} />
                     </TabPanel>
                     <TabPanel activeTab={activeTab} tabName={UserCardTabs.Locations}>
-                        <TabDataWrapper data={mutateJson(locationsJSON, 'status')} />
+                        <TabDataWrapper data={locationsJSON} />
                     </TabPanel>
                     <TabPanel activeTab={activeTab} tabName={UserCardTabs.UserPermissions}>
                         <TabDataWrapper
@@ -199,7 +199,7 @@ export function UserCard() {
                         </TabDataWrapper>
                     </TabPanel>
                     <TabPanel activeTab={activeTab} tabName={UserCardTabs.Settings}>
-                        <TabDataWrapper data={mutateJson(userSettingsJSON, 'status')} />
+                        <TabDataWrapper data={userSettingsJSON} />
                     </TabPanel>
                     <TabPanel activeTab={activeTab} tabName={UserCardTabs.Sessions}>
                         <TabDataWrapper data={userSessionsJSON} />
@@ -214,7 +214,7 @@ export function UserCard() {
                         <TabDataWrapper data={userSalesPersonsJSON} />
                     </TabPanel>
                     <TabPanel activeTab={activeTab} tabName={UserCardTabs.Permissions}>
-                        <TabDataWrapper data={mutateJson(permissionsJSON, 'status')} />
+                        <TabDataWrapper data={permissionsJSON} />
                     </TabPanel>
                     <TabPanel activeTab={activeTab} tabName={UserCardTabs.UserTypes}>
                         <TabDataWrapper data={userTypesJSON} />
