@@ -21,6 +21,7 @@ enum UsersColumns {
 const usersColumnsArray: string[] = Object.values(UsersColumns) as string[];
 
 export default function Users() {
+    const { useruid: currentUseruid } = JSON.parse(localStorage.getItem('admss-admin-user') ?? '');
     const [users, setUsers] = useState<User[]>([]);
     const [editUserModalEnabled, setEditUserModalEnabled] = useState<boolean>(false);
     const [userPermissionsModalEnabled, setUserPermissionsModalEnabled] = useState<boolean>(false);
@@ -62,7 +63,8 @@ export default function Users() {
 
     const updateUsers = (): void => {
         getUsers().then((response) => {
-            setUsers(response);
+            const filteredUsers = response.filter((user) => user.useruid !== currentUseruid);
+            setUsers(filteredUsers);
             setLoaded(true);
         });
     };
@@ -71,26 +73,23 @@ export default function Users() {
         if (!loaded) {
             updateUsers();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [users, loaded]);
 
     const handleCopyUser = (srcuid: string) => {
+        setLoaded(false);
         copyUser(srcuid).then((response) => {
             if (response.status === 'OK') {
-                getUsers().then((response) => {
-                    setUsers(response);
-                    setLoaded(true);
-                });
+                updateUsers();
             }
         });
     };
 
     const moveToTrash = (userId: string) => {
+        setLoaded(false);
         deleteUser(userId).then((response) => {
             if (response.status === 'OK') {
-                getUsers().then((response) => {
-                    setUsers(response);
-                    setLoaded(true);
-                });
+                updateUsers();
             }
         });
     };
@@ -146,7 +145,7 @@ export default function Users() {
                                 <table className='table align-middle table-row-dashed fs-6 gy-3 no-footer'>
                                     <TableHead columns={usersColumnsArray} />
                                     <tbody className='text-gray-600 fw-bold'>
-                                        {users.map((user: User) => {
+                                        {users.map((user: User): JSX.Element => {
                                             return (
                                                 <tr key={user.useruid}>
                                                     <td className='text-gray-800'>{user.index}</td>
