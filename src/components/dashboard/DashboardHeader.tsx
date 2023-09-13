@@ -1,12 +1,15 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { LoginResponse, logout } from 'services/auth.service';
+import { CustomDropdown } from './helpers/renderDropdownHelper';
 
 export function DashboardHeader() {
     const navigate = useNavigate();
-    const user: LoginResponse = JSON.parse(localStorage.getItem('admss-admin-user') ?? '');
+    const { useruid, loginname }: LoginResponse = JSON.parse(
+        localStorage.getItem('admss-admin-user') ?? ''
+    );
     const signOut = () => {
-        if (user) {
-            logout(user.useruid).then((response) => {
+        if (useruid) {
+            logout(useruid).then((response) => {
                 if (response.status) {
                     navigate('/');
                     localStorage.removeItem('admss-admin-user');
@@ -48,16 +51,15 @@ export function DashboardHeader() {
                                 </Link>
                             </div>
                             <div className='menu-item me-lg-1'>
-                                <span className='menu-title'>{user.useruid}</span>
-                            </div>
-                            <div className='menu-item me-lg-1'>
-                                <span
-                                    onClick={() => signOut()}
-                                    className='menu-link text-hover-primary'
-                                >
-                                    <i className='ki-outline ki-exit-right fs-2 m-2'></i>
-                                    <span className='menu-title'>Log out</span>
-                                </span>
+                                <CustomDropdown title={loginname}>
+                                    <span
+                                        onClick={() => signOut()}
+                                        className='menu-link text-hover-primary'
+                                    >
+                                        <i className='ki-outline ki-exit-right fs-2 m-2'></i>
+                                        <span className='menu-title'>Log out</span>
+                                    </span>
+                                </CustomDropdown>
                             </div>
                         </div>
                     </div>
@@ -66,3 +68,16 @@ export function DashboardHeader() {
         </div>
     );
 }
+
+//                                     <div className='menu-item me-lg-1'>
+//     <span className='menu-title'>{loginname}</span>
+// </div>
+// <div className='menu-item me-lg-1'>
+//     <span
+//         onClick={() => signOut()}
+//         className='menu-link text-hover-primary'
+//     >
+//         <i className='ki-outline ki-exit-right fs-2 m-2'></i>
+//         <span className='menu-title'>Log out</span>
+//     </span>
+// </div>
