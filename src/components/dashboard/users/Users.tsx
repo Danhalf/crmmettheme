@@ -9,6 +9,7 @@ import { UserOptionalModal } from 'components/dashboard/users/UserModal/parts/Us
 import { TableHead } from 'components/dashboard/helpers/renderTableHelper';
 import { CustomDropdown } from 'components/dashboard/helpers/renderDropdownHelper';
 import { User, getUsers, copyUser, deleteUser, killSession } from 'services/user.service';
+import { CustomToast } from '../helpers/renderToastHelper';
 
 enum UsersColumns {
     ID = 'Index',
@@ -240,6 +241,7 @@ export default function Users() {
                     </div>
                 </div>
             </div>
+            <CustomToast type={'warning'} content={'lorem'} />
         </>
     );
 }
