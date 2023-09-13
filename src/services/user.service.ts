@@ -60,9 +60,9 @@ export const setUserOptionalData = (uid: string, data: any) => {
     );
 };
 
-export const getUsers = () => {
+export const getUsers = (useruid = 0) => {
     return axios
-        .get<User[]>(`${API_URL}user/0/list`, {
+        .get<User[]>(`${API_URL}user/${useruid}/listclients`, {
             headers: { Authorization: `Bearer ${getToken()}` },
         })
         .then((response) => response.data);
