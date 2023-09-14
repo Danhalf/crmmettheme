@@ -9,11 +9,14 @@ import './_metronic/assets/keenicons/solid/style.css';
 import './_metronic/assets/sass/style.scss';
 import './_metronic/assets/sass/plugins.scss';
 import './_metronic/assets/sass/style.react.scss';
+import { ToastProvider } from 'components/dashboard/helpers/renderToastHelper';
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(
     <BrowserRouter>
-        <App />
+        <ToastProvider>
+            <App />
+        </ToastProvider>
     </BrowserRouter>
 );

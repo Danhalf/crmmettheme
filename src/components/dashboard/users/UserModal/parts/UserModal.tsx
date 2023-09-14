@@ -4,6 +4,8 @@ import { useFormik } from 'formik';
 import { useState } from 'react';
 import { UserData } from 'common/interfaces/UserData';
 import { createOrUpdateUser, User } from 'services/user.service';
+import { useToast } from 'components/dashboard/helpers/renderToastHelper';
+import { AxiosError } from 'axios';
 
 interface UserModalProps {
     onClose: () => void;
@@ -16,6 +18,8 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
         username: user?.username || '',
         password: '',
     };
+
+    const { handleShowToast } = useToast();
 
     const [userData] = useState<UserData>(initialUserData);
 
@@ -32,10 +36,20 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
             try {
                 const params: [string, string, string?] = [username, password];
                 if (user?.useruid) params.push(user.useruid);
-                await createOrUpdateUser(...params);
-                onClose();
-                updateData && updateData();
-            } catch (ex) {
+                const response = await createOrUpdateUser(...params);
+                if (response.status === 200 && !response.data.error) {
+                    handleShowToast({
+                        message: `User password successfully updated`,
+                        type: 'primary',
+                    });
+                    onClose();
+                    updateData && updateData();
+                } else {
+                    throw new Error(response.data.error);
+                }
+            } catch (err) {
+                const { message } = err as Error | AxiosError;
+                handleShowToast({ message, type: 'danger' });
             } finally {
                 setSubmitting(false);
             }

@@ -203,19 +203,3 @@ export const getUserShortInfo = (uid: string) => {
         })
         .then((response) => response.data);
 };
-
-export const getAllUIPermissions = (uid: string) => {
-    return axios
-        .get<string>(`${API_URL}user/${uid}/listpermissions`, {
-            headers: { Authorization: `Bearer ${getToken()}` },
-        })
-        .then((response) => response.data);
-};
-
-export const getAllUITypes = (uid: string) => {
-    return axios
-        .get<string>(`${API_URL}user/${uid}/listusertypes`, {
-            headers: { Authorization: `Bearer ${getToken()}` },
-        })
-        .then((response) => response.data);
-};

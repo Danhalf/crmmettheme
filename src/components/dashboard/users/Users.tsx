@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { CustomModal } from 'components/dashboard/helpers/modal/renderModalHelper';
 import { UserModal } from 'components/dashboard/users/UserModal/parts/UserModal';
 import { UserPermissionsModal } from 'components/dashboard/users/UserModal/parts/UserPermissionsModal';
@@ -9,7 +9,8 @@ import { UserOptionalModal } from 'components/dashboard/users/UserModal/parts/Us
 import { TableHead } from 'components/dashboard/helpers/renderTableHelper';
 import { CustomDropdown } from 'components/dashboard/helpers/renderDropdownHelper';
 import { User, getUsers, copyUser, deleteUser, killSession } from 'services/user.service';
-import { CustomToast } from '../helpers/renderToastHelper';
+import { useToast } from '../helpers/renderToastHelper';
+import { AxiosError } from 'axios';
 
 enum UsersColumns {
     ID = 'Index',
@@ -28,6 +29,10 @@ export default function Users() {
     const [userPermissionsModalEnabled, setUserPermissionsModalEnabled] = useState<boolean>(false);
     const [userSettingsModalEnabled, setUserSettingssModalEnabled] = useState<boolean>(false);
     const [userOptionalModalEnabled, setUserOptionalsModalEnabled] = useState<boolean>(false);
+
+    const navigate = useNavigate();
+
+    const { handleShowToast } = useToast();
 
     const initialUserState = {
         created: '',
@@ -77,22 +82,63 @@ export default function Users() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [users, loaded]);
 
-    const handleCopyUser = (srcuid: string) => {
+    const handleCopyUser = async (srcuid: string): Promise<void> => {
         setLoaded(false);
-        copyUser(srcuid).then((response) => {
-            if (response.status === 'OK') {
-                updateUsers();
+        try {
+            if (srcuid) {
+                const response: any = await copyUser(srcuid);
+                if (response.status === 'OK') {
+                    const newUseruid = response.useruid;
+                    navigate(`user/${newUseruid}`);
+                    handleShowToast({
+                        message: 'User successfully copied',
+                        type: 'primary',
+                    });
+                    updateUsers();
+                }
             }
-        });
+        } catch (err) {
+            const { message } = err as Error | AxiosError;
+            handleShowToast({ message, type: 'danger' });
+        }
     };
 
-    const moveToTrash = (userId: string) => {
+    const handleMoveToTrash = async (userId: string): Promise<void> => {
         setLoaded(false);
-        deleteUser(userId).then((response) => {
-            if (response.status === 'OK') {
-                updateUsers();
+        try {
+            if (userId) {
+                const response = await deleteUser(userId);
+                if (response.status === 'OK') {
+                    handleShowToast({
+                        message: 'User successfully deleted',
+                        type: 'primary',
+                    });
+                    updateUsers();
+                }
             }
-        });
+        } catch (err) {
+            const { message } = err as Error | AxiosError;
+            handleShowToast({ message, type: 'danger' });
+        }
+    };
+
+    const handleKillSession = async (userId: string): Promise<void> => {
+        setLoaded(false);
+        try {
+            if (userId) {
+                const response = await killSession(userId);
+                if (response.status === 200) {
+                    handleShowToast({
+                        message: 'User session successfully closed',
+                        type: 'primary',
+                    });
+                    updateUsers();
+                }
+            }
+        } catch (err) {
+            const { message } = err as Error | AxiosError;
+            handleShowToast({ message, type: 'danger' });
+        }
     };
 
     return (
@@ -130,7 +176,7 @@ export default function Users() {
             {userOptionalModalEnabled && (
                 <CustomModal
                     onClose={() => setUserOptionalsModalEnabled(false)}
-                    title={`${selectedUser.username} user settings: `}
+                    title={`${selectedUser.username} user optional data: `}
                 >
                     <UserOptionalModal
                         onClose={() => setUserOptionalsModalEnabled(false)}
@@ -212,13 +258,17 @@ export default function Users() {
                                                                 {
                                                                     menuItemName: 'Delete user',
                                                                     menuItemAction: () =>
-                                                                        moveToTrash(user.useruid),
+                                                                        handleMoveToTrash(
+                                                                            user.useruid
+                                                                        ),
                                                                 },
                                                                 {
                                                                     menuItemName:
                                                                         'Kill user session',
                                                                     menuItemAction: () =>
-                                                                        killSession(user.useruid),
+                                                                        handleKillSession(
+                                                                            user.useruid
+                                                                        ),
                                                                 },
                                                             ]}
                                                         />
@@ -241,7 +291,6 @@ export default function Users() {
                     </div>
                 </div>
             </div>
-            <CustomToast type={'warning'} content={'lorem'} />
         </>
     );
 }

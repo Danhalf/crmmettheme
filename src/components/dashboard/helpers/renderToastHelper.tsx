@@ -1,35 +1,69 @@
-import { useState } from 'react';
+import clsx from 'clsx';
+import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
 
-interface CustomToastProps {
-    type: 'success' | 'warning';
-    content: string;
+type ToastType = 'primary' | 'danger' | undefined;
+
+interface ToastData {
+    message: string;
+    type?: ToastType;
 }
 
-export const CustomToast = ({ type, content }: CustomToastProps): JSX.Element => {
-    const [showToast, setShowToast] = useState<boolean>(true);
+const ToastContext = createContext({
+    handleShowToast: ({ message, type }: ToastData): void => {},
+    handleToastClose: (): void => {},
+});
+
+export const useToast = () => useContext(ToastContext);
+
+export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
+    const [showToast, setShowToast] = useState<boolean>(false);
+    const [toastMessage, setToastMessage] = useState<string>('');
+    const [toastType, setToastType] = useState<ToastType>(undefined);
+    const [toastHeaderText, setToastHeaderText] = useState<string>('');
+
+    useEffect(() => {
+        switch (toastType) {
+            case 'primary':
+                setToastHeaderText('Success!');
+                break;
+            case 'danger':
+                setToastHeaderText('Error!');
+                break;
+            default:
+                setToastHeaderText('Message:');
+                break;
+        }
+    }, [toastType]);
+
+    const handleShowToast = ({ message, type }: ToastData) => {
+        setToastMessage(message);
+        setToastType(type);
+        setShowToast(true);
+    };
 
     const handleToastClose = () => {
         setShowToast(false);
+        setToastType(undefined);
+        setToastMessage('');
     };
 
     return (
-        <ToastContainer position='bottom-end'>
-            <Toast
-                show={showToast}
-                onClose={handleToastClose}
-                bg={type}
-                // delay={5000}
-                // autohide
-            >
-                <Toast.Header>
-                    {/* <img src='holder.js/20x20?text=%20' className='rounded me-2' alt='' /> */}
-                    <strong className='me-auto'>
-                        {type === 'success' ? 'Action successfully' : 'An action error'}
-                    </strong>
-                </Toast.Header>
-                <Toast.Body>{content}</Toast.Body>
-            </Toast>
-        </ToastContainer>
+        <ToastContext.Provider value={{ handleShowToast, handleToastClose }}>
+            {children}
+            <ToastContainer position='bottom-end'>
+                <Toast show={showToast} onClose={handleToastClose} delay={6000} autohide>
+                    <Toast.Header
+                        className={clsx(`fs-6 bg-${toastType} text-white`)}
+                        closeVariant='white'
+                    >
+                        <strong className='me-auto'>{toastHeaderText}</strong>
+                    </Toast.Header>
+                    <Toast.Body>
+                        <span className='fs-6'>{toastMessage}</span>
+                    </Toast.Body>
+                </Toast>
+            </ToastContainer>
+        </ToastContext.Provider>
     );
 };

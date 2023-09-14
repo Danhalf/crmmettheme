@@ -2,6 +2,8 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { deepEqual } from 'components/dashboard/helpers/common';
 import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/PrimaryButton';
 import { getUserLocations, setUserOptionalData } from 'services/user.service';
+import { useToast } from 'components/dashboard/helpers/renderToastHelper';
+import { AxiosError } from 'axios';
 
 interface UserOptionalModalProps {
     onClose: () => void;
@@ -14,6 +16,8 @@ export const UserOptionalModal = ({ onClose, useruid }: UserOptionalModalProps):
     const [allOptional, setAllOptional] = useState<any>({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+
+    const { handleShowToast } = useToast();
 
     useEffect(() => {
         setIsLoading(true);
@@ -55,9 +59,15 @@ export const UserOptionalModal = ({ onClose, useruid }: UserOptionalModalProps):
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === 200) {
+                    handleShowToast({
+                        message: 'User optional data successfully saved',
+                        type: 'primary',
+                    });
                     onClose();
                 }
-            } catch (error) {
+            } catch (err) {
+                const { message } = err as Error | AxiosError;
+                handleShowToast({ message, type: 'danger' });
             } finally {
                 setIsLoading(false);
             }
@@ -86,7 +96,7 @@ export const UserOptionalModal = ({ onClose, useruid }: UserOptionalModalProps):
                                     disabled={disabledKeys.includes(setting)}
                                     className='form-control bg-transparent'
                                     name={setting}
-                                    type={'text'}
+                                    type='text'
                                     value={value}
                                     onChange={(event) => handleChangeUserOptional(event, index)}
                                 />
@@ -95,7 +105,7 @@ export const UserOptionalModal = ({ onClose, useruid }: UserOptionalModalProps):
                     });
                 })}
             <PrimaryButton
-                buttonText='Save permissions'
+                buttonText='Save user optional data'
                 icon='check'
                 disabled={isButtonDisabled}
                 buttonClickAction={handleSetUserOptional}

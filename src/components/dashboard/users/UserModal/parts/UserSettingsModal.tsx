@@ -2,6 +2,8 @@ import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { convertToNumberIfNumeric, deepEqual } from 'components/dashboard/helpers/common';
 import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/PrimaryButton';
 import { getUserSettings, setUserSettings } from 'services/user.service';
+import { useToast } from 'components/dashboard/helpers/renderToastHelper';
+import { AxiosError } from 'axios';
 
 interface UserSettingsModalProps {
     onClose: () => void;
@@ -14,6 +16,8 @@ export const UserSettingsModal = ({ onClose, useruid }: UserSettingsModalProps):
     const [allSettings, setAllSettings] = useState<any>({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+
+    const { handleShowToast } = useToast();
 
     useEffect(() => {
         setIsLoading(true);
@@ -49,19 +53,25 @@ export const UserSettingsModal = ({ onClose, useruid }: UserSettingsModalProps):
         [settings]
     );
 
-    const handleSetUserSettings = (): void => {
+    const handleSetUserSettings = async (): Promise<void> => {
         setIsLoading(true);
-        if (useruid) {
-            const newSettings = { ...allSettings, settings };
-            setUserSettings(useruid, newSettings).then((response) => {
-                try {
-                    response.status = 200;
+        try {
+            if (useruid) {
+                const newSettings = { ...allSettings, settings };
+                const response = await setUserSettings(useruid, newSettings);
+                if (response.status === 200) {
+                    handleShowToast({
+                        message: 'User settings successfully saved',
+                        type: 'primary',
+                    });
                     onClose();
-                } catch (error) {
-                } finally {
-                    setIsLoading(false);
                 }
-            });
+            }
+        } catch (error) {
+            const { message } = error as Error | AxiosError;
+            handleShowToast({ message, type: 'danger' });
+        } finally {
+            setIsLoading(false);
         }
     };
 
