@@ -68,16 +68,3 @@ export function DashboardHeader() {
         </div>
     );
 }
-
-//                                     <div className='menu-item me-lg-1'>
-//     <span className='menu-title'>{loginname}</span>
-// </div>
-// <div className='menu-item me-lg-1'>
-//     <span
-//         onClick={() => signOut()}
-//         className='menu-link text-hover-primary'
-//     >
-//         <i className='ki-outline ki-exit-right fs-2 m-2'></i>
-//         <span className='menu-title'>Log out</span>
-//     </span>
-// </div>
