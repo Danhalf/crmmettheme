@@ -66,14 +66,13 @@ export const UserPermissionsModal = ({
     };
 
     const handleSetUserPermissions = async (): Promise<void> => {
-        setIsLoading(true);
         try {
             if (useruid) {
                 const response = await setUserPermissions(useruid, JSON.parse(userPermissionsJSON));
                 if (response.status === 200) {
                     handleShowToast({
                         message: 'Permissions successfully saved',
-                        type: 'primary',
+                        type: 'success',
                     });
                     onClose();
                 }

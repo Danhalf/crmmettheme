@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
 
-type ToastType = 'primary' | 'danger' | undefined;
+type ToastType = 'success' | 'danger' | undefined;
 
 interface ToastData {
     message: string;
@@ -24,7 +24,7 @@ export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
 
     useEffect(() => {
         switch (toastType) {
-            case 'primary':
+            case 'success':
                 setToastHeaderText('Success!');
                 break;
             case 'danger':
@@ -51,7 +51,7 @@ export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
     return (
         <ToastContext.Provider value={{ handleShowToast, handleToastClose }}>
             {children}
-            <ToastContainer position='bottom-end'>
+            <ToastContainer position='top-end'>
                 <Toast show={showToast} onClose={handleToastClose} delay={6000} autohide>
                     <Toast.Header
                         className={clsx(`fs-6 bg-${toastType} text-white`)}

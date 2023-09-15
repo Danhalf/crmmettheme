@@ -62,7 +62,7 @@ export const UserSettingsModal = ({ onClose, useruid }: UserSettingsModalProps):
                 if (response.status === 200) {
                     handleShowToast({
                         message: 'User settings successfully saved',
-                        type: 'primary',
+                        type: 'success',
                     });
                     onClose();
                 }

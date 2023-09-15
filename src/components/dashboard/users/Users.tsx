@@ -92,7 +92,7 @@ export default function Users() {
                     navigate(`user/${newUseruid}`);
                     handleShowToast({
                         message: 'User successfully copied',
-                        type: 'primary',
+                        type: 'success',
                     });
                     updateUsers();
                 }
@@ -111,7 +111,7 @@ export default function Users() {
                 if (response.status === 'OK') {
                     handleShowToast({
                         message: 'User successfully deleted',
-                        type: 'primary',
+                        type: 'success',
                     });
                     updateUsers();
                 }
@@ -130,7 +130,7 @@ export default function Users() {
                 if (response.status === 200) {
                     handleShowToast({
                         message: 'User session successfully closed',
-                        type: 'primary',
+                        type: 'success',
                     });
                     updateUsers();
                 }

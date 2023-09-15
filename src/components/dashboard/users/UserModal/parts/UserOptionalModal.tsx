@@ -61,7 +61,7 @@ export const UserOptionalModal = ({ onClose, useruid }: UserOptionalModalProps):
                 if (response.status === 200) {
                     handleShowToast({
                         message: 'User optional data successfully saved',
-                        type: 'primary',
+                        type: 'success',
                     });
                     onClose();
                 }

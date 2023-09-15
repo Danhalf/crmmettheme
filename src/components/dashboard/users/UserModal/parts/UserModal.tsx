@@ -40,7 +40,7 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
                 if (response.status === 200 && !response.data.error) {
                     handleShowToast({
                         message: `User password successfully updated`,
-                        type: 'primary',
+                        type: 'success',
                     });
                     onClose();
                     updateData && updateData();
