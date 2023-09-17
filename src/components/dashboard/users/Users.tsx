@@ -8,7 +8,7 @@ import { UserSettingsModal } from 'components/dashboard/users/UserModal/parts/Us
 import { UserOptionalModal } from 'components/dashboard/users/UserModal/parts/UserOptionalModal';
 import { TableHead } from 'components/dashboard/helpers/renderTableHelper';
 import { CustomDropdown } from 'components/dashboard/helpers/renderDropdownHelper';
-import { User, getUsers, copyUser, deleteUser, killSession } from 'services/user.service';
+import { User, getUsers, copyUser, deleteUser, killSession, Status } from 'services/user.service';
 import { useToast } from '../helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 
@@ -108,7 +108,7 @@ export default function Users() {
         try {
             if (userId) {
                 const response = await deleteUser(userId);
-                if (response.status === 'OK') {
+                if (response.status === Status.OK) {
                     handleShowToast({
                         message: 'User successfully deleted',
                         type: 'success',
@@ -127,7 +127,7 @@ export default function Users() {
         try {
             if (userId) {
                 const response = await killSession(userId);
-                if (response.status === 'OK') {
+                if (response.status === Status.OK) {
                     handleShowToast({
                         message: 'User session successfully closed',
                         type: 'success',

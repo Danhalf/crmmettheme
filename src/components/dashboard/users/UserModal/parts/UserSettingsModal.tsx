@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { convertToNumberIfNumeric, deepEqual } from 'components/dashboard/helpers/common';
 import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/PrimaryButton';
-import { getUserSettings, setUserSettings } from 'services/user.service';
+import { Status, getUserSettings, setUserSettings } from 'services/user.service';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 
@@ -59,7 +59,7 @@ export const UserSettingsModal = ({ onClose, useruid }: UserSettingsModalProps):
             if (useruid) {
                 const newSettings = { ...allSettings, settings };
                 const response = await setUserSettings(useruid, newSettings);
-                if (response.status === 'OK') {
+                if (response.status === Status.OK) {
                     handleShowToast({
                         message: 'User settings successfully saved',
                         type: 'success',

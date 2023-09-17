@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { deepEqual } from 'components/dashboard/helpers/common';
 import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/PrimaryButton';
-import { getUserLocations, setUserOptionalData } from 'services/user.service';
+import { Status, getUserLocations, setUserOptionalData } from 'services/user.service';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 
@@ -58,7 +58,7 @@ export const UserOptionalModal = ({ onClose, useruid }: UserOptionalModalProps):
             const newOptional = { ...allOptional, locations: optional };
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
-                if (response.status === 'OK') {
+                if (response.status === Status.OK) {
                     handleShowToast({
                         message: 'User optional data successfully saved',
                         type: 'success',

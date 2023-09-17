@@ -11,6 +11,11 @@ interface ToastData {
     type?: ToastType;
 }
 
+const InitStateToastData: ToastData = {
+    message: '',
+    type: 'success',
+};
+
 const ToastContext = createContext({
     handleShowToast: ({ message, type }: ToastData): void => {},
     handleToastClose: (): void => {},
@@ -20,9 +25,9 @@ export const useToast = () => useContext(ToastContext);
 
 export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
     const [showToast, setShowToast] = useState<boolean>(false);
-    const [toastMessage, setToastMessage] = useState<string>('');
-    const [toastType, setToastType] = useState<ToastType>();
     const [toastHeaderText, setToastHeaderText] = useState<string>('');
+    const [{ message: toastMessage, type: toastType }, setToastData] =
+        useState<ToastData>(InitStateToastData);
 
     useEffect(() => {
         switch (toastType) {
@@ -36,8 +41,7 @@ export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
     }, [toastType]);
 
     const handleShowToast = ({ message, type }: ToastData) => {
-        setToastMessage(message);
-        setToastType(type);
+        setToastData({ message, type });
         setShowToast(true);
     };
 

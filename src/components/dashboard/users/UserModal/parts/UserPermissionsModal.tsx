@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { renderList } from 'components/dashboard/helpers/helpers';
 import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/PrimaryButton';
-import { getUserPermissions, setUserPermissions } from 'services/user.service';
+import { Status, getUserPermissions, setUserPermissions } from 'services/user.service';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 
@@ -69,7 +69,7 @@ export const UserPermissionsModal = ({
         try {
             if (useruid) {
                 const response = await setUserPermissions(useruid, JSON.parse(userPermissionsJSON));
-                if (response.status === 'OK') {
+                if (response.status === Status.OK) {
                     handleShowToast({
                         message: 'Permissions successfully saved',
                         type: 'success',
