@@ -69,7 +69,7 @@ export const UserPermissionsModal = ({
         try {
             if (useruid) {
                 const response = await setUserPermissions(useruid, JSON.parse(userPermissionsJSON));
-                if (response.status === 200) {
+                if (response.status === 'OK') {
                     handleShowToast({
                         message: 'Permissions successfully saved',
                         type: 'success',

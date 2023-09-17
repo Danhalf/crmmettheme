@@ -58,7 +58,7 @@ export const UserOptionalModal = ({ onClose, useruid }: UserOptionalModalProps):
             const newOptional = { ...allOptional, locations: optional };
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
-                if (response.status === 200) {
+                if (response.status === 'OK') {
                     handleShowToast({
                         message: 'User optional data successfully saved',
                         type: 'success',

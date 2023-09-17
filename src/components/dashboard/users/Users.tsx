@@ -127,7 +127,7 @@ export default function Users() {
         try {
             if (userId) {
                 const response = await killSession(userId);
-                if (response.status === 200) {
+                if (response.status === 'OK') {
                     handleShowToast({
                         message: 'User session successfully closed',
                         type: 'success',

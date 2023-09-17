@@ -2,7 +2,9 @@ import clsx from 'clsx';
 import { PropsWithChildren, createContext, useContext, useEffect, useState } from 'react';
 import { Toast, ToastContainer } from 'react-bootstrap';
 
-type ToastType = 'success' | 'danger' | undefined;
+export const TOAST_DURATION = 5000;
+
+type ToastType = 'success' | 'danger';
 
 interface ToastData {
     message: string;
@@ -19,7 +21,7 @@ export const useToast = () => useContext(ToastContext);
 export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
     const [showToast, setShowToast] = useState<boolean>(false);
     const [toastMessage, setToastMessage] = useState<string>('');
-    const [toastType, setToastType] = useState<ToastType>(undefined);
+    const [toastType, setToastType] = useState<ToastType>();
     const [toastHeaderText, setToastHeaderText] = useState<string>('');
 
     useEffect(() => {
@@ -29,9 +31,6 @@ export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
                 break;
             case 'danger':
                 setToastHeaderText('Error!');
-                break;
-            default:
-                setToastHeaderText('Message:');
                 break;
         }
     }, [toastType]);
@@ -44,15 +43,13 @@ export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
 
     const handleToastClose = () => {
         setShowToast(false);
-        setToastType(undefined);
-        setToastMessage('');
     };
 
     return (
         <ToastContext.Provider value={{ handleShowToast, handleToastClose }}>
             {children}
             <ToastContainer position='top-end'>
-                <Toast show={showToast} onClose={handleToastClose} delay={6000} autohide>
+                <Toast show={showToast} onClose={handleToastClose} delay={TOAST_DURATION} autohide>
                     <Toast.Header
                         className={clsx(`fs-6 bg-${toastType} text-white`)}
                         closeVariant='white'

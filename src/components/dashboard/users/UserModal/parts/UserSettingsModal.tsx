@@ -59,7 +59,7 @@ export const UserSettingsModal = ({ onClose, useruid }: UserSettingsModalProps):
             if (useruid) {
                 const newSettings = { ...allSettings, settings };
                 const response = await setUserSettings(useruid, newSettings);
-                if (response.status === 200) {
+                if (response.status === 'OK') {
                     handleShowToast({
                         message: 'User settings successfully saved',
                         type: 'success',

@@ -3,19 +3,20 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { UserData } from 'common/interfaces/UserData';
-import { createOrUpdateUser, User } from 'services/user.service';
-import { useToast } from 'components/dashboard/helpers/renderToastHelper';
+import { updateUser, User } from 'services/user.service';
+import { TOAST_DURATION, useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 
 interface UserModalProps {
     onClose: () => void;
-    user?: User;
+    user: User;
     updateData?: () => void;
 }
 
 export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.Element => {
+    const [hasServerError, setHasServerError] = useState<boolean>(false);
     const initialUserData: UserData = {
-        username: user?.username || '',
+        username: user.username,
         password: '',
     };
 
@@ -36,8 +37,9 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
             try {
                 const params: [string, string, string?] = [username, password];
                 if (user?.useruid) params.push(user.useruid);
-                const response = await createOrUpdateUser(...params);
-                if (response.status === 200 && !response.data.error) {
+                const responseData = await updateUser(...params);
+
+                if (!responseData.error) {
                     handleShowToast({
                         message: `User password successfully updated`,
                         type: 'success',
@@ -45,7 +47,11 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
                     onClose();
                     updateData && updateData();
                 } else {
-                    throw new Error(response.data.error);
+                    setHasServerError(responseData.error);
+                    setTimeout(() => {
+                        setHasServerError(false);
+                    }, TOAST_DURATION);
+                    throw new Error(responseData.error);
                 }
             } catch (err) {
                 const { message } = err as Error | AxiosError;
@@ -96,10 +102,15 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
                             className={clsx(
                                 'form-control',
                                 {
-                                    'is-invalid': formik.touched.password && formik.errors.password,
+                                    'is-invalid':
+                                        (formik.touched.password && formik.errors.password) ||
+                                        hasServerError,
                                 },
                                 {
-                                    'is-valid': formik.touched.password && !formik.errors.password,
+                                    'is-valid':
+                                        formik.touched.password &&
+                                        !formik.errors.password &&
+                                        !hasServerError,
                                 }
                             )}
                         />
