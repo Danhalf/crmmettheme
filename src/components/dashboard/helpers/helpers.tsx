@@ -19,6 +19,10 @@ export const renderList = ({ data, checkbox, action }: RenderListArgs) => {
         );
     }
 
+    if ('error' in data) {
+        return <div>No data available</div>;
+    }
+
     const properties = Object.entries(data);
 
     return properties.map(([key, value]: [string, any], index: number) => {
