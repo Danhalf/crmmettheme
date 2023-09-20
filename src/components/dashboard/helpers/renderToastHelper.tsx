@@ -52,7 +52,7 @@ export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
     return (
         <ToastContext.Provider value={{ handleShowToast, handleToastClose }}>
             {children}
-            <ToastContainer position='top-end'>
+            <ToastContainer className='position-fixed' position='bottom-center'>
                 <Toast show={showToast} onClose={handleToastClose} delay={TOAST_DURATION} autohide>
                     <Toast.Header
                         className={clsx(`fs-6 bg-${toastType} text-white`)}
