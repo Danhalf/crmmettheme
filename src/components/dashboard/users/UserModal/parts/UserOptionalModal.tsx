@@ -55,7 +55,7 @@ export const UserOptionalModal = ({ onClose, useruid }: UserOptionalModalProps):
     const handleSetUserOptional = async (): Promise<void> => {
         setIsLoading(true);
         if (useruid) {
-            const newOptional = { ...allOptional, locations: optional };
+            const newOptional = { ...allOptional[0], locations: optional };
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === Status.OK) {
