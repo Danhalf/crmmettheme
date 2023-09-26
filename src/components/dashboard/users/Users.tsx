@@ -11,8 +11,6 @@ import { CustomDropdown } from 'components/dashboard/helpers/renderDropdownHelpe
 import { User, getUsers, copyUser, deleteUser, killSession, Status } from 'services/user.service';
 import { useToast } from '../helpers/renderToastHelper';
 import { AxiosError } from 'axios';
-import { LoginResponse } from 'services/auth.service';
-import { STORAGE_USER } from 'app-consts';
 
 enum UsersColumns {
     ID = 'Index',
@@ -25,8 +23,7 @@ enum UsersColumns {
 const usersColumnsArray: string[] = Object.values(UsersColumns) as string[];
 
 export default function Users() {
-    const userStorage = localStorage.getItem(STORAGE_USER);
-    const { useruid: currentUseruid }: LoginResponse = userStorage ? JSON.parse(userStorage) : {};
+    const { useruid: currentUseruid } = JSON.parse(localStorage.getItem('admss-admin-user') ?? '');
     const [users, setUsers] = useState<User[]>([]);
     const [editUserModalEnabled, setEditUserModalEnabled] = useState<boolean>(false);
     const [userPermissionsModalEnabled, setUserPermissionsModalEnabled] = useState<boolean>(false);
