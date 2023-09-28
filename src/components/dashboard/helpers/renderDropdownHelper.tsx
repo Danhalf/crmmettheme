@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
+import { MenuComponent } from '_metronic/assets/ts/components/MenuComponent';
 import { PropsWithChildren, useEffect } from 'react';
-import { MenuComponent } from '_metronic/assets/ts/components';
 
 interface PropsItems {
     menuItemName: string;
