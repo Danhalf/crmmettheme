@@ -3,20 +3,20 @@ import * as Yup from 'yup';
 import { useFormik } from 'formik';
 import { useState } from 'react';
 import { UserData } from 'common/interfaces/UserData';
-import { updateUser, User } from 'services/user.service';
+import { User, createOrUpdateUser } from 'services/user.service';
 import { TOAST_DURATION, useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 
 interface UserModalProps {
     onClose: () => void;
-    user: User;
+    user?: User;
     updateData?: () => void;
 }
 
 export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.Element => {
     const [hasServerError, setHasServerError] = useState<boolean>(false);
     const initialUserData: UserData = {
-        username: user.username,
+        username: user?.username || '',
         password: '',
     };
 
@@ -37,11 +37,16 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
             try {
                 const params: [string, string, string?] = [username, password];
                 if (user?.useruid) params.push(user.useruid);
-                const responseData = await updateUser(...params);
+                const responseData = await createOrUpdateUser(...params);
+
+                const message =
+                    params.length > 2
+                        ? `User password successfully updated`
+                        : `User ${username} successfully created`;
 
                 if (!responseData.error) {
                     handleShowToast({
-                        message: `User password successfully updated`,
+                        message,
                         type: 'success',
                     });
                     onClose();
@@ -102,15 +107,10 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
                             className={clsx(
                                 'form-control',
                                 {
-                                    'is-invalid':
-                                        (formik.touched.password && formik.errors.password) ||
-                                        hasServerError,
+                                    'is-invalid': formik.touched.password && formik.errors.password,
                                 },
                                 {
-                                    'is-valid':
-                                        formik.touched.password &&
-                                        !formik.errors.password &&
-                                        !hasServerError,
+                                    'is-valid': formik.touched.password && !formik.errors.password,
                                 }
                             )}
                         />
