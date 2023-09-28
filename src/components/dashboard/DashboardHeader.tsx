@@ -1,18 +1,18 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { LoginResponse, logout } from 'services/auth.service';
 import { CustomDropdown } from './helpers/renderDropdownHelper';
-import { STORAGE_USER } from 'app-consts';
 
 export function DashboardHeader() {
     const navigate = useNavigate();
-    const userStorage = localStorage.getItem(STORAGE_USER);
-    const { useruid, loginname }: LoginResponse = userStorage ? JSON.parse(userStorage) : {};
+    const { useruid, loginname }: LoginResponse = JSON.parse(
+        localStorage.getItem('admss-admin-user') ?? ''
+    );
     const signOut = () => {
         if (useruid) {
             logout(useruid).then((response) => {
                 if (response.status) {
                     navigate('/');
-                    localStorage.removeItem(STORAGE_USER);
+                    localStorage.removeItem('admss-admin-user');
                 }
             });
         }

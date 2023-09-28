@@ -1,11 +1,10 @@
 import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { HTMLInputTypeAttribute, useEffect, useState } from 'react';
+import { HTMLInputTypeAttribute, useState } from 'react';
 import * as Yup from 'yup';
 
-import { LoginResponse, login } from '../services/auth.service';
+import { login } from '../services/auth.service';
 import { useNavigate } from 'react-router-dom';
-import { STORAGE_USER } from 'app-consts';
 
 interface LoginCredentials {
     username: string;
@@ -29,13 +28,6 @@ export function Login() {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
     const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
     const [passwordFieldIcon, setPasswordFieldIcon] = useState<PasswordFieldIcon>('ki-eye');
-
-    const userStorage = localStorage.getItem(STORAGE_USER);
-    const { useruid }: LoginResponse = userStorage ? JSON.parse(userStorage) : {};
-
-    useEffect(() => {
-        if (useruid) navigate('/dashboard');
-    }, [useruid]);
 
     const navigate = useNavigate();
 
@@ -63,7 +55,7 @@ export function Login() {
             login(values.username, values.password)
                 .then((response) => {
                     setStatus(false);
-                    localStorage.setItem(STORAGE_USER, JSON.stringify(response));
+                    localStorage.setItem('admss-admin-user', JSON.stringify(response));
                     navigate('/dashboard');
                 })
                 .catch((err) => {

@@ -1,7 +1,5 @@
-import { STORAGE_USER } from 'app-consts';
-
 export function getToken(): string {
-    const userJson = localStorage.getItem(STORAGE_USER);
+    const userJson = localStorage.getItem('admss-admin-user');
     let token = '';
 
     if (userJson) {

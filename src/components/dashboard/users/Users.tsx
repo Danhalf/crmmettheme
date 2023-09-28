@@ -12,9 +12,6 @@ import { User, getUsers, copyUser, deleteUser, killSession, Status } from 'servi
 import { useToast } from '../helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 import { UserConfirmModal } from './UserModal/parts/UserConfirmModal';
-import { STORAGE_USER } from 'app-consts';
-import { LoginResponse } from 'services/auth.service';
-import { PrimaryButton } from '../smallComponents/buttons/PrimaryButton';
 
 enum UsersColumns {
     ID = 'Index',
@@ -27,10 +24,8 @@ enum UsersColumns {
 const usersColumnsArray: string[] = Object.values(UsersColumns) as string[];
 
 export default function Users() {
-    const userStorage = localStorage.getItem(STORAGE_USER);
-    const { useruid: currentUseruid }: LoginResponse = userStorage ? JSON.parse(userStorage) : {};
+    const { useruid: currentUseruid } = JSON.parse(localStorage.getItem('admss-admin-user') ?? '');
     const [users, setUsers] = useState<User[]>([]);
-    const [addUserModalEnabled, setAddUserModalEnabled] = useState<boolean>(false);
     const [editUserModalEnabled, setEditUserModalEnabled] = useState<boolean>(false);
     const [confirmModalEnabled, setConfirmModalEnabled] = useState<boolean>(false);
     const [userPermissionsModalEnabled, setUserPermissionsModalEnabled] = useState<boolean>(false);
@@ -57,7 +52,6 @@ export default function Users() {
 
     const [loaded, setLoaded] = useState<boolean>(false);
 
-    const handleAddUserModalOpen = () => setAddUserModalEnabled(!addUserModalEnabled);
     const handleEditUserModalOpen = ({ useruid, username }: User) => {
         setSelectedUser({ ...selectedUser, useruid, username: username });
         setEditUserModalEnabled(true);
@@ -81,11 +75,9 @@ export default function Users() {
 
     const updateUsers = (): void => {
         getUsers().then((response) => {
-            if (response.length) {
-                const filteredUsers = response.filter((user) => user?.useruid !== currentUseruid);
-                setUsers(filteredUsers);
-                setLoaded(true);
-            }
+            const filteredUsers = response.filter((user) => user.useruid !== currentUseruid);
+            setUsers(filteredUsers);
+            setLoaded(true);
         });
     };
 
@@ -127,13 +119,12 @@ export default function Users() {
                         type: 'success',
                     });
                     setConfirmModalEnabled(false);
+                    updateUsers();
                 }
             }
         } catch (err) {
             const { message } = err as Error | AxiosError;
             handleShowToast({ message, type: 'danger' });
-        } finally {
-            setLoaded(false);
         }
     };
 
@@ -158,11 +149,6 @@ export default function Users() {
 
     return (
         <>
-            {addUserModalEnabled && (
-                <CustomModal onClose={handleAddUserModalOpen} title={'Add user'}>
-                    <UserModal onClose={handleAddUserModalOpen} updateData={updateUsers} />
-                </CustomModal>
-            )}
             {confirmModalEnabled && (
                 <CustomModal
                     onClose={() => setConfirmModalEnabled(false)}
@@ -217,21 +203,14 @@ export default function Users() {
             )}
             <div className='card'>
                 <div className='tab-content' id='myTabContentInner'>
-                    <div className='d-flex w-100 justify-content-end px-8 mt-4'>
-                        <PrimaryButton
-                            buttonText='Add User'
-                            icon='plus'
-                            buttonClickAction={handleAddUserModalOpen}
-                        />
-                    </div>
                     <div className='card-body'>
                         {Array.isArray(users) ? (
                             <div className='table-responsive'>
                                 <table className='table align-middle table-row-dashed fs-6 gy-3 no-footer'>
                                     <TableHead columns={usersColumnsArray} />
                                     <tbody className='text-gray-600 fw-bold'>
-                                        {users.map((user: User, index: number): JSX.Element => {
-                                            return user?.useruid ? (
+                                        {users.map((user: User): JSX.Element => {
+                                            return (
                                                 <tr key={user.useruid}>
                                                     <td className='text-gray-800'>{user.index}</td>
                                                     <td>
@@ -310,22 +289,6 @@ export default function Users() {
                                                                 },
                                                             ]}
                                                         />
-                                                    </td>
-                                                </tr>
-                                            ) : (
-                                                <tr key={index}>
-                                                    <td>
-                                                        <div
-                                                            className='alert alert-danger fs-6 w-100'
-                                                            role='alert'
-                                                        >
-                                                            <div className='bold'>Error: </div>
-                                                            <span>
-                                                                {JSON.parse(JSON.stringify(users))
-                                                                    ?.error ||
-                                                                    'Incorrect type of data received from the server'}
-                                                            </span>
-                                                        </div>
                                                     </td>
                                                 </tr>
                                             );
