@@ -38,7 +38,7 @@ const fetchApiData = async <T>(method: Method, url: string, data?: any): Promise
     }
 };
 
-export const updateUser = (
+export const createOrUpdateUser = (
     loginname: string,
     loginpassword: string,
     uid: string = '0'
