@@ -3,6 +3,7 @@ import { PropsWithChildren } from 'react';
 import { TabValues } from 'common/interfaces/TabValues';
 import { CustomCheckbox } from 'components/dashboard/helpers/renderInputsHelper';
 import { renderTable } from 'components/dashboard/helpers/renderTableHelper';
+import { renamedKeys } from 'app-consts';
 
 interface RenderListArgs {
     data: string[] | string;
@@ -38,6 +39,7 @@ export const renderList = ({ data, checkbox, action }: RenderListArgs) => {
             return <div key={`${key}-${index}`}>{renderList({ data: value })}</div>;
         } else {
             const activeCheckbox = checkbox && (Number(value) === 0 || Number(value) === 1);
+            const title = renamedKeys[key] || key;
             return activeCheckbox ? (
                 <CustomCheckbox
                     key={key}
