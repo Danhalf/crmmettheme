@@ -45,6 +45,10 @@ export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
         setShowToast(true);
     };
 
+    const createMarkup = (html: string) => {
+        return { __html: html };
+    };
+
     const handleToastClose = () => {
         setShowToast(false);
     };
@@ -61,7 +65,10 @@ export const ToastProvider = ({ children }: PropsWithChildren): JSX.Element => {
                         <strong className='me-auto'>{toastHeaderText}</strong>
                     </Toast.Header>
                     <Toast.Body>
-                        <span className='fs-6'>{toastMessage}</span>
+                        <span
+                            className='fs-6'
+                            dangerouslySetInnerHTML={createMarkup(toastMessage)}
+                        />
                     </Toast.Body>
                 </Toast>
             </ToastContainer>

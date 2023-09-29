@@ -41,8 +41,8 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
 
                 const message =
                     params.length > 2
-                        ? `User password successfully updated`
-                        : `User ${username} successfully created`;
+                        ? `<strong>${username}</strong>'s password successfully updated`
+                        : `User <strong>${username} successfully created`;
 
                 if (!responseData.error) {
                     handleShowToast({
