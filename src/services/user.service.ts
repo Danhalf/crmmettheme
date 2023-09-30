@@ -38,12 +38,14 @@ const fetchApiData = async <T>(method: Method, url: string, data?: any): Promise
     }
 };
 
-export const createOrUpdateUser = (
-    loginname: string,
-    loginpassword: string,
-    uid: string = '0'
-): Promise<any> => {
-    return fetchApiData('POST', `user/${uid}/user`, { loginname, loginpassword });
+export const createOrUpdateUser = (userData: {
+    loginname?: string;
+    loginpassword: string;
+    uid?: string;
+}): Promise<any> => {
+    const { uid, ...reqBody } = userData;
+
+    return fetchApiData('POST', `user/${uid || '0'}/user`, reqBody);
 };
 
 export const copyUser = (srcuid: string): Promise<any> => {

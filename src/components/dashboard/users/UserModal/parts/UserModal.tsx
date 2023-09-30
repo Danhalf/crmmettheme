@@ -31,7 +31,6 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
     const [confirmPasswordFieldType, setConfirmPasswordFieldType] =
         useState<HTMLInputTypeAttribute>('password');
-    const [, setHasServerError] = useState<boolean>(false);
 
     const initialUserData: UserModalData = {
         username: user?.username || '',
@@ -91,14 +90,14 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
 
             setSubmitting(true);
             try {
-                const params: [string, string, string?] = [username, password];
-                if (user?.useruid) params.push(user.useruid);
-                const responseData = await createOrUpdateUser(...params);
+                const userData = user?.useruid ? { uid: user.useruid } : { loginname: username };
+                const reqData = { ...userData, loginpassword: password };
 
-                const message =
-                    params.length > 2
-                        ? `User password successfully updated`
-                        : `User ${username} successfully created`;
+                const responseData = await createOrUpdateUser(reqData);
+
+                const message = user?.useruid
+                    ? `<strong>${username}</strong>'s password successfully updated`
+                    : `User <strong>${username}</strong> successfully created`;
 
                 if (!responseData.error) {
                     handleShowToast({
@@ -108,10 +107,6 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
                     onClose();
                     updateData && updateData();
                 } else {
-                    setHasServerError(responseData.error);
-                    setTimeout(() => {
-                        setHasServerError(false);
-                    }, TOAST_DURATION);
                     throw new Error(responseData.error);
                 }
             } catch (err) {
