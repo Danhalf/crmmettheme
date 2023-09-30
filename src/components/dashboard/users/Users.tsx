@@ -18,7 +18,7 @@ enum UsersColumns {
     ID = 'Index',
     Username = 'User name',
     ParrentUser = 'Created by user',
-    isAdmin = 'Is admin',
+    isadmin = 'Is admin',
     Actions = 'Actions',
 }
 
@@ -47,7 +47,7 @@ export default function Users() {
         updated: '',
         username: '',
         useruid: '',
-        isAdmin: 0,
+        isadmin: 0,
     };
 
     const [selectedUser, setSelectedUser] = useState<User>(initialUserState);
@@ -93,16 +93,16 @@ export default function Users() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [users, loaded]);
 
-    const handleCopyUser = async (srcuid: string): Promise<void> => {
+    const handleCopyUser = async (useruid: string, username: string): Promise<void> => {
         setLoaded(false);
         try {
-            if (srcuid) {
-                const response: any = await copyUser(srcuid);
+            if (useruid) {
+                const response: any = await copyUser(useruid);
                 if (response.status === 'OK') {
                     const newUseruid = response.useruid;
                     navigate(`user/${newUseruid}`);
                     handleShowToast({
-                        message: 'User successfully copied',
+                        message: `<strong>${username}</strong> successfully copied`,
                         type: 'success',
                     });
                     updateUsers();
@@ -120,7 +120,7 @@ export default function Users() {
                 const response = await deleteUser(userId);
                 if (response.status === Status.OK) {
                     handleShowToast({
-                        message: `${username} successfully deleted`,
+                        message: `<strong>${username}</strong> successfully deleted`,
                         type: 'success',
                     });
                     setConfirmModalEnabled(false);
@@ -135,14 +135,14 @@ export default function Users() {
         }
     };
 
-    const handleKillSession = async (userId: string): Promise<void> => {
+    const handleKillSession = async (useruid: string, username: string): Promise<void> => {
         setLoaded(false);
         try {
-            if (userId) {
-                const response = await killSession(userId);
+            if (useruid) {
+                const response = await killSession(useruid);
                 if (response.status === Status.OK) {
                     handleShowToast({
-                        message: 'User session successfully closed',
+                        message: `<strong>${username}</strong> session successfully closed`,
                         type: 'success',
                     });
                     updateUsers();
@@ -188,6 +188,7 @@ export default function Users() {
                     <UserPermissionsModal
                         onClose={() => setUserPermissionsModalEnabled(false)}
                         useruid={selectedUser.useruid}
+                        username={selectedUser.username}
                     />
                 </CustomModal>
             )}
@@ -199,6 +200,7 @@ export default function Users() {
                     <UserSettingsModal
                         onClose={() => setUserSettingssModalEnabled(false)}
                         useruid={selectedUser.useruid}
+                        username={selectedUser.username}
                     />
                 </CustomModal>
             )}
@@ -210,6 +212,7 @@ export default function Users() {
                     <UserOptionalModal
                         onClose={() => setUserOptionalsModalEnabled(false)}
                         useruid={selectedUser.useruid}
+                        username={selectedUser.username}
                     />
                 </CustomModal>
             )}
@@ -248,7 +251,7 @@ export default function Users() {
                                                             {user.parentusername}
                                                         </Link>
                                                     </td>
-                                                    <td>{user.isAdmin ? 'yes' : 'no'}</td>
+                                                    <td>{user.isadmin ? 'yes' : 'no'}</td>
                                                     <td>
                                                         <CustomDropdown
                                                             title='Actions'
@@ -264,7 +267,8 @@ export default function Users() {
                                                                     menuItemName: 'Copy user',
                                                                     menuItemAction: () =>
                                                                         handleCopyUser(
-                                                                            user.useruid
+                                                                            user.useruid,
+                                                                            user.username
                                                                         ),
                                                                 },
                                                                 {
@@ -303,7 +307,8 @@ export default function Users() {
                                                                         'Kill user session',
                                                                     menuItemAction: () =>
                                                                         handleKillSession(
-                                                                            user.useruid
+                                                                            user.useruid,
+                                                                            user.username
                                                                         ),
                                                                 },
                                                             ]}
