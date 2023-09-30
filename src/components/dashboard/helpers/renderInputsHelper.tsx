@@ -3,13 +3,14 @@ import { useEffect, useState } from 'react';
 interface CustomInput {
     currentValue: number;
     id: string;
-    title: string;
+    name: string;
+    title?: string;
     action?: (value: [string, number]) => void;
 }
 
 interface CustomCheckbox extends CustomInput {}
 
-export const CustomCheckbox = ({ currentValue, id, title, action }: CustomCheckbox) => {
+export const CustomCheckbox = ({ currentValue, id, name, action, title }: CustomCheckbox) => {
     const [value, setValue] = useState<number>(currentValue);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
@@ -21,9 +22,9 @@ export const CustomCheckbox = ({ currentValue, id, title, action }: CustomCheckb
         setIsLoading(false);
         if (currentValue !== value && action) {
             setIsLoading(true);
-            action([title, value]);
+            action([name, value]);
         }
-    }, [title, value, currentValue, action]);
+    }, [name, value, currentValue, action]);
 
     return (
         <div className='mb-10'>

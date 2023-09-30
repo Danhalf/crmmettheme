@@ -28,9 +28,6 @@ export const renderList = ({ data, checkbox, action }: RenderListArgs) => {
 
     return properties.map(([key, value]: [string, any], index: number) => {
         if (key === 'status') return null;
-        const title = key.replace(/^[^a-zа-яё]*([a-zа-яё])/i, (letter: string) =>
-            letter.toUpperCase()
-        );
 
         if (typeof value === 'object' && value !== null) {
             if (Array.isArray(value)) {
@@ -45,7 +42,8 @@ export const renderList = ({ data, checkbox, action }: RenderListArgs) => {
                     key={key}
                     currentValue={value}
                     id={key}
-                    title={key}
+                    name={key}
+                    title={title}
                     action={action}
                 />
             ) : (
