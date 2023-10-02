@@ -9,12 +9,14 @@ interface UserPermissionsModalProps {
     onClose: () => void;
     useruid: string;
     username: string;
+    onUpdateUsers: () => void;
 }
 
 export const UserPermissionsModal = ({
     onClose,
     useruid,
     username,
+    onUpdateUsers,
 }: UserPermissionsModalProps): JSX.Element => {
     const [userPermissionsJSON, setUserPermissionsJSON] = useState<string>('');
     const [initialUserPermissionsJSON, setInitialUserPermissionsJSON] = useState<string>('');
@@ -77,6 +79,7 @@ export const UserPermissionsModal = ({
                         type: 'success',
                     });
                     onClose();
+                    onUpdateUsers();
                 }
             }
         } catch (err) {
