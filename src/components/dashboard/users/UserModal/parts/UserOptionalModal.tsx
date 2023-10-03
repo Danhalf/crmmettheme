@@ -33,7 +33,14 @@ export const UserOptionalModal = ({
             getUserLocations(useruid).then(async (response: any) => {
                 setAllOptional(response);
                 const responseOptional: any[] = response.locations;
-                setOptional(responseOptional);
+                const filteredOptional = responseOptional.filter((option) => {
+                    const keys = Object.keys(option);
+
+                    return keys.some((key) => {
+                        return hiddenKeys.includes(key);
+                    });
+                });
+                setOptional(filteredOptional);
                 const deepClone = JSON.parse(JSON.stringify(responseOptional));
                 setInitialUserOptional(deepClone);
                 setIsLoading(false);
@@ -63,12 +70,7 @@ export const UserOptionalModal = ({
     const handleSetUserOptional = async (): Promise<void> => {
         setIsLoading(true);
         if (useruid) {
-            const filteredOptional = optional.filter((option) => {
-                const keys = Object.keys(option);
-                return !keys.some((key) => hiddenKeys.includes(key));
-            });
-
-            const newOptional = { ...allOptional, locations: filteredOptional };
+            const newOptional = { ...allOptional, locations: optional };
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === Status.OK) {
