@@ -5,6 +5,7 @@ import { Status, getUserLocations, setUserOptionalData } from 'services/user.ser
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 import { renamedKeys } from 'app-consts';
+import { TabNavigate, TabPanel } from 'components/dashboard/helpers/helpers';
 
 interface UserOptionalModalProps {
     onClose: () => void;
@@ -18,6 +19,7 @@ export const UserOptionalModal = ({
     username,
 }: UserOptionalModalProps): JSX.Element => {
     const [optional, setOptional] = useState<any[]>([]);
+    const [activeTab, setActiveTab] = useState<string>('0');
     const [initialUserOptional, setInitialUserOptional] = useState<any>([]);
     const [allOptional, setAllOptional] = useState<any>({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -61,7 +63,12 @@ export const UserOptionalModal = ({
     const handleSetUserOptional = async (): Promise<void> => {
         setIsLoading(true);
         if (useruid) {
-            const newOptional = { ...allOptional, locations: optional };
+            const filteredOptional = optional.filter((option) => {
+                const keys = Object.keys(option);
+                return !keys.some((key) => hiddenKeys.includes(key));
+            });
+
+            const newOptional = { ...allOptional, locations: filteredOptional };
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === Status.OK) {
@@ -80,37 +87,63 @@ export const UserOptionalModal = ({
         }
     };
 
+    const handleTabClick = (tab: string) => {
+        setActiveTab(tab);
+    };
+
     if (!optional) {
         return <></>;
     }
-
+    const hiddenKeys = ['locuid', 'useruid', 'index'];
     const disabledKeys = ['useruid', 'created', 'updated'];
     return (
         <>
+            <div className='d-flex justify-content-center mb-3'>
+                <div className='btn-group' role='group'>
+                    {optional.map((tab, idx) => (
+                        <button
+                            key={idx}
+                            type='button'
+                            className={`btn btn-secondary ${
+                                activeTab === `${idx}` ? 'active' : ''
+                            }`}
+                            onClick={() => handleTabClick(`${idx}`)}
+                        >
+                            {idx + 1}
+                        </button>
+                    ))}
+                </div>{' '}
+            </div>
             {optional &&
                 optional.map((option: any, index: number) => {
-                    return (Object.entries(option) as [string, string | number][]).map(
-                        ([setting, value]) => {
-                            const settingName = renamedKeys[setting] || setting;
-                            return (
-                                <div className='fv-row mb-8' key={setting}>
-                                    <label
-                                        htmlFor={setting}
-                                        className='form-label fs-6 fw-bolder text-dark'
-                                    >
-                                        {settingName}
-                                    </label>
-                                    <input
-                                        disabled={disabledKeys.includes(setting)}
-                                        className='form-control bg-transparent'
-                                        name={setting}
-                                        type='text'
-                                        value={value}
-                                        onChange={(event) => handleChangeUserOptional(event, index)}
-                                    />
-                                </div>
-                            );
-                        }
+                    return (
+                        <TabPanel activeTab={activeTab} tabName={`${index}`}>
+                            {(Object.entries(option) as [string, string | number][]).map(
+                                ([setting, value]) => {
+                                    const settingName = renamedKeys[setting] || setting;
+                                    return (
+                                        <div className='fv-row mb-8' key={setting}>
+                                            <label
+                                                htmlFor={setting}
+                                                className='form-label fs-6 fw-bolder text-dark'
+                                            >
+                                                {settingName}
+                                            </label>
+                                            <input
+                                                disabled={disabledKeys.includes(setting)}
+                                                className='form-control bg-transparent'
+                                                name={setting}
+                                                type='text'
+                                                value={value}
+                                                onChange={(event) =>
+                                                    handleChangeUserOptional(event, index)
+                                                }
+                                            />
+                                        </div>
+                                    );
+                                }
+                            )}
+                        </TabPanel>
                     );
                 })}
             <PrimaryButton
