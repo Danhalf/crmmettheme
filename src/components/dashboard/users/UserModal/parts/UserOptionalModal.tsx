@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { deepEqual } from 'components/dashboard/helpers/common';
 import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/PrimaryButton';
@@ -6,6 +7,8 @@ import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 import { renamedKeys } from 'app-consts';
 import { TabNavigate, TabPanel } from 'components/dashboard/helpers/helpers';
+import { TableHead } from 'components/dashboard/helpers/renderTableHelper';
+import { TabPane } from 'react-bootstrap';
 
 interface UserOptionalModalProps {
     onClose: () => void;
@@ -33,12 +36,16 @@ export const UserOptionalModal = ({
             getUserLocations(useruid).then(async (response: any) => {
                 setAllOptional(response);
                 const responseOptional: any[] = response.locations;
-                const filteredOptional = responseOptional.filter((option) => {
-                    const keys = Object.keys(option);
 
-                    return keys.some((key) => {
-                        return hiddenKeys.includes(key);
-                    });
+                const filteredOptional = responseOptional.map((option) => {
+                    const filteredOption = Object.keys(option).reduce((acc, key) => {
+                        if (!hiddenKeys.includes(key)) {
+                            acc[key] = option[key];
+                        }
+                        return acc;
+                    }, {});
+
+                    return filteredOption;
                 });
                 setOptional(filteredOptional);
                 const deepClone = JSON.parse(JSON.stringify(responseOptional));
@@ -75,7 +82,7 @@ export const UserOptionalModal = ({
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === Status.OK) {
                     handleShowToast({
-                        message: `<strong>${username}</strong> optional data successfully saved`,
+                        message: `${username} optional data successfully saved`,
                         type: 'success',
                     });
                     onClose();
@@ -90,6 +97,7 @@ export const UserOptionalModal = ({
     };
 
     const handleTabClick = (tab: string) => {
+        console.log(tab);
         setActiveTab(tab);
     };
 
@@ -103,44 +111,42 @@ export const UserOptionalModal = ({
             <div className='d-flex justify-content-center mb-3'>
                 <div className='btn-group' role='group'>
                     {optional.map((tab, idx) => (
-                        <button
+                        <TabNavigate
                             key={idx}
-                            type='button'
-                            className={`btn btn-secondary ${
-                                activeTab === `${idx}` ? 'active' : ''
-                            }`}
-                            onClick={() => handleTabClick(`${idx}`)}
-                        >
-                            {idx + 1}
-                        </button>
+                            tab={`${idx}`}
+                            activeTab={activeTab}
+                            onTabClick={handleTabClick}
+                        />
                     ))}
-                </div>{' '}
+                </div>
             </div>
             {optional &&
                 optional.map((option: any, index: number) => {
                     return (
-                        <TabPanel activeTab={activeTab} tabName={`${index}`}>
+                        <TabPanel key={index} activeTab={activeTab} tabName={`${index}`}>
                             {(Object.entries(option) as [string, string | number][]).map(
                                 ([setting, value]) => {
                                     const settingName = renamedKeys[setting] || setting;
                                     return (
-                                        <div className='fv-row mb-8' key={setting}>
-                                            <label
-                                                htmlFor={setting}
-                                                className='form-label fs-6 fw-bolder text-dark'
-                                            >
-                                                {settingName}
-                                            </label>
-                                            <input
-                                                disabled={disabledKeys.includes(setting)}
-                                                className='form-control bg-transparent'
-                                                name={setting}
-                                                type='text'
-                                                value={value}
-                                                onChange={(event) =>
-                                                    handleChangeUserOptional(event, index)
-                                                }
-                                            />
+                                        <div className='tab-content' id={activeTab}>
+                                            <div className='fv-row mb-8' key={setting}>
+                                                <label
+                                                    htmlFor={setting}
+                                                    className='form-label fs-6 fw-bolder text-dark'
+                                                >
+                                                    {settingName}
+                                                </label>
+                                                <input
+                                                    disabled={disabledKeys.includes(setting)}
+                                                    className='form-control bg-transparent'
+                                                    name={setting}
+                                                    type='text'
+                                                    value={value}
+                                                    onChange={(event) =>
+                                                        handleChangeUserOptional(event, index)
+                                                    }
+                                                />
+                                            </div>
                                         </div>
                                     );
                                 }
