@@ -96,7 +96,7 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
                 const responseData = await createOrUpdateUser(reqData);
 
                 const message = user?.useruid
-                    ? `<strong>${username}</strong>'s password successfully updated`
+                    ? `<strong>${username}</strong> password successfully updated`
                     : `User <strong>${username}</strong> successfully created`;
 
                 if (!responseData.error) {
