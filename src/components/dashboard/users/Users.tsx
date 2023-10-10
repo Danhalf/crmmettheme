@@ -190,6 +190,7 @@ export default function Users() {
                         onClose={() => setUserPermissionsModalEnabled(false)}
                         useruid={selectedUser.useruid}
                         username={selectedUser.username}
+                        onUpdateUsers={updateUsers}
                     />
                 </CustomModal>
             )}
