@@ -2,7 +2,7 @@ import { AxiosError } from 'axios';
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import { User, UserData } from 'common/interfaces/UserData';
-import { useToast, TOAST_DURATION } from 'components/dashboard/helpers/renderToastHelper';
+import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, useState } from 'react';
 import { createOrUpdateUser } from 'services/user.service';
