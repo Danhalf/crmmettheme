@@ -5,6 +5,7 @@ import { Status, getUserLocations, setUserOptionalData } from 'services/user.ser
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 import { renamedKeys } from 'app-consts';
+import { TabPanel } from 'components/dashboard/helpers/helpers';
 
 interface UserOptionalModalProps {
     onClose: () => void;
@@ -12,12 +13,35 @@ interface UserOptionalModalProps {
     username: string;
 }
 
+const TabSwitcher = ({ tabs, activeTab, handleTabClick }) => {
+    return (
+        <div className='d-flex justify-content-center mb-3'>
+            <div className='btn-group' role='group'>
+                {tabs.map((_, idx) => (
+                    <button
+                        key={idx}
+                        type='button'
+                        className={`btn btn-secondary ${activeTab === `${idx}` ? 'active' : ''}`}
+                        onClick={() => handleTabClick(`${idx}`)}
+                    >
+                        {idx + 1}
+                    </button>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+const hiddenKeys = ['locuid', 'useruid', 'index'];
+const disabledKeys = ['useruid', 'created', 'updated'];
+
 export const UserOptionalModal = ({
     onClose,
     useruid,
     username,
 }: UserOptionalModalProps): JSX.Element => {
     const [optional, setOptional] = useState<any[]>([]);
+    const [activeTab, setActiveTab] = useState<string>('0');
     const [initialUserOptional, setInitialUserOptional] = useState<any>([]);
     const [allOptional, setAllOptional] = useState<any>({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -31,7 +55,18 @@ export const UserOptionalModal = ({
             getUserLocations(useruid).then(async (response: any) => {
                 setAllOptional(response);
                 const responseOptional: any[] = response.locations;
-                setOptional(responseOptional);
+
+                const filteredOptional = responseOptional.map((option) => {
+                    const filteredOption = Object.keys(option).reduce((acc, key) => {
+                        if (!hiddenKeys.includes(key)) {
+                            acc[key] = option[key];
+                        }
+                        return acc;
+                    }, {});
+
+                    return filteredOption;
+                });
+                setOptional(filteredOptional);
                 const deepClone = JSON.parse(JSON.stringify(responseOptional));
                 setInitialUserOptional(deepClone);
                 setIsLoading(false);
@@ -80,45 +115,66 @@ export const UserOptionalModal = ({
         }
     };
 
+    const handleTabClick = (tab: string) => {
+        setActiveTab(tab);
+    };
+
     if (!optional) {
         return <></>;
     }
 
-    const disabledKeys = ['useruid', 'created', 'updated'];
     return (
         <>
+            <TabSwitcher tabs={optional} activeTab={activeTab} handleTabClick={handleTabClick} />
             {optional &&
                 optional.map((option: any, index: number) => {
-                    return (Object.entries(option) as [string, string | number][]).map(
-                        ([setting, value]) => {
-                            const settingName = renamedKeys[setting] || setting;
-                            return (
-                                <div className='fv-row mb-8' key={setting}>
-                                    <label
-                                        htmlFor={setting}
-                                        className='form-label fs-6 fw-bolder text-dark'
-                                    >
-                                        {settingName}
-                                    </label>
-                                    <input
-                                        disabled={disabledKeys.includes(setting)}
-                                        className='form-control bg-transparent'
-                                        name={setting}
-                                        type='text'
-                                        value={value}
-                                        onChange={(event) => handleChangeUserOptional(event, index)}
-                                    />
-                                </div>
-                            );
-                        }
+                    return (
+                        <div key={index} className='tab-content' id='myTabPanel'>
+                            <TabPanel activeTab={activeTab} tabName={`${index}`}>
+                                {(Object.entries(option) as [string, string | number][]).map(
+                                    ([setting, value]) => {
+                                        const settingName = renamedKeys[setting] || setting;
+                                        return (
+                                            <div
+                                                key={settingName}
+                                                className='tab-content'
+                                                id={activeTab}
+                                            >
+                                                <div className='fv-row mb-8' key={setting}>
+                                                    <label
+                                                        htmlFor={setting}
+                                                        className='form-label fs-6 fw-bolder text-dark'
+                                                    >
+                                                        {settingName}
+                                                    </label>
+                                                    <input
+                                                        disabled={disabledKeys.includes(setting)}
+                                                        className='form-control bg-transparent'
+                                                        name={setting}
+                                                        type='text'
+                                                        value={value}
+                                                        onChange={(event) =>
+                                                            handleChangeUserOptional(event, index)
+                                                        }
+                                                    />
+                                                </div>
+                                            </div>
+                                        );
+                                    }
+                                )}
+                            </TabPanel>
+                        </div>
                     );
                 })}
-            <PrimaryButton
-                buttonText='Save user optional data'
-                icon='check'
-                disabled={isButtonDisabled}
-                buttonClickAction={handleSetUserOptional}
-            />
+            <TabSwitcher tabs={optional} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <div className='text-center mt-8'>
+                <PrimaryButton
+                    buttonText='Save user optional data'
+                    icon='check'
+                    disabled={isButtonDisabled}
+                    buttonClickAction={handleSetUserOptional}
+                />
+            </div>
         </>
     );
 };
