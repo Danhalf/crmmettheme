@@ -18,23 +18,23 @@ import {
 } from 'services/user.service';
 
 enum UserCardTabs {
-    Profile = 'Profile',
-    ExtendedInfo = 'Extended info',
-    ShortInfo = 'Short info',
-    Locations = 'Locations',
-    UserPermissions = 'User permissions',
-    Settings = 'Settings',
-    Sessions = 'Sessions',
-    Logins = 'Logins',
-    Subusers = 'Subusers',
-    SalesPersons = 'Sales persons',
+    PROFILE = 'Profile',
+    EXTENDEDINFO = 'Extended info',
+    SHORTINFO = 'Short info',
+    LOCATIONS = 'Locations',
+    USERPERMISSIONS = 'User permissions',
+    SETTINGS = 'Settings',
+    SESSIONS = 'Sessions',
+    LOGINS = 'Logins',
+    SUBUSERS = 'Subusers',
+    SALESPERSONS = 'Sales persons',
 }
 
 const userCardTabsArray: string[] = Object.values(UserCardTabs) as string[];
 
 export function UserCard() {
     const { id } = useParams();
-    const [activeTab, setActiveTab] = useState('Profile');
+    const [activeTab, setActiveTab] = useState<string>(UserCardTabs.PROFILE);
     const [profileJson, setProfileJson] = useState<string>('');
     const [extendedInfoJSON, setExtendedInfoJSON] = useState<string>('');
     const [shortInfoJSON, setShortInfoJSON] = useState<string>('');
@@ -46,6 +46,7 @@ export function UserCard() {
     const [userSubusersJSON, setUserSubusersJSON] = useState<string>('');
     const [userSalesPersonsJSON, setSalesPersonsJSON] = useState<string>('');
 
+    const [username, setUsername] = useState<string>('');
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
     const [buttonPermissionsText, setButtonPermissionsText] = useState<string>('Save permissions');
     const [initialUserPermissionsJSON, setInitialUserPermissionsJSON] = useState<string>('');
@@ -59,6 +60,7 @@ export function UserCard() {
                 setExtendedInfoJSON(JSON.stringify(response, null, 2));
             });
             getUserShortInfo(id).then((response) => {
+                setUsername(response.userName);
                 setShortInfoJSON(JSON.stringify(response, null, 2));
             });
             getUserLocations(id).then((response) => {
@@ -143,7 +145,9 @@ export function UserCard() {
             <div className='col-12'>
                 <div className='card card-custom mb-5 vw-90 mx-auto'>
                     <div className='card-header'>
-                        <h3 className='card-title fw-bolder text-dark'>User Card</h3>
+                        <h3 className='card-title fw-bolder text-dark'>
+                            {username && `${username}'s User Card`}
+                        </h3>
                     </div>
                     <div className='card-body d-flex flex-column justify-content-end pb-0'>
                         <ul className='nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bolder flex-nowrap'>
@@ -160,19 +164,19 @@ export function UserCard() {
                 </div>
 
                 <div className='tab-content' id='myTabPanel'>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.Profile}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.PROFILE}>
                         <TabDataWrapper data={profileJson} />
                     </TabPanel>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.ExtendedInfo}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.EXTENDEDINFO}>
                         <TabDataWrapper data={extendedInfoJSON} />
                     </TabPanel>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.ShortInfo}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.SHORTINFO}>
                         <TabDataWrapper data={shortInfoJSON} />
                     </TabPanel>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.Locations}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.LOCATIONS}>
                         <TabDataWrapper data={locationsJSON} />
                     </TabPanel>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.UserPermissions}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.USERPERMISSIONS}>
                         <TabDataWrapper
                             data={mutateJson(userPermissionsJSON, 'useruid')}
                             checkbox={true}
@@ -186,19 +190,19 @@ export function UserCard() {
                             />
                         </TabDataWrapper>
                     </TabPanel>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.Settings}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.SETTINGS}>
                         <TabDataWrapper data={userSettingsJSON} />
                     </TabPanel>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.Sessions}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.SESSIONS}>
                         <TabDataWrapper data={userSessionsJSON} />
                     </TabPanel>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.Logins}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.LOGINS}>
                         <TabDataWrapper data={userLoginsJSON} />
                     </TabPanel>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.Subusers}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.SUBUSERS}>
                         <TabDataWrapper data={userSubusersJSON} />
                     </TabPanel>
-                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.SalesPersons}>
+                    <TabPanel activeTab={activeTab} tabName={UserCardTabs.SALESPERSONS}>
                         <TabDataWrapper data={userSalesPersonsJSON} />
                     </TabPanel>
                 </div>

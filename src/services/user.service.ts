@@ -1,20 +1,10 @@
 import axios, { AxiosResponse } from 'axios';
 import { getToken } from './utils';
-import { API_URL } from '../app-consts';
-
-export interface User {
-    created: string;
-    createdbyuid: string;
-    index: number;
-    parentuid: string;
-    parentusername: string;
-    updated: string;
-    username: string;
-    useruid: string;
-    isadmin: number;
-}
+import { ShortUserInfo, User } from 'common/interfaces/UserData';
+import { API_URL } from 'app-consts';
 
 export enum Status {
+    // eslint-disable-next-line no-unused-vars
     OK = 'OK',
 }
 
@@ -112,6 +102,6 @@ export const listSalesPersons = (uid: string): Promise<string> => {
     return fetchApiData<string>('GET', `user/${uid}/salespersons`);
 };
 
-export const getUserShortInfo = (uid: string): Promise<string> => {
-    return fetchApiData<string>('GET', `user/${uid}/username`);
+export const getUserShortInfo = (uid: string): Promise<ShortUserInfo> => {
+    return fetchApiData<ShortUserInfo>('GET', `user/${uid}/username`);
 };

@@ -8,9 +8,9 @@ interface CustomInput {
     action?: (value: [string, number]) => void;
 }
 
-interface CustomCheckbox extends CustomInput {}
+interface CustomCheckboxInput extends CustomInput {}
 
-export const CustomCheckbox = ({ currentValue, id, name, action, title }: CustomCheckbox) => {
+export const CustomCheckbox = ({ currentValue, id, name, action, title }: CustomCheckboxInput) => {
     const [value, setValue] = useState<number>(currentValue);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
