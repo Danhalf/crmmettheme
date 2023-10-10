@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { getToken } from './utils';
+import { API_URL } from '../app-consts';
 import { ShortUserInfo, User } from 'common/interfaces/UserData';
-import { API_URL } from 'app-consts';
 
 export enum Status {
     // eslint-disable-next-line no-unused-vars

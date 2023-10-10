@@ -245,14 +245,7 @@ export default function Users() {
                                                             {user.username}
                                                         </Link>
                                                     </td>
-                                                    <td>
-                                                        <Link
-                                                            to={`user/${user.parentuid}`}
-                                                            className='text-gray-800 text-hover-primary mb-1 text-decoration-underline'
-                                                        >
-                                                            {user.parentusername}
-                                                        </Link>
-                                                    </td>
+                                                    <td>{user.parentusername}</td>
                                                     <td>{user.isadmin ? 'yes' : 'no'}</td>
                                                     <td>
                                                         <CustomDropdown
