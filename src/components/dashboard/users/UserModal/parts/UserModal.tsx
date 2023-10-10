@@ -1,11 +1,11 @@
 import { AxiosError } from 'axios';
 import clsx from 'clsx';
 import * as Yup from 'yup';
-import { UserData } from 'common/interfaces/UserData';
+import { User, UserData } from 'common/interfaces/UserData';
 import { useToast, TOAST_DURATION } from 'components/dashboard/helpers/renderToastHelper';
 import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, useState } from 'react';
-import { User, createOrUpdateUser } from 'services/user.service';
+import { createOrUpdateUser } from 'services/user.service';
 
 interface UserModalProps {
     onClose: () => void;

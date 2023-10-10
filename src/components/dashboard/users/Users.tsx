@@ -8,11 +8,12 @@ import { UserSettingsModal } from 'components/dashboard/users/UserModal/parts/Us
 import { UserOptionalModal } from 'components/dashboard/users/UserModal/parts/UserOptionalModal';
 import { TableHead } from 'components/dashboard/helpers/renderTableHelper';
 import { CustomDropdown } from 'components/dashboard/helpers/renderDropdownHelper';
-import { User, getUsers, copyUser, deleteUser, killSession, Status } from 'services/user.service';
+import { getUsers, copyUser, deleteUser, killSession, Status } from 'services/user.service';
 import { useToast } from '../helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 import { UserConfirmModal } from './UserModal/parts/UserConfirmModal';
 import { PrimaryButton } from '../smallComponents/buttons/PrimaryButton';
+import { User } from 'common/interfaces/UserData';
 
 enum UsersColumns {
     ID = 'Index',
