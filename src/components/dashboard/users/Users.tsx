@@ -15,7 +15,7 @@ import { UserConfirmModal } from './UserModal/parts/UserConfirmModal';
 import { PrimaryButton } from '../smallComponents/buttons/PrimaryButton';
 import { User } from 'common/interfaces/UserData';
 import { STORAGE_USER } from 'app-consts';
-import { LoginResponse, logout } from 'services/auth.service';
+import { LoginResponse } from 'services/auth.service';
 
 enum UsersColumns {
     ID = 'Index',
