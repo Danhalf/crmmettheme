@@ -1,11 +1,7 @@
 import { STORAGE_USER } from 'app-consts';
 
-export function getToken(): string {
-    const userJson = localStorage.getItem(STORAGE_USER);
-    let token = '';
+export function getToken(): string | null {
+    const userLocalStorage = localStorage.getItem(STORAGE_USER);
 
-    if (userJson) {
-        token = JSON.parse(userJson).token;
-    }
-    return token;
+    return !!userLocalStorage ? JSON.parse(userLocalStorage)?.token : null;
 }

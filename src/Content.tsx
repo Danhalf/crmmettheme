@@ -2,7 +2,6 @@ import { Billing } from 'components/dashboard/Billing';
 import { Reports } from 'components/dashboard/Reports';
 import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import { Dashboard } from './components/dashboard/Dashboard';
 import { Login } from './components/Login';
 import { UserCard } from './components/dashboard/users/UserCard';
 import Users from './components/dashboard/users/Users';

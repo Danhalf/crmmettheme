@@ -1,21 +1,30 @@
-import { Login } from 'components/Login';
+import { useTokenValidation } from 'common/hooks/useTokenValidation';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { Dashboard } from 'components/dashboard/Dashboard';
-import { useEffect, useState } from 'react';
-import { checkToken } from 'services/auth.service';
 import { getToken } from 'services/utils';
+import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 
 export const PrivateRoute = () => {
-    const [isTokenValid, setIsTokenValid] = useState(false);
     const token = getToken();
-    useEffect(() => {
-        checkToken(token)
-            .then(() => {
-                setIsTokenValid(true);
-            })
-            .catch(() => {
-                setIsTokenValid(false);
-            });
-    }, [token]);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const { handleShowToast } = useToast();
 
-    return isTokenValid ? <Dashboard /> : <Login />;
+    const isTokenValid = useTokenValidation(token);
+
+    useEffect(() => {
+        if (!isTokenValid) {
+            if (location.pathname !== '/') {
+                handleShowToast({
+                    message: 'Your session has expired. Please login again.',
+                    type: 'danger',
+                });
+            }
+            navigate('/');
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isTokenValid, navigate]);
+
+    return isTokenValid && <Dashboard />;
 };

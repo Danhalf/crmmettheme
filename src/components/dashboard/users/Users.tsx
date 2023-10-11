@@ -15,7 +15,7 @@ import { UserConfirmModal } from './UserModal/parts/UserConfirmModal';
 import { PrimaryButton } from '../smallComponents/buttons/PrimaryButton';
 import { User } from 'common/interfaces/UserData';
 import { STORAGE_USER } from 'app-consts';
-import { LoginResponse } from 'services/auth.service';
+import { LoginResponse, logout } from 'services/auth.service';
 
 enum UsersColumns {
     ID = 'Index',
@@ -81,13 +81,22 @@ export default function Users() {
     };
 
     const updateUsers = (): void => {
-        getUsers().then((response) => {
-            if (response.length) {
-                const filteredUsers = response.filter((user) => user?.useruid !== currentUseruid);
-                setUsers(filteredUsers);
-                setLoaded(true);
-            }
-        });
+        getUsers()
+            .then((response) => {
+                if (response.length) {
+                    const filteredUsers = response.filter(
+                        (user) => user?.useruid !== currentUseruid
+                    );
+                    setUsers(filteredUsers);
+                    setLoaded(true);
+                }
+            })
+            .catch((error) => {
+                handleShowToast({
+                    message: error.message,
+                    type: 'danger',
+                });
+            });
     };
 
     useEffect(() => {
