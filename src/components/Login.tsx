@@ -3,9 +3,10 @@ import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 
-import { LoginResponse, login } from '../services/auth.service';
+import { LoginResponse, checkToken, login } from '../services/auth.service';
 import { useNavigate } from 'react-router-dom';
 import { STORAGE_USER } from 'app-consts';
+import { getToken } from 'services/utils';
 
 interface LoginCredentials {
     username: string;
@@ -29,12 +30,7 @@ export function Login() {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
     const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
     const [passwordFieldIcon, setPasswordFieldIcon] = useState<PasswordFieldIcon>('ki-eye');
-    const userStorage = localStorage.getItem(STORAGE_USER);
-    const { useruid }: LoginResponse = userStorage ? JSON.parse(userStorage) : {};
 
-    useEffect(() => {
-        if (useruid) navigate('/dashboard');
-    }, [useruid]);
     const navigate = useNavigate();
 
     const handleChangePasswordField = () => {
