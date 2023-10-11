@@ -14,6 +14,8 @@ import { AxiosError } from 'axios';
 import { UserConfirmModal } from './UserModal/parts/UserConfirmModal';
 import { PrimaryButton } from '../smallComponents/buttons/PrimaryButton';
 import { User } from 'common/interfaces/UserData';
+import { STORAGE_USER } from 'app-consts';
+import { LoginResponse } from 'services/auth.service';
 
 enum UsersColumns {
     ID = 'Index',
@@ -26,7 +28,8 @@ enum UsersColumns {
 const usersColumnsArray: string[] = Object.values(UsersColumns) as string[];
 
 export default function Users() {
-    const { useruid: currentUseruid } = JSON.parse(localStorage.getItem('admss-admin-user') ?? '');
+    const userStorage = localStorage.getItem(STORAGE_USER);
+    const { useruid: currentUseruid }: LoginResponse = userStorage ? JSON.parse(userStorage) : {};
     const [users, setUsers] = useState<User[]>([]);
     const [addUserModalEnabled, setAddUserModalEnabled] = useState<boolean>(false);
     const [editUserModalEnabled, setEditUserModalEnabled] = useState<boolean>(false);
