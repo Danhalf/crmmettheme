@@ -1,10 +1,13 @@
 import clsx from 'clsx';
 import { useFormik } from 'formik';
-import { HTMLInputTypeAttribute, useState } from 'react';
+import { HTMLInputTypeAttribute, useEffect, useState } from 'react';
 import * as Yup from 'yup';
 
 import { login } from '../services/auth.service';
 import { useNavigate } from 'react-router-dom';
+import { STORAGE_USER } from 'app-consts';
+import { getToken } from 'services/utils';
+import { useTokenValidation } from 'common/hooks/useTokenValidation';
 
 interface LoginCredentials {
     username: string;
@@ -25,11 +28,18 @@ const initialValues: LoginCredentials = {
 
 export function Login() {
     const [loading, setLoading] = useState(false);
+
+    const navigate = useNavigate();
+    const token = getToken();
+    const isTokenValid = useTokenValidation(token);
+
+    useEffect(() => {
+        isTokenValid && navigate('/dashboard');
+    }, [isTokenValid, navigate]);
+
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
     const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
     const [passwordFieldIcon, setPasswordFieldIcon] = useState<PasswordFieldIcon>('ki-eye');
-
-    const navigate = useNavigate();
 
     const handleChangePasswordField = () => {
         switch (isPasswordVisible) {
@@ -55,7 +65,7 @@ export function Login() {
             login(values.username, values.password)
                 .then((response) => {
                     setStatus(false);
-                    localStorage.setItem('admss-admin-user', JSON.stringify(response));
+                    localStorage.setItem(STORAGE_USER, JSON.stringify(response));
                     navigate('/dashboard');
                 })
                 .catch((err) => {
