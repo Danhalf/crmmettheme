@@ -208,24 +208,3 @@ export const UserOptionalModal = ({
         </>
     );
 };
-
-{
-    /* <div className='fv-row mb-8' key={setting}>
-                                                    <label
-                                                        htmlFor={setting}
-                                                        className='form-label fs-6 fw-bolder text-dark'
-                                                    >
-                                                        {settingName}
-                                                    </label>
-                                                    <input
-                                                        disabled={disabledKeys.includes(setting)}
-                                                        className='form-control bg-transparent'
-                                                        name={setting}
-                                                        type='text'
-                                                        value={value}
-                                                        onChange={(event) =>
-                                                            handleChangeUserOptional(event, index)
-                                                        }
-                                                    />
-                                                </div> */
-}
