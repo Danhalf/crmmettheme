@@ -28,8 +28,8 @@ const UserModalHeader = ({ onClose, title }: CustomModalProps): JSX.Element => {
 
 export const UserModalFooter = ({ onClose, footerAction }: CustomModalProps): JSX.Element => (
     <div className='modal-footer'>
-        <PrimaryButton buttonText='Cancel' type='light' buttonClickAction={onClose} />
-        <PrimaryButton buttonText='Delete' buttonClickAction={footerAction} />
+        <PrimaryButton children='Cancel' appearance='light' buttonClickAction={onClose} />
+        <PrimaryButton children='Delete' buttonClickAction={footerAction} />
     </div>
 );
 

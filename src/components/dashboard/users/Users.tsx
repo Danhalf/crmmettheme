@@ -234,7 +234,7 @@ export default function Users() {
                 <div className='tab-content' id='myTabContentInner'>
                     <div className='d-flex w-100 justify-content-end px-8 mt-4'>
                         <PrimaryButton
-                            buttonText='Add User'
+                            children='Add User'
                             icon='plus'
                             buttonClickAction={handleAddUserModalOpen}
                         />

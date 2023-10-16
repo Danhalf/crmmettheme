@@ -6,6 +6,8 @@ import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 import { renamedKeys } from 'app-consts';
 import { TabPanel } from 'components/dashboard/helpers/helpers';
+import * as Yup from 'yup';
+import { Formik, Form, Field } from 'formik';
 
 interface UserOptionalModalProps {
     onClose: () => void;
@@ -48,6 +50,12 @@ export const UserOptionalModal = ({
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
     const { handleShowToast } = useToast();
+
+    const UserOptionalSchema = Yup.object().shape({
+        firstName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Required'),
+        lastName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Required'),
+        email: Yup.string().email('Invalid email').required('Required'),
+    });
 
     useEffect(() => {
         setIsLoading(true);
@@ -131,16 +139,78 @@ export const UserOptionalModal = ({
                     return (
                         <div key={index} className='tab-content' id='myTabPanel'>
                             <TabPanel activeTab={activeTab} tabName={`${index}`}>
-                                {(Object.entries(option) as [string, string | number][]).map(
-                                    ([setting, value]) => {
-                                        const settingName = renamedKeys[setting] || setting;
-                                        return (
-                                            <div
-                                                key={settingName}
-                                                className='tab-content'
-                                                id={activeTab}
-                                            >
-                                                <div className='fv-row mb-8' key={setting}>
+                                <Formik
+                                    initialValues={{}}
+                                    onSubmit={(values) => {
+                                        // same shape as initial values
+                                        // eslint-disable-next-line no-console
+                                        console.log(values);
+                                    }}
+                                >
+                                    {({ errors, touched }) => (
+                                        <Form>
+                                            {(
+                                                Object.entries(option) as [
+                                                    string,
+                                                    string | number,
+                                                ][]
+                                            ).map(([setting, value]) => {
+                                                const settingName = renamedKeys[setting] || setting;
+                                                return (
+                                                    <div className='fv-row mb-4' key={setting}>
+                                                        <div className='row'>
+                                                            <div className='col-6 d-flex align-items-center'>
+                                                                <label
+                                                                    htmlFor={setting}
+                                                                    className='fs-6 fw-bolder text-dark'
+                                                                >
+                                                                    {settingName}
+                                                                </label>
+                                                            </div>
+                                                            <div className='col-6 d-flex align-items-center'>
+                                                                <Field
+                                                                    key={setting}
+                                                                    value={value}
+                                                                    disabled={disabledKeys.includes(
+                                                                        setting
+                                                                    )}
+                                                                    className='form-control bg-transparent'
+                                                                    name={setting}
+                                                                    onChange={(event) =>
+                                                                        handleChangeUserOptional(
+                                                                            event,
+                                                                            index
+                                                                        )
+                                                                    }
+                                                                />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                );
+                                            })}
+                                        </Form>
+                                    )}
+                                </Formik>
+                            </TabPanel>
+                        </div>
+                    );
+                })}
+            <TabSwitcher tabs={optional} activeTab={activeTab} handleTabClick={handleTabClick} />
+            <div className='text-center mt-8'>
+                <PrimaryButton
+                    icon='check'
+                    disabled={isButtonDisabled}
+                    buttonClickAction={handleSetUserOptional}
+                >
+                    Save user optional data
+                </PrimaryButton>
+            </div>
+        </>
+    );
+};
+
+{
+    /* <div className='fv-row mb-8' key={setting}>
                                                     <label
                                                         htmlFor={setting}
                                                         className='form-label fs-6 fw-bolder text-dark'
@@ -157,24 +227,5 @@ export const UserOptionalModal = ({
                                                             handleChangeUserOptional(event, index)
                                                         }
                                                     />
-                                                </div>
-                                            </div>
-                                        );
-                                    }
-                                )}
-                            </TabPanel>
-                        </div>
-                    );
-                })}
-            <TabSwitcher tabs={optional} activeTab={activeTab} handleTabClick={handleTabClick} />
-            <div className='text-center mt-8'>
-                <PrimaryButton
-                    buttonText='Save user optional data'
-                    icon='check'
-                    disabled={isButtonDisabled}
-                    buttonClickAction={handleSetUserOptional}
-                />
-            </div>
-        </>
-    );
-};
+                                                </div> */
+}
