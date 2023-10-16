@@ -8,6 +8,8 @@ import { renamedKeys } from 'app-consts';
 import { TabPanel } from 'components/dashboard/helpers/helpers';
 import * as Yup from 'yup';
 import { Formik, Form, Field } from 'formik';
+import { validateSchema } from 'webpack';
+import clsx from 'clsx';
 
 interface UserOptionalModalProps {
     onClose: () => void;
@@ -52,10 +54,13 @@ export const UserOptionalModal = ({
     const { handleShowToast } = useToast();
 
     const UserOptionalSchema = Yup.object().shape({
-        firstName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Required'),
-        lastName: Yup.string().min(2, 'Too Short!').max(50, 'Too Long!').required('Required'),
-        email: Yup.string().email('Invalid email').required('Required'),
+        locPhone1: Yup.string().min(8, 'Too Short!').max(20, 'Too Long!'),
+        locZIP: Yup.string().min(5, 'Too Short!').max(12, 'Too Long!'),
+        locEmail1: Yup.string().email('Invalid email'),
+        locEmail2: Yup.string().email('Invalid email'),
     });
+
+    const userOptionalValidateFields = Object.keys(UserOptionalSchema.fields);
 
     useEffect(() => {
         setIsLoading(true);
@@ -140,14 +145,11 @@ export const UserOptionalModal = ({
                         <div key={index} className='tab-content' id='myTabPanel'>
                             <TabPanel activeTab={activeTab} tabName={`${index}`}>
                                 <Formik
-                                    initialValues={{}}
-                                    onSubmit={(values) => {
-                                        // same shape as initial values
-                                        // eslint-disable-next-line no-console
-                                        console.log(values);
-                                    }}
+                                    initialValues={option}
+                                    onSubmit={handleSetUserOptional}
+                                    validationSchema={UserOptionalSchema}
                                 >
-                                    {({ errors, touched }) => (
+                                    {({ errors, touched, getFieldProps }) => (
                                         <Form>
                                             {(
                                                 Object.entries(option) as [
@@ -156,6 +158,9 @@ export const UserOptionalModal = ({
                                                 ][]
                                             ).map(([setting, value]) => {
                                                 const settingName = renamedKeys[setting] || setting;
+                                                errors[setting]
+                                                    ? setIsButtonDisabled(true)
+                                                    : setIsButtonDisabled(false);
                                                 return (
                                                     <div className='fv-row mb-4' key={setting}>
                                                         <div className='row'>
@@ -165,16 +170,50 @@ export const UserOptionalModal = ({
                                                                     className='fs-6 fw-bolder text-dark'
                                                                 >
                                                                     {settingName}
+                                                                    {touched[setting] &&
+                                                                        errors[setting] && (
+                                                                            <div className='fv-plugins-message-container position-absolute'>
+                                                                                <div className='fv-help-block'>
+                                                                                    <span role='alert'>
+                                                                                        {String(
+                                                                                            errors[
+                                                                                                setting
+                                                                                            ]
+                                                                                        )}
+                                                                                    </span>
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
                                                                 </label>
                                                             </div>
                                                             <div className='col-6 d-flex align-items-center'>
                                                                 <Field
                                                                     key={setting}
-                                                                    value={value}
+                                                                    {...getFieldProps(setting)}
+                                                                    autoComplete='off'
                                                                     disabled={disabledKeys.includes(
                                                                         setting
                                                                     )}
-                                                                    className='form-control bg-transparent'
+                                                                    className={clsx(
+                                                                        'form-control bg-transparent',
+                                                                        userOptionalValidateFields.includes(
+                                                                            setting
+                                                                        ) && {
+                                                                            'border-danger':
+                                                                                touched[setting] &&
+                                                                                errors[setting],
+                                                                        },
+                                                                        userOptionalValidateFields.includes(
+                                                                            setting
+                                                                        ) && {
+                                                                            'border-success':
+                                                                                userOptionalValidateFields.includes(
+                                                                                    setting
+                                                                                ) &&
+                                                                                touched[setting] &&
+                                                                                !errors[setting],
+                                                                        }
+                                                                    )}
                                                                     name={setting}
                                                                     onChange={(event) =>
                                                                         handleChangeUserOptional(
