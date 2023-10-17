@@ -54,11 +54,17 @@ export const UserOptionalModal = ({
     const { handleShowToast } = useToast();
 
     const UserOptionalSchema = Yup.object().shape({
-        locEmail1: Yup.string().email('Invalid email'),
-        locEmail2: Yup.string().email('Invalid email'),
-        locPhone1: Yup.string().min(8, 'Too Short!').max(20, 'Too Long!'),
-        locPhone2: Yup.string().min(8, 'Too Short!').max(20, 'Too Long!'),
-        locZIP: Yup.string().min(5, 'Too Short!').max(14, 'Too Long!'),
+        locEmail1: Yup.string().email('Please enter valid email address'),
+        locEmail2: Yup.string().email('Please enter valid email address'),
+        locPhone1: Yup.string().matches(/^\+?\d{5,15}$/, {
+            message: 'Please enter valid number.',
+            excludeEmptyString: false,
+        }),
+        locPhone2: Yup.string().matches(/^\+?\d{5,15}$/, {
+            message: 'Please enter valid number.',
+            excludeEmptyString: false,
+        }),
+        locZIP: Yup.string().min(5, 'Too short ZIP!').max(10, 'Too long ZIP!'),
     });
 
     const userOptionalValidateFields = Object.keys(UserOptionalSchema.fields);
@@ -144,14 +150,10 @@ export const UserOptionalModal = ({
                 <div key={index} className='tab-content' id='myTabPanel'>
                     <Formik
                         initialValues={option}
-                        onSubmit={(values) => {
-                            // eslint-disable-next-line no-console
-                            console.log(values);
-                            // handleSetUserOptional();
-                        }}
+                        onSubmit={handleSetUserOptional}
                         validationSchema={UserOptionalSchema}
                     >
-                        {({ errors, touched, getFieldProps }) => (
+                        {({ errors, touched }) => (
                             <TabPanel activeTab={activeTab} tabName={`${index}`}>
                                 <Form>
                                     {(Object.entries(option) as [string, string | number][]).map(
@@ -185,7 +187,6 @@ export const UserOptionalModal = ({
                                                         <div className='col-6 d-flex align-items-center'>
                                                             <Field
                                                                 key={setting}
-                                                                {...getFieldProps(setting)}
                                                                 autoComplete='off'
                                                                 disabled={disabledKeys.includes(
                                                                     setting
@@ -195,19 +196,16 @@ export const UserOptionalModal = ({
                                                                     userOptionalValidateFields.includes(
                                                                         setting
                                                                     ) && {
-                                                                        'border-danger':
-                                                                            touched[setting] &&
-                                                                            errors[setting],
-                                                                    },
-                                                                    userOptionalValidateFields.includes(
-                                                                        setting
-                                                                    ) && {
-                                                                        'border-success':
-                                                                            userOptionalValidateFields.includes(
-                                                                                setting
-                                                                            ) &&
-                                                                            touched[setting] &&
-                                                                            !errors[setting],
+                                                                        ...{
+                                                                            'border-danger':
+                                                                                touched[setting] &&
+                                                                                errors[setting],
+                                                                        },
+                                                                        ...{
+                                                                            'border-secondary':
+                                                                                touched[setting] &&
+                                                                                !errors[setting],
+                                                                        },
                                                                     }
                                                                 )}
                                                                 name={setting}
@@ -227,7 +225,9 @@ export const UserOptionalModal = ({
                                     <div className='text-center mt-8'>
                                         <PrimaryButton
                                             icon='check'
-                                            disabled={isButtonDisabled}
+                                            disabled={
+                                                isButtonDisabled || !!Object.keys(errors).length
+                                            }
                                             type='submit'
                                         >
                                             Save user optional data
