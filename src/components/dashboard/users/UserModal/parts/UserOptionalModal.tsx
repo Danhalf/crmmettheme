@@ -8,7 +8,6 @@ import { renamedKeys } from 'app-consts';
 import { TabPanel } from 'components/dashboard/helpers/helpers';
 import * as Yup from 'yup';
 import { Formik, Form, Field } from 'formik';
-import { validateSchema } from 'webpack';
 import clsx from 'clsx';
 
 interface UserOptionalModalProps {
