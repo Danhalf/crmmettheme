@@ -54,10 +54,11 @@ export const UserOptionalModal = ({
     const { handleShowToast } = useToast();
 
     const UserOptionalSchema = Yup.object().shape({
-        locPhone1: Yup.string().min(8, 'Too Short!').max(20, 'Too Long!'),
-        locZIP: Yup.string().min(5, 'Too Short!').max(12, 'Too Long!'),
         locEmail1: Yup.string().email('Invalid email'),
         locEmail2: Yup.string().email('Invalid email'),
+        locPhone1: Yup.string().min(8, 'Too Short!').max(20, 'Too Long!'),
+        locPhone2: Yup.string().min(8, 'Too Short!').max(20, 'Too Long!'),
+        locZIP: Yup.string().min(5, 'Too Short!').max(14, 'Too Long!'),
     });
 
     const userOptionalValidateFields = Object.keys(UserOptionalSchema.fields);
@@ -80,7 +81,7 @@ export const UserOptionalModal = ({
                     return filteredOption;
                 });
                 setOptional(filteredOptional);
-                const deepClone = JSON.parse(JSON.stringify(responseOptional));
+                const deepClone = JSON.parse(JSON.stringify(filteredOptional));
                 setInitialUserOptional(deepClone);
                 setIsLoading(false);
             });
@@ -139,111 +140,105 @@ export const UserOptionalModal = ({
     return (
         <>
             <TabSwitcher tabs={optional} activeTab={activeTab} handleTabClick={handleTabClick} />
-            {optional &&
-                optional.map((option: any, index: number) => {
-                    return (
-                        <div key={index} className='tab-content' id='myTabPanel'>
+            {optional.map((option: any, index: number) => (
+                <div key={index} className='tab-content' id='myTabPanel'>
+                    <Formik
+                        initialValues={option}
+                        onSubmit={(values) => {
+                            // eslint-disable-next-line no-console
+                            console.log(values);
+                            // handleSetUserOptional();
+                        }}
+                        validationSchema={UserOptionalSchema}
+                    >
+                        {({ errors, touched, getFieldProps }) => (
                             <TabPanel activeTab={activeTab} tabName={`${index}`}>
-                                <Formik
-                                    initialValues={option}
-                                    onSubmit={handleSetUserOptional}
-                                    validationSchema={UserOptionalSchema}
-                                >
-                                    {({ errors, touched, getFieldProps }) => (
-                                        <Form>
-                                            {(
-                                                Object.entries(option) as [
-                                                    string,
-                                                    string | number,
-                                                ][]
-                                            ).map(([setting, value]) => {
-                                                const settingName = renamedKeys[setting] || setting;
-                                                errors[setting]
-                                                    ? setIsButtonDisabled(true)
-                                                    : setIsButtonDisabled(false);
-                                                return (
-                                                    <div className='fv-row mb-4' key={setting}>
-                                                        <div className='row'>
-                                                            <div className='col-6 d-flex align-items-center'>
-                                                                <label
-                                                                    htmlFor={setting}
-                                                                    className='fs-6 fw-bolder text-dark'
-                                                                >
-                                                                    {settingName}
-                                                                    {touched[setting] &&
-                                                                        errors[setting] && (
-                                                                            <div className='fv-plugins-message-container position-absolute'>
-                                                                                <div className='fv-help-block'>
-                                                                                    <span role='alert'>
-                                                                                        {String(
-                                                                                            errors[
-                                                                                                setting
-                                                                                            ]
-                                                                                        )}
-                                                                                    </span>
-                                                                                </div>
+                                <Form>
+                                    {(Object.entries(option) as [string, string | number][]).map(
+                                        ([setting]) => {
+                                            const settingName = renamedKeys[setting] || setting;
+                                            return (
+                                                <div className='fv-row mb-4' key={setting}>
+                                                    <div className='row'>
+                                                        <div className='col-6 d-flex align-items-center'>
+                                                            <label
+                                                                htmlFor={setting}
+                                                                className='fs-6 fw-bolder text-dark'
+                                                            >
+                                                                {settingName}
+                                                                {touched[setting] &&
+                                                                    errors[setting] && (
+                                                                        <div className='fv-plugins-message-container position-absolute'>
+                                                                            <div className='fv-help-block'>
+                                                                                <span role='alert'>
+                                                                                    {String(
+                                                                                        errors[
+                                                                                            setting
+                                                                                        ]
+                                                                                    )}
+                                                                                </span>
                                                                             </div>
-                                                                        )}
-                                                                </label>
-                                                            </div>
-                                                            <div className='col-6 d-flex align-items-center'>
-                                                                <Field
-                                                                    key={setting}
-                                                                    {...getFieldProps(setting)}
-                                                                    autoComplete='off'
-                                                                    disabled={disabledKeys.includes(
+                                                                        </div>
+                                                                    )}
+                                                            </label>
+                                                        </div>
+                                                        <div className='col-6 d-flex align-items-center'>
+                                                            <Field
+                                                                key={setting}
+                                                                {...getFieldProps(setting)}
+                                                                autoComplete='off'
+                                                                disabled={disabledKeys.includes(
+                                                                    setting
+                                                                )}
+                                                                className={clsx(
+                                                                    'form-control bg-transparent',
+                                                                    userOptionalValidateFields.includes(
                                                                         setting
-                                                                    )}
-                                                                    className={clsx(
-                                                                        'form-control bg-transparent',
-                                                                        userOptionalValidateFields.includes(
-                                                                            setting
-                                                                        ) && {
-                                                                            'border-danger':
-                                                                                touched[setting] &&
-                                                                                errors[setting],
-                                                                        },
-                                                                        userOptionalValidateFields.includes(
-                                                                            setting
-                                                                        ) && {
-                                                                            'border-success':
-                                                                                userOptionalValidateFields.includes(
-                                                                                    setting
-                                                                                ) &&
-                                                                                touched[setting] &&
-                                                                                !errors[setting],
-                                                                        }
-                                                                    )}
-                                                                    name={setting}
-                                                                    onChange={(event) =>
-                                                                        handleChangeUserOptional(
-                                                                            event,
-                                                                            index
-                                                                        )
+                                                                    ) && {
+                                                                        'border-danger':
+                                                                            touched[setting] &&
+                                                                            errors[setting],
+                                                                    },
+                                                                    userOptionalValidateFields.includes(
+                                                                        setting
+                                                                    ) && {
+                                                                        'border-success':
+                                                                            userOptionalValidateFields.includes(
+                                                                                setting
+                                                                            ) &&
+                                                                            touched[setting] &&
+                                                                            !errors[setting],
                                                                     }
-                                                                />
-                                                            </div>
+                                                                )}
+                                                                name={setting}
+                                                                onChange={(event) =>
+                                                                    handleChangeUserOptional(
+                                                                        event,
+                                                                        index
+                                                                    )
+                                                                }
+                                                            />
                                                         </div>
                                                     </div>
-                                                );
-                                            })}
-                                        </Form>
+                                                </div>
+                                            );
+                                        }
                                     )}
-                                </Formik>
+                                    <div className='text-center mt-8'>
+                                        <PrimaryButton
+                                            icon='check'
+                                            disabled={isButtonDisabled}
+                                            type='submit'
+                                        >
+                                            Save user optional data
+                                        </PrimaryButton>
+                                    </div>
+                                </Form>
                             </TabPanel>
-                        </div>
-                    );
-                })}
-            <TabSwitcher tabs={optional} activeTab={activeTab} handleTabClick={handleTabClick} />
-            <div className='text-center mt-8'>
-                <PrimaryButton
-                    icon='check'
-                    disabled={isButtonDisabled}
-                    buttonClickAction={handleSetUserOptional}
-                >
-                    Save user optional data
-                </PrimaryButton>
-            </div>
+                        )}
+                    </Formik>
+                </div>
+            ))}
         </>
     );
 };
