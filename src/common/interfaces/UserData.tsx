@@ -29,7 +29,6 @@ export interface ShortUserInfo {
 
 export enum UsersType {
     ACTIVE = 'Users',
-    DELETED = 'Deleted users',
 }
 
 export type UsersListType = UsersType;
