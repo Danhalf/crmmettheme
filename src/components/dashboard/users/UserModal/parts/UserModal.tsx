@@ -1,11 +1,11 @@
 import { AxiosError } from 'axios';
 import clsx from 'clsx';
 import * as Yup from 'yup';
-import { User, UserData } from 'common/interfaces/UserData';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, useState } from 'react';
 import { createOrUpdateUser } from 'services/user.service';
+import { User, UserInputData } from 'common/interfaces/UserData';
 
 interface UserModalProps {
     onClose: () => void;
@@ -13,7 +13,7 @@ interface UserModalProps {
     updateData?: () => void;
 }
 
-interface UserModalData extends UserData {
+interface UserModalData extends UserInputData {
     confirmPassword: '';
 }
 

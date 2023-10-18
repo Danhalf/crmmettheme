@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { getToken } from './utils';
 import { API_URL } from '../app-consts';
 import { ShortUserInfo, User } from 'common/interfaces/UserData';
+import { UserQuery } from 'common/interfaces/QueriesParams';
 
 export enum Status {
     // eslint-disable-next-line no-unused-vars
@@ -14,18 +15,29 @@ type ActionStatus = {
     status: Status;
 };
 
-const fetchApiData = async <T>(method: Method, url: string, data?: any): Promise<T> => {
+const fetchApiData = async <T>(
+    method: Method,
+    url: string,
+    options?: { data?: unknown; params?: UserQuery }
+): Promise<T> => {
+    const headers = { Authorization: `Bearer ${getToken()}` };
+    const { data, params } = options || {};
     try {
         const response: AxiosResponse<T> = await axios({
-            method: method,
+            method,
             url: API_URL + url,
-            data: data,
-            headers: { Authorization: `Bearer ${getToken()}` },
+            data,
+            params,
+            headers,
         });
         return response.data;
     } catch (error) {
         throw error;
     }
+};
+
+export const getTotalUsersRecords = (): Promise<{ status: string; total: number }> => {
+    return fetchApiData<{ status: string; total: number }>('GET', `user/0/listclients?total=1`);
 };
 
 export const createOrUpdateUser = (userData: {
@@ -35,7 +47,7 @@ export const createOrUpdateUser = (userData: {
 }): Promise<any> => {
     const { uid, ...reqBody } = userData;
 
-    return fetchApiData('POST', `user/${uid || '0'}/user`, reqBody);
+    return fetchApiData('POST', `user/${uid || '0'}/user`, { data: reqBody });
 };
 
 export const copyUser = (srcuid: string): Promise<any> => {
@@ -46,8 +58,16 @@ export const setUserOptionalData = (uid: string, data: any): Promise<any> => {
     return fetchApiData('POST', `user/${uid}/set`, data);
 };
 
-export const getUsers = (useruid = '0'): Promise<User[]> => {
-    return fetchApiData<User[]>('GET', `user/${useruid}/listclients`);
+export const getUsers = (params?: UserQuery): Promise<User[]> => {
+    const initialParams: UserQuery = {
+        column: params?.column || 'username',
+        type: params?.type || 'asc',
+        skip: params?.skip || 0,
+        qry: params?.qry || '',
+        top: params?.top || 10,
+    };
+
+    return fetchApiData<User[]>('GET', `user/0/listclients`, { params: initialParams });
 };
 
 export const deleteUser = (uid: string): Promise<any> => {

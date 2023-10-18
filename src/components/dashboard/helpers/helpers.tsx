@@ -1,6 +1,5 @@
 import clsx from 'clsx';
 import { PropsWithChildren } from 'react';
-import { TabValues } from 'common/interfaces/TabValues';
 import { CustomCheckbox } from 'components/dashboard/helpers/renderInputsHelper';
 import { renderTable } from 'components/dashboard/helpers/renderTableHelper';
 import { renamedKeys } from 'app-consts';
@@ -9,6 +8,13 @@ interface RenderListArgs {
     data: string[] | string;
     checkbox?: boolean;
     action?: (value: [string, number]) => void;
+}
+
+interface TabValues {
+    activeTab: string;
+    tabName: string;
+    children: string | JSX.Element | JSX.Element[];
+    tabId?: number;
 }
 
 export const renderList = ({ data, checkbox, action }: RenderListArgs) => {
