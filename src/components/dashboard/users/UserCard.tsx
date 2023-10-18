@@ -183,7 +183,7 @@ export function UserCard() {
                             action={handleChangeUserPermissions}
                         >
                             <PrimaryButton
-                                buttonText={buttonPermissionsText}
+                                children={buttonPermissionsText}
                                 icon='check'
                                 disabled={isButtonDisabled}
                                 buttonClickAction={handleSetUserPermissions}
