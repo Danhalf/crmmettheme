@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Login } from './components/Login';
 import { UserCard } from './components/dashboard/users/UserCard';
-import Users from './components/dashboard/users/Users';
+import { Users } from './components/dashboard/users/Users';
 import { MenuComponent } from '_metronic/assets/ts/components/MenuComponent';
 import { useAuthInterceptor } from 'services/auth.interceptor';
 import { PrivateRoute } from 'router/privateRouter';
