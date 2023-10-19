@@ -13,6 +13,7 @@ import { UserModal } from 'components/dashboard/users/UserModal/parts/UserModal'
 import { UserOptionalModal } from 'components/dashboard/users/UserModal/parts/UserOptionalModal';
 import { UserPermissionsModal } from 'components/dashboard/users/UserModal/parts/UserPermissionsModal';
 import { UserSettingsModal } from 'components/dashboard/users/UserModal/parts/UserSettingsModal';
+import { useQueryResponse } from 'common/core/QueryResponseProvider';
 
 export const UserActionsCell = ({ useruid, username }: User) => {
     const [editUserModalEnabled, setEditUserModalEnabled] = useState<boolean>(false);
@@ -22,6 +23,8 @@ export const UserActionsCell = ({ useruid, username }: User) => {
 
     const navigate = useNavigate();
     const { handleShowToast } = useToast();
+
+    const { refetch } = useQueryResponse();
 
     const handleEditUserModalOpen = () => {
         setEditUserModalEnabled(true);
@@ -115,6 +118,7 @@ export const UserActionsCell = ({ useruid, username }: User) => {
                         onClose={() => setUserPermissionsModalEnabled(false)}
                         useruid={useruid}
                         username={username}
+                        onUpdateUsers={refetch}
                     />
                 </CustomModal>
             )}

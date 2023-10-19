@@ -26,11 +26,6 @@ export function stringifyRequestQuery(state: QueryState): string {
         .toLowerCase();
 }
 
-export function parseRequestQuery(query: string): QueryState {
-    const cache: unknown = qs.parse(query);
-    return cache as QueryState;
-}
-
 export function useDebounce(value: string | undefined, delay: number) {
     const [debouncedValue, setDebouncedValue] = useState(value);
     useEffect(() => {

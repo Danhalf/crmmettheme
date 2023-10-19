@@ -55,7 +55,7 @@ export const copyUser = (srcuid: string): Promise<any> => {
 };
 
 export const setUserOptionalData = (uid: string, data: any): Promise<any> => {
-    return fetchApiData('POST', `user/${uid}/set`, data);
+    return fetchApiData('POST', `user/${uid}/set`, { data });
 };
 
 export const getUsers = (params?: UserQuery): Promise<User[]> => {
@@ -75,7 +75,7 @@ export const deleteUser = (uid: string): Promise<any> => {
 };
 
 export const setUserPermissions = (uid: string, data: any): Promise<any> => {
-    return fetchApiData('POST', `user/${uid}/permissions`, data);
+    return fetchApiData('POST', `user/${uid}/permissions`, { data });
 };
 
 export const getUserPermissions = (uid: string): Promise<string> => {
@@ -95,7 +95,7 @@ export const getUserProfile = (uid: string): Promise<string> => {
 };
 
 export const setUserSettings = (uid: string, data: any): Promise<any> => {
-    return fetchApiData('POST', `user/${uid}/settings`, data);
+    return fetchApiData('POST', `user/${uid}/settings`, { data });
 };
 
 export const getUserSettings = (uid: string): Promise<any> => {

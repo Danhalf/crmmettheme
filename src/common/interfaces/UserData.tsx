@@ -30,5 +30,3 @@ export interface ShortUserInfo {
 export enum UsersType {
     ACTIVE = 'Users',
 }
-
-export type UsersListType = UsersType;
