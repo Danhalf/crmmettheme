@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { STORAGE_USER } from 'app-consts';
 import { getToken } from 'services/utils';
 import { useTokenValidation } from 'common/hooks/useTokenValidation';
+import { Status } from 'common/interfaces/ActionStatus';
 
 interface LoginCredentials {
     username: string;
@@ -28,6 +29,9 @@ const initialValues: LoginCredentials = {
 
 export function Login() {
     const [loading, setLoading] = useState(false);
+    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+    const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
+    const [passwordFieldIcon, setPasswordFieldIcon] = useState<PasswordFieldIcon>('ki-eye');
 
     const navigate = useNavigate();
     const token = getToken();
@@ -36,10 +40,6 @@ export function Login() {
     useEffect(() => {
         isTokenValid && navigate('/dashboard');
     }, [isTokenValid, navigate]);
-
-    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-    const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
-    const [passwordFieldIcon, setPasswordFieldIcon] = useState<PasswordFieldIcon>('ki-eye');
 
     const handleChangePasswordField = () => {
         switch (isPasswordVisible) {
@@ -64,9 +64,11 @@ export function Login() {
 
             login(values.username, values.password)
                 .then((response) => {
-                    setStatus(false);
-                    localStorage.setItem(STORAGE_USER, JSON.stringify(response));
-                    navigate('/dashboard');
+                    if (response && response?.status === Status.OK) {
+                        setStatus(false);
+                        localStorage.setItem(STORAGE_USER, JSON.stringify(response));
+                        navigate('/dashboard');
+                    }
                 })
                 .catch((err) => {
                     setStatus(err.response.data.error);
