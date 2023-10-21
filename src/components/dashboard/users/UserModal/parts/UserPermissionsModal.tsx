@@ -5,6 +5,10 @@ import { Status, getUserPermissions, setUserPermissions } from 'services/user.se
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 
+interface UserPermissions {
+    [key: string]: number;
+}
+
 interface UserPermissionsModalProps {
     onClose: () => void;
     useruid: string;
@@ -20,7 +24,10 @@ export const UserPermissionsModal = ({
 }: UserPermissionsModalProps): JSX.Element => {
     const [userPermissionsJSON, setUserPermissionsJSON] = useState<string>('');
     const [initialUserPermissionsJSON, setInitialUserPermissionsJSON] = useState<string>('');
-    const [modifiedJSON, setModifiedJSON] = useState<string>('');
+    const [modifiedJSON, setModifiedJSON] = useState<Record<string, UserPermissions>>({
+        contacts: {},
+        other: {},
+    });
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
@@ -62,6 +69,27 @@ export const UserPermissionsModal = ({
         }
     }, [userPermissionsJSON, initialUserPermissionsJSON, isLoading]);
 
+    const sortPermissionsByCategory = (permissions: UserPermissions) => {
+        const contactPermissions: UserPermissions = {};
+        const otherPermissions: UserPermissions = {};
+
+        for (const key in permissions) {
+            if (permissions.hasOwnProperty(key)) {
+                const value = permissions[key];
+                if (key.startsWith('uaAdd') || key.startsWith('uaViewContacts')) {
+                    contactPermissions[key] = value;
+                } else {
+                    otherPermissions[key] = value;
+                }
+            }
+        }
+
+        return {
+            contacts: contactPermissions,
+            other: otherPermissions,
+        };
+    };
+
     const handleChangeUserPermissions = ([fieldName, fieldValue]: [string, number]): void => {
         const parsedUserPermission = JSON.parse(userPermissionsJSON);
         parsedUserPermission[fieldName] = fieldValue;
@@ -92,12 +120,37 @@ export const UserPermissionsModal = ({
 
     return (
         <>
-            {!isLoading &&
-                renderList({
-                    data: modifiedJSON,
-                    checkbox: true,
-                    action: handleChangeUserPermissions,
-                })}
+            {!isLoading && (
+                <>
+                    <h3>Contacts Permissions</h3>
+                    {renderList({
+                        data: JSON.stringify(modifiedJSON.contacts),
+                        checkbox: true,
+                        action: handleChangeUserPermissions,
+                    })}
+
+                    <h3>Deals Permissions</h3>
+                    {renderList({
+                        data: JSON.stringify(modifiedJSON.deals),
+                        checkbox: true,
+                        action: handleChangeUserPermissions,
+                    })}
+
+                    <h3>Inventory Permissions</h3>
+                    {renderList({
+                        data: JSON.stringify(modifiedJSON.inventory),
+                        checkbox: true,
+                        action: handleChangeUserPermissions,
+                    })}
+
+                    <h3>Other Permissions</h3>
+                    {renderList({
+                        data: JSON.stringify(modifiedJSON.other),
+                        checkbox: true,
+                        action: handleChangeUserPermissions,
+                    })}
+                </>
+            )}
             <PrimaryButton
                 icon='check'
                 disabled={isButtonDisabled}
