@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from 'axios';
 import { getToken } from './utils';
 import { API_URL } from '../app-consts';
-import { ShortUserInfo, User } from 'common/interfaces/UserData';
+import { ShortUserInfo, User, UserPermissions } from 'common/interfaces/UserData';
 import { UserQuery } from 'common/interfaces/QueriesParams';
 
 export enum Status {
@@ -78,8 +78,8 @@ export const setUserPermissions = (uid: string, data: any): Promise<any> => {
     return fetchApiData('POST', `user/${uid}/permissions`, { data });
 };
 
-export const getUserPermissions = (uid: string): Promise<string> => {
-    return fetchApiData<string>('GET', `user/${uid}/permissions`);
+export const getUserPermissions = (uid: string): Promise<UserPermissions> => {
+    return fetchApiData<UserPermissions>('GET', `user/${uid}/permissions`);
 };
 
 export const getUserExtendedInfo = (uid: string): Promise<string> => {

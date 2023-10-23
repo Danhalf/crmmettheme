@@ -4,8 +4,9 @@ import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/Prim
 import { Status, getUserPermissions, setUserPermissions } from 'services/user.service';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
+import { UserPermissions } from 'common/interfaces/UserData';
 
-interface UserPermissions {
+interface UserPermissionsRecord {
     [key: string]: number;
 }
 
@@ -16,6 +17,27 @@ interface UserPermissionsModalProps {
     onUpdateUsers: () => void;
 }
 
+const sortPermissions = (permissions: UserPermissions) => {
+    const contactPermissions: UserPermissionsRecord = {};
+    const otherPermissions: UserPermissionsRecord = {};
+
+    for (const key in permissions) {
+        if (permissions.hasOwnProperty(key)) {
+            const value = permissions[key];
+            if (key.includes('Contacts')) {
+                contactPermissions[key] = value;
+            } else {
+                otherPermissions[key] = value;
+            }
+        }
+    }
+
+    return {
+        ...contactPermissions,
+        ...otherPermissions,
+    };
+};
+
 export const UserPermissionsModal = ({
     onClose,
     useruid,
@@ -24,16 +46,13 @@ export const UserPermissionsModal = ({
 }: UserPermissionsModalProps): JSX.Element => {
     const [userPermissionsJSON, setUserPermissionsJSON] = useState<string>('');
     const [initialUserPermissionsJSON, setInitialUserPermissionsJSON] = useState<string>('');
-    const [modifiedJSON, setModifiedJSON] = useState<Record<string, UserPermissions>>({
-        contacts: {},
-        other: {},
-    });
+    const [modifiedJSON, setModifiedJSON] = useState<string>('');
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
     const { handleShowToast } = useToast();
 
-    const filterObjectValues = (json: Record<string, string | number>) => {
+    const filterObjectValues = (json: UserPermissionsRecord) => {
         const filteredObj: any = {};
         for (const key in json) {
             if (json.hasOwnProperty(key)) {
@@ -51,10 +70,11 @@ export const UserPermissionsModal = ({
         setIsLoading(true);
         if (useruid) {
             getUserPermissions(useruid).then(async (response) => {
-                const stringifiedResponse = JSON.stringify(response, null, 2);
+                const sortedPermissions = sortPermissions(response);
+                const stringifiedResponse = JSON.stringify(sortedPermissions, null, 2);
                 setUserPermissionsJSON(stringifiedResponse);
                 setInitialUserPermissionsJSON(stringifiedResponse);
-                const filteredData = typeof response === 'object' && filterObjectValues(response);
+                const filteredData = filterObjectValues(sortedPermissions);
                 setModifiedJSON(filteredData);
                 setIsLoading(false);
             });
@@ -68,27 +88,6 @@ export const UserPermissionsModal = ({
             setIsButtonDisabled(true);
         }
     }, [userPermissionsJSON, initialUserPermissionsJSON, isLoading]);
-
-    const sortPermissionsByCategory = (permissions: UserPermissions) => {
-        const contactPermissions: UserPermissions = {};
-        const otherPermissions: UserPermissions = {};
-
-        for (const key in permissions) {
-            if (permissions.hasOwnProperty(key)) {
-                const value = permissions[key];
-                if (key.startsWith('uaAdd') || key.startsWith('uaViewContacts')) {
-                    contactPermissions[key] = value;
-                } else {
-                    otherPermissions[key] = value;
-                }
-            }
-        }
-
-        return {
-            contacts: contactPermissions,
-            other: otherPermissions,
-        };
-    };
 
     const handleChangeUserPermissions = ([fieldName, fieldValue]: [string, number]): void => {
         const parsedUserPermission = JSON.parse(userPermissionsJSON);
@@ -122,30 +121,8 @@ export const UserPermissionsModal = ({
         <>
             {!isLoading && (
                 <>
-                    <h3>Contacts Permissions</h3>
                     {renderList({
-                        data: JSON.stringify(modifiedJSON.contacts),
-                        checkbox: true,
-                        action: handleChangeUserPermissions,
-                    })}
-
-                    <h3>Deals Permissions</h3>
-                    {renderList({
-                        data: JSON.stringify(modifiedJSON.deals),
-                        checkbox: true,
-                        action: handleChangeUserPermissions,
-                    })}
-
-                    <h3>Inventory Permissions</h3>
-                    {renderList({
-                        data: JSON.stringify(modifiedJSON.inventory),
-                        checkbox: true,
-                        action: handleChangeUserPermissions,
-                    })}
-
-                    <h3>Other Permissions</h3>
-                    {renderList({
-                        data: JSON.stringify(modifiedJSON.other),
+                        data: modifiedJSON,
                         checkbox: true,
                         action: handleChangeUserPermissions,
                     })}
