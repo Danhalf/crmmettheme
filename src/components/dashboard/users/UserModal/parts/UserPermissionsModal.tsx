@@ -17,15 +17,21 @@ interface UserPermissionsModalProps {
     onUpdateUsers: () => void;
 }
 
+const sortPermissionsKeys: ReadonlyArray<string> = ['Contacts', 'Deal'];
+
 const sortPermissions = (permissions: UserPermissions) => {
     const contactPermissions: UserPermissionsRecord = {};
+    const dealsPermissions: UserPermissionsRecord = {};
     const otherPermissions: UserPermissionsRecord = {};
+    const [contacts, deals] = sortPermissionsKeys;
 
     for (const key in permissions) {
         if (permissions.hasOwnProperty(key)) {
             const value = permissions[key];
-            if (key.includes('Contacts')) {
+            if (key.includes(contacts)) {
                 contactPermissions[key] = value;
+            } else if (key.includes(deals)) {
+                dealsPermissions[key] = value;
             } else {
                 otherPermissions[key] = value;
             }
@@ -34,6 +40,7 @@ const sortPermissions = (permissions: UserPermissions) => {
 
     return {
         ...contactPermissions,
+        ...dealsPermissions,
         ...otherPermissions,
     };
 };
