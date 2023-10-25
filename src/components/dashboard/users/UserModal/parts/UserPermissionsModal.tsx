@@ -79,7 +79,6 @@ export const UserPermissionsModal = ({
                 setInitialUserPermissionsJSON(stringifiedResponse);
                 const filteredData = filterObjectValues(sortedPermissions);
                 setModifiedJSON(filteredData);
-                debugger;
                 setIsLoading(false);
             });
         }
