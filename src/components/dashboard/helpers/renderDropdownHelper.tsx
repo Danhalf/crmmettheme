@@ -4,6 +4,7 @@ import { PropsWithChildren, useEffect } from 'react';
 
 interface PropsItems {
     menuItemName: string;
+    icon?: string;
     menuItemAction?: () => void;
 }
 
@@ -33,9 +34,12 @@ export const CustomDropdown = ({ title, items, children }: PropsWithChildren<Dro
             >
                 {children}
                 {items &&
-                    items.map(({ menuItemName, menuItemAction }) => (
+                    items.map(({ menuItemName, menuItemAction, icon }) => (
                         <div key={menuItemName} className='menu-item px-3' onClick={menuItemAction}>
-                            <a className='menu-link px-3'>{menuItemName}</a>
+                            <a className='menu-link px-3 text-hover-primary'>
+                                {icon && <i className={`ki-outline ki-${icon} fs-2 me-2`} />}
+                                {menuItemName}
+                            </a>
                         </div>
                     ))}
             </div>

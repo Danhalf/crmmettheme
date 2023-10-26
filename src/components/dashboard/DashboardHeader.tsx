@@ -51,7 +51,21 @@ export function DashboardHeader() {
                                 </Link>
                             </div>
                             <div className='menu-item me-lg-1'>
-                                <CustomDropdown title={loginname}>
+                                <CustomDropdown
+                                    title={loginname}
+                                    items={[
+                                        {
+                                            menuItemName: 'Change password',
+                                            icon: 'lock-2',
+                                            menuItemAction: () => {},
+                                        },
+                                        {
+                                            menuItemName: 'Log out',
+                                            icon: 'exit-right',
+                                            menuItemAction: () => signOut(),
+                                        },
+                                    ]}
+                                >
                                     <Link
                                         className='menu-link py-3 text-hover-primary'
                                         to={`/dashboard/user/${useruid}`}
@@ -59,13 +73,6 @@ export function DashboardHeader() {
                                         <i className='ki-outline ki-user-tick fs-2 m-2'></i>
                                         <span className='menu-title'>{loginname} card</span>
                                     </Link>
-                                    <span
-                                        onClick={() => signOut()}
-                                        className='menu-link text-hover-primary'
-                                    >
-                                        <i className='ki-outline ki-exit-right fs-2 m-2'></i>
-                                        <span className='menu-title'>Log out</span>
-                                    </span>
                                 </CustomDropdown>
                             </div>
                         </div>
