@@ -16,9 +16,13 @@ export const UsersTable = () => {
     const isLoading = useQueryResponseLoading();
 
     useEffect(() => {
-        getTotalUsersRecords().then(({ total }) => {
-            setTotalRecords(total);
-        });
+        getTotalUsersRecords()
+            .then(({ total }) => {
+                setTotalRecords(total);
+            })
+            .catch(() => {
+                setTotalRecords(0);
+            });
     }, []);
 
     const usersData = useMemo(() => users, [users]);

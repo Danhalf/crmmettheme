@@ -4,6 +4,7 @@ import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/Prim
 import { Status, getUserPermissions, setUserPermissions } from 'services/user.service';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
+import { UserPermissionsRecord } from 'common/interfaces/UserData';
 
 interface UserPermissionsModalProps {
     onClose: () => void;
@@ -11,6 +12,34 @@ interface UserPermissionsModalProps {
     username: string;
     onUpdateUsers: () => void;
 }
+
+const sortPermissionsKeys: ReadonlyArray<string> = ['Contacts', 'Deal'];
+
+const sortPermissions = (permissions: UserPermissionsRecord) => {
+    const contactPermissions: UserPermissionsRecord = {};
+    const dealsPermissions: UserPermissionsRecord = {};
+    const otherPermissions: UserPermissionsRecord = {};
+    const [contacts, deals] = sortPermissionsKeys;
+
+    for (const key in permissions) {
+        if (permissions.hasOwnProperty(key)) {
+            const value = permissions[key];
+            if (key.includes(contacts)) {
+                contactPermissions[key] = value;
+            } else if (key.includes(deals)) {
+                dealsPermissions[key] = value;
+            } else {
+                otherPermissions[key] = value;
+            }
+        }
+    }
+
+    return {
+        ...contactPermissions,
+        ...dealsPermissions,
+        ...otherPermissions,
+    };
+};
 
 export const UserPermissionsModal = ({
     onClose,
@@ -26,7 +55,7 @@ export const UserPermissionsModal = ({
 
     const { handleShowToast } = useToast();
 
-    const filterObjectValues = (json: Record<string, string | number>) => {
+    const filterObjectValues = (json: UserPermissionsRecord) => {
         const filteredObj: any = {};
         for (const key in json) {
             if (json.hasOwnProperty(key)) {
@@ -44,10 +73,11 @@ export const UserPermissionsModal = ({
         setIsLoading(true);
         if (useruid) {
             getUserPermissions(useruid).then(async (response) => {
-                const stringifiedResponse = JSON.stringify(response, null, 2);
+                const sortedPermissions = sortPermissions(response);
+                const stringifiedResponse = JSON.stringify(sortedPermissions, null, 2);
                 setUserPermissionsJSON(stringifiedResponse);
                 setInitialUserPermissionsJSON(stringifiedResponse);
-                const filteredData = typeof response === 'object' && filterObjectValues(response);
+                const filteredData = filterObjectValues(sortedPermissions);
                 setModifiedJSON(filteredData);
                 setIsLoading(false);
             });
@@ -92,12 +122,15 @@ export const UserPermissionsModal = ({
 
     return (
         <>
-            {!isLoading &&
-                renderList({
-                    data: modifiedJSON,
-                    checkbox: true,
-                    action: handleChangeUserPermissions,
-                })}
+            {!isLoading && (
+                <>
+                    {renderList({
+                        data: modifiedJSON,
+                        checkbox: true,
+                        action: handleChangeUserPermissions,
+                    })}
+                </>
+            )}
             <PrimaryButton
                 icon='check'
                 disabled={isButtonDisabled}
