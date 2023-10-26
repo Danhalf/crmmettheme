@@ -10,10 +10,16 @@ interface PropsItems {
 
 interface DropdownProps {
     title: string;
+    weight?: number;
     items?: PropsItems[];
 }
 
-export const CustomDropdown = ({ title, items, children }: PropsWithChildren<DropdownProps>) => {
+export const CustomDropdown = ({
+    title,
+    items,
+    children,
+    weight,
+}: PropsWithChildren<DropdownProps>) => {
     useEffect(() => {
         MenuComponent.reinitialization();
     }, []);
@@ -29,7 +35,9 @@ export const CustomDropdown = ({ title, items, children }: PropsWithChildren<Dro
                 <i className='ki-duotone ki-down fs-5 m-0'></i>
             </a>
             <div
-                className='menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-150px py-4'
+                className={`menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-bold fs-7 w-${
+                    weight || 150
+                }px py-4`}
                 data-kt-menu='true'
             >
                 {children}
