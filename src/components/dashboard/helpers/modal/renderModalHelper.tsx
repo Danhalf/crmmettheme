@@ -9,7 +9,7 @@ type CustomModalProps = {
 
 const UserModalHeader = ({ onClose, title }: CustomModalProps): JSX.Element => {
     return (
-        <div className='modal-header'>
+        <div className='modal-header position-sticky top-0 z-index-2 bg-white'>
             <h2 className='fw-bolder'>{title}</h2>
             <div
                 className='btn btn-icon btn-sm btn-active-icon-primary'
@@ -70,7 +70,7 @@ export const CustomModal = ({
                 <div className='modal-dialog modal-dialog-centered mw-650px'>
                     <div className='modal-content'>
                         <UserModalHeader onClose={onClose} title={title} />
-                        <div className='modal-body scroll-y my-7'>{children}</div>
+                        <div className='modal-body scroll-y my-7 z-index-1'>{children}</div>
                         {footerAction && (
                             <UserModalFooter onClose={onClose} footerAction={footerAction} />
                         )}
