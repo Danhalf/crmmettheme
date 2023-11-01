@@ -6,11 +6,11 @@ import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, useState } from 'react';
 import { createOrUpdateUser } from 'services/user.service';
 import { User, UserInputData } from 'common/interfaces/UserData';
+import { useQueryResponse } from 'common/core/QueryResponseProvider';
 
 interface UserModalProps {
     onClose: () => void;
     user?: User;
-    updateData?: () => void;
 }
 
 interface UserModalData extends UserInputData {
@@ -25,12 +25,14 @@ enum PassIcon {
     HIDDEN = 'ki-eye-slash',
 }
 
-export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.Element => {
+export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
     const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
     const [confirmPasswordFieldType, setConfirmPasswordFieldType] =
         useState<HTMLInputTypeAttribute>('password');
+
+    const { refetch } = useQueryResponse();
 
     const initialUserData: UserModalData = {
         username: user?.username || '',
@@ -105,7 +107,7 @@ export const UserModal = ({ onClose, user, updateData }: UserModalProps): JSX.El
                         type: 'success',
                     });
                     onClose();
-                    updateData && updateData();
+                    refetch();
                 } else {
                     throw new Error(responseData.error);
                 }

@@ -48,6 +48,7 @@ export const UserActionsCell = ({ useruid, username }: User) => {
             if (useruid) {
                 const response: any = await copyUser(useruid);
                 if (response.status === Status.OK) {
+                    refetch();
                     const newUseruid = response.useruid;
                     navigate(`/dashboard/user/${newUseruid}`);
                     handleShowToast({
@@ -67,6 +68,7 @@ export const UserActionsCell = ({ useruid, username }: User) => {
             if (useruid) {
                 const response = await deleteUser(useruid);
                 if (response.status === Status.OK) {
+                    refetch();
                     handleShowToast({
                         message: `<strong>${username}</strong> successfully deleted`,
                         type: 'success',
