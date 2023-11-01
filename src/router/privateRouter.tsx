@@ -15,7 +15,7 @@ export const PrivateRoute = () => {
 
     useEffect(() => {
         if (!isTokenValid) {
-            if (location.pathname !== '/') {
+            if (location.pathname !== '/' && token) {
                 handleShowToast({
                     message: 'Your session has expired. Please login again.',
                     type: 'danger',
