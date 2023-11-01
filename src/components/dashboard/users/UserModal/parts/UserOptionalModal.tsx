@@ -46,7 +46,6 @@ export const UserOptionalModal = ({
     const [optional, setOptional] = useState<any[]>([]);
     const [activeTab, setActiveTab] = useState<string>('0');
     const [initialUserOptional, setInitialUserOptional] = useState<any>([]);
-    const [allOptional, setAllOptional] = useState<any>({});
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
 
@@ -55,15 +54,18 @@ export const UserOptionalModal = ({
     const UserOptionalSchema = Yup.object().shape({
         locEmail1: Yup.string().email('Please enter valid email address'),
         locEmail2: Yup.string().email('Please enter valid email address'),
-        locPhone1: Yup.string().matches(/^\+?\d{5,15}$/, {
-            message: 'Please enter valid number.',
+        locPhone1: Yup.string().matches(/^[\d-]{10,16}$/, {
+            message: 'Please enter a valid number with only digits/dashes.',
             excludeEmptyString: false,
         }),
-        locPhone2: Yup.string().matches(/^\+?\d{5,15}$/, {
-            message: 'Please enter valid number.',
+        locPhone2: Yup.string().matches(/^[\d-]{10,16}$/, {
+            message: 'Please enter a valid number with only digits/dashes.',
             excludeEmptyString: false,
         }),
-        locZIP: Yup.string().min(5, 'Too short ZIP!').max(10, 'Too long ZIP!'),
+        locZIP: Yup.string()
+            .matches(/^[0-9]+$/, 'ZIP should only contain digits')
+            .min(5, 'Too short ZIP!')
+            .max(10, 'Too long ZIP!'),
     });
 
     const userOptionalValidateFields = Object.keys(UserOptionalSchema.fields);
@@ -72,7 +74,6 @@ export const UserOptionalModal = ({
         setIsLoading(true);
         if (useruid) {
             getUserLocations(useruid).then(async (response: any) => {
-                setAllOptional(response);
                 const responseOptional: any[] = response.locations;
 
                 const filteredOptional = responseOptional.map((option) => {
