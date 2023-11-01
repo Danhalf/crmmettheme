@@ -115,7 +115,14 @@ export const UserOptionalModal = ({
     const handleSetUserOptional = async (): Promise<void> => {
         setIsLoading(true);
         if (useruid) {
-            const newOptional = { ...allOptional, locations: optional };
+            const filteredOptional = optional.map((item) => {
+                const filteredItem = { ...item };
+                disabledKeys.forEach((key) => {
+                    delete filteredItem[key];
+                });
+                return filteredItem;
+            });
+            const newOptional = { locations: filteredOptional };
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === Status.OK) {
