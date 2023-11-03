@@ -35,8 +35,8 @@ const TabSwitcher = ({ tabs, activeTab, handleTabClick }) => {
     );
 };
 
-const hiddenKeys = ['locuid', 'useruid', 'index'];
-const disabledKeys = ['useruid', 'created', 'updated'];
+const hiddenKeys: readonly ['locuid', ...string[]] = ['locuid', 'useruid', 'index'];
+const disabledKeys: readonly string[] = ['useruid', 'created', 'updated'];
 
 export const UserOptionalModal = ({
     onClose,
@@ -116,23 +116,25 @@ export const UserOptionalModal = ({
     const handleSetUserOptional = async (): Promise<void> => {
         setIsLoading(true);
         if (useruid) {
-            const filteredOptional = optional.map((item) => {
+            const filteredOptional = optional.map((item, index) => {
                 const filteredItem = { ...item };
                 disabledKeys.forEach((key) => {
                     delete filteredItem[key];
                 });
-                return filteredItem;
+                const [id] = hiddenKeys;
+                return [filteredItem, initialUserOptional[index][id]];
             });
             const newOptional = { locations: filteredOptional };
+            debugger;
             try {
-                const response = await setUserOptionalData(useruid, newOptional);
-                if (response.status === Status.OK) {
-                    handleShowToast({
-                        message: `<strong>${username}</strong> optional data successfully saved`,
-                        type: 'success',
-                    });
-                    onClose();
-                }
+                // const response = await setUserOptionalData(useruid, newOptional);
+                // if (response.status === Status.OK) {
+                //     handleShowToast({
+                //         message: `<strong>${username}</strong> optional data successfully saved`,
+                //         type: 'success',
+                //     });
+                //     onClose();
+                // }
             } catch (err) {
                 const { message } = err as Error | AxiosError;
                 handleShowToast({ message, type: 'danger' });
