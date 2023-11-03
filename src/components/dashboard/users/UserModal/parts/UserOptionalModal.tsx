@@ -38,16 +38,20 @@ const TabSwitcher = ({ tabs, activeTab, handleTabClick }) => {
 const hiddenKeys: readonly ['locuid', ...string[]] = ['locuid', 'useruid', 'index'];
 const disabledKeys: readonly string[] = ['useruid', 'created', 'updated'];
 
+const [locationuid] = hiddenKeys;
 export const UserOptionalModal = ({
     onClose,
     useruid,
     username,
 }: UserOptionalModalProps): JSX.Element => {
-    const [optional, setOptional] = useState<any[]>([]);
+    const [optional, setOptional] = useState<Record<string, string | number>[]>([]);
     const [activeTab, setActiveTab] = useState<string>('0');
-    const [initialUserOptional, setInitialUserOptional] = useState<any>([]);
+    const [initialUserOptional, setInitialUserOptional] = useState<
+        Record<string, string | number>[]
+    >([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+    const [locationKeys, setLocationKeys] = useState<string[]>([]);
 
     const { handleShowToast } = useToast();
 
@@ -78,6 +82,9 @@ export const UserOptionalModal = ({
 
                 const filteredOptional = responseOptional.map((option) => {
                     const filteredOption = Object.keys(option).reduce((acc, key) => {
+                        if (key === locationuid) {
+                            setLocationKeys((keys) => [...keys, option[key]]);
+                        }
                         if (!hiddenKeys.includes(key)) {
                             acc[key] = option[key];
                         }
@@ -121,20 +128,20 @@ export const UserOptionalModal = ({
                 disabledKeys.forEach((key) => {
                     delete filteredItem[key];
                 });
-                const [id] = hiddenKeys;
-                return [filteredItem, initialUserOptional[index][id]];
+                filteredItem['locationuid'] = locationKeys[index];
+
+                return filteredItem;
             });
             const newOptional = { locations: filteredOptional };
-            debugger;
             try {
-                // const response = await setUserOptionalData(useruid, newOptional);
-                // if (response.status === Status.OK) {
-                //     handleShowToast({
-                //         message: `<strong>${username}</strong> optional data successfully saved`,
-                //         type: 'success',
-                //     });
-                //     onClose();
-                // }
+                const response = await setUserOptionalData(useruid, newOptional);
+                if (response.status === Status.OK) {
+                    handleShowToast({
+                        message: `<strong>${username}</strong> optional data successfully saved`,
+                        type: 'success',
+                    });
+                    onClose();
+                }
             } catch (err) {
                 const { message } = err as Error | AxiosError;
                 handleShowToast({ message, type: 'danger' });
