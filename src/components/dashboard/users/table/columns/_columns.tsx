@@ -13,7 +13,7 @@ export const usersColumns = (): ReadonlyArray<Column<User>> => {
         },
         {
             Header: (props) => (
-                <UserCustomHeader tableProps={props} title='User name' className='min-w-125px' />
+                <UserCustomHeader tableProps={props} title='User name' className='w-300px' />
             ),
             id: 'username',
             Cell: ({ ...props }) => {
