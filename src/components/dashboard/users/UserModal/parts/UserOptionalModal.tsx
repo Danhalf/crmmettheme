@@ -35,7 +35,7 @@ const TabSwitcher = ({ tabs, activeTab, handleTabClick }) => {
     );
 };
 
-const hiddenKeys: readonly ['locuid', ...string[]] = ['locuid', 'useruid', 'index'];
+const hiddenKeys: readonly ['locationuid', ...string[]] = ['locationuid', 'useruid', 'index'];
 const disabledKeys: readonly string[] = ['useruid', 'created', 'updated'];
 
 const [locationuid] = hiddenKeys;
@@ -128,7 +128,7 @@ export const UserOptionalModal = ({
                 disabledKeys.forEach((key) => {
                     delete filteredItem[key];
                 });
-                filteredItem['locationuid'] = locationKeys[index];
+                filteredItem[locationuid] = locationKeys[index];
 
                 return filteredItem;
             });
