@@ -17,6 +17,15 @@ export const useAuthInterceptor = () => {
                 });
                 return error.response.data.error;
             }
+            if (error.response) {
+                return Promise.reject(error.response.data);
+            }
+
+            if (error.request) {
+                return Promise.reject(error.request);
+            }
+
+            return Promise.reject(error.message);
         }
     );
 };
