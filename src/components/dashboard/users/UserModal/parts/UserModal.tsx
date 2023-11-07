@@ -110,8 +110,8 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
                     throw new Error(responseData);
                 }
             } catch (err) {
-                const { error, warning } = err as Record<string, string>;
-                const message = warning || error;
+                const { data } = err as { status: number; data: Record<string, string> };
+                const message = data.warning || data.error;
                 handleShowToast({ message, type: 'danger' });
             } finally {
                 setSubmitting(false);
