@@ -1,5 +1,5 @@
 import { STORAGE_USER } from 'app-consts';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 
 export const useAuthInterceptor = () => {
@@ -8,7 +8,7 @@ export const useAuthInterceptor = () => {
         (response) => {
             return response;
         },
-        (error) => {
+        (error: AxiosError | any) => {
             if (error.response && error.response.status === 401) {
                 localStorage.removeItem(STORAGE_USER);
                 handleShowToast({
@@ -16,6 +16,12 @@ export const useAuthInterceptor = () => {
                     type: 'danger',
                 });
                 return error.response.data.error;
+            }
+            if (error.response) {
+                const { status, data } = error.response;
+                return Promise.reject({ status, data });
+            } else {
+                return Promise.reject(error);
             }
         }
     );

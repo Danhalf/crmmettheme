@@ -45,14 +45,19 @@ export const getTotalUsersRecords = (): Promise<{ status: string; total: number 
     return fetchApiData<{ status: string; total: number }>('GET', `user/0/listclients?total=1`);
 };
 
-export const createOrUpdateUser = (userData: {
+export const createOrUpdateUser = async (userData: {
     loginname?: string;
     loginpassword: string;
     uid?: string;
 }): Promise<any> => {
     const { uid, ...reqBody } = userData;
 
-    return fetchApiData('POST', `user/${uid || '0'}/user`, { data: reqBody });
+    try {
+        const response = await fetchApiData('POST', `user/${uid || '0'}/user`, { data: reqBody });
+        return response;
+    } catch (error) {
+        throw error;
+    }
 };
 
 export const copyUser = (srcuid: string): Promise<any> => {

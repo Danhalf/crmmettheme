@@ -1,7 +1,7 @@
 import { AxiosError } from 'axios';
 import clsx from 'clsx';
 import * as Yup from 'yup';
-import { useToast } from 'components/dashboard/helpers/renderToastHelper';
+import { TOAST_DURATION, useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, useState } from 'react';
 import { createOrUpdateUser } from 'services/user.service';
@@ -31,7 +31,6 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
     const [confirmPasswordFieldType, setConfirmPasswordFieldType] =
         useState<HTMLInputTypeAttribute>('password');
-
     const { refetch } = useQueryResponse();
 
     const initialUserData: UserModalData = {
@@ -96,12 +95,11 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
                 const reqData = { ...userData, loginpassword: password };
 
                 const responseData = await createOrUpdateUser(reqData);
-
                 const message = user?.useruid
                     ? `<strong>${username}</strong> password successfully updated`
                     : `User <strong>${username}</strong> successfully created`;
 
-                if (!responseData.error) {
+                if (!responseData.error && !responseData.warning) {
                     handleShowToast({
                         message,
                         type: 'success',
@@ -109,10 +107,11 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
                     onClose();
                     refetch();
                 } else {
-                    throw new Error(responseData.error);
+                    throw new Error(responseData);
                 }
             } catch (err) {
-                const { message } = err as Error | AxiosError;
+                const { data } = err as { status: number; data: Record<string, string> };
+                const message = data.warning || data.error;
                 handleShowToast({ message, type: 'danger' });
             } finally {
                 setSubmitting(false);
