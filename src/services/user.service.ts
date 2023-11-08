@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { getToken } from './utils';
+import { getApplicationType, getToken } from './utils';
 import { API_URL } from '../app-consts';
 import {
     ShortUserInfo,
@@ -25,7 +25,7 @@ const fetchApiData = async <T>(
     url: string,
     options?: { data?: unknown; params?: UserQuery }
 ): Promise<T> => {
-    const headers = { Authorization: `Bearer ${getToken()}` };
+    const headers = { Authorization: `Bearer ${getToken()}`, ...getApplicationType() };
     const { data, params } = options || {};
     try {
         const response: AxiosResponse<T> = await axios({
