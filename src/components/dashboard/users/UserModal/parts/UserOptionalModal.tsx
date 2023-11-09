@@ -35,35 +35,38 @@ const TabSwitcher = ({ tabs, activeTab, handleTabClick }) => {
     );
 };
 
-const hiddenKeys = ['locuid', 'useruid', 'index'];
-const disabledKeys = ['useruid', 'created', 'updated'];
+const hiddenKeys: readonly ['locationuid', ...string[]] = ['locationuid', 'useruid', 'index'];
+const disabledKeys: readonly string[] = ['useruid', 'created', 'updated'];
 
+const [locationuid] = hiddenKeys;
 export const UserOptionalModal = ({
     onClose,
     useruid,
     username,
 }: UserOptionalModalProps): JSX.Element => {
-    const [optional, setOptional] = useState<any[]>([]);
+    const [optional, setOptional] = useState<Record<string, string | number>[]>([]);
     const [activeTab, setActiveTab] = useState<string>('0');
-    const [initialUserOptional, setInitialUserOptional] = useState<any>([]);
-    const [allOptional, setAllOptional] = useState<any>({});
+    const [initialUserOptional, setInitialUserOptional] = useState<
+        Record<string, string | number>[]
+    >([]);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
+    const [locationKeys, setLocationKeys] = useState<string[]>([]);
 
     const { handleShowToast } = useToast();
 
     const UserOptionalSchema = Yup.object().shape({
         locEmail1: Yup.string().email('Please enter valid email address'),
         locEmail2: Yup.string().email('Please enter valid email address'),
-        locPhone1: Yup.string().matches(/^\+?\d{5,15}$/, {
-            message: 'Please enter valid number.',
+        locPhone1: Yup.string().matches(/^[\d-]{10,16}$/, {
+            message: 'Please enter a valid number with only digits/dashes.',
             excludeEmptyString: false,
         }),
-        locPhone2: Yup.string().matches(/^\+?\d{5,15}$/, {
-            message: 'Please enter valid number.',
+        locPhone2: Yup.string().matches(/^[\d-]{10,16}$/, {
+            message: 'Please enter a valid number with only digits/dashes.',
             excludeEmptyString: false,
         }),
-        locZIP: Yup.string().min(5, 'Too short ZIP!').max(10, 'Too long ZIP!'),
+        locZIP: Yup.string().matches(/^\d{5}$/, 'Please enter a valid 5-digit ZIP'),
     });
 
     const userOptionalValidateFields = Object.keys(UserOptionalSchema.fields);
@@ -72,11 +75,13 @@ export const UserOptionalModal = ({
         setIsLoading(true);
         if (useruid) {
             getUserLocations(useruid).then(async (response: any) => {
-                setAllOptional(response);
                 const responseOptional: any[] = response.locations;
 
                 const filteredOptional = responseOptional.map((option) => {
                     const filteredOption = Object.keys(option).reduce((acc, key) => {
+                        if (key === locationuid) {
+                            setLocationKeys((keys) => [...keys, option[key]]);
+                        }
                         if (!hiddenKeys.includes(key)) {
                             acc[key] = option[key];
                         }
@@ -115,7 +120,16 @@ export const UserOptionalModal = ({
     const handleSetUserOptional = async (): Promise<void> => {
         setIsLoading(true);
         if (useruid) {
-            const newOptional = { ...allOptional, locations: optional };
+            const filteredOptional = optional.map((item, index) => {
+                const filteredItem = { ...item };
+                disabledKeys.forEach((key) => {
+                    delete filteredItem[key];
+                });
+                filteredItem[locationuid] = locationKeys[index];
+
+                return filteredItem;
+            });
+            const newOptional = { locations: filteredOptional };
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === Status.OK) {
