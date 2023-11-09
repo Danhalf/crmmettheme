@@ -66,10 +66,7 @@ export const UserOptionalModal = ({
             message: 'Please enter a valid number with only digits/dashes.',
             excludeEmptyString: false,
         }),
-        locZIP: Yup.string()
-            .matches(/^[0-9]+$/, 'ZIP should only contain digits')
-            .min(5, 'Too short ZIP!')
-            .max(10, 'Too long ZIP!'),
+        locZIP: Yup.string().matches(/^\d{5}$/, 'Please enter a valid 5-digit ZIP'),
     });
 
     const userOptionalValidateFields = Object.keys(UserOptionalSchema.fields);
