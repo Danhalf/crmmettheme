@@ -1,19 +1,9 @@
-import { APPLICATION, STORAGE_USER } from 'app-consts';
+import { STORAGE_USER } from 'app-consts';
 import axios, { AxiosError } from 'axios';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 
 export const useAuthInterceptor = () => {
     const { handleShowToast } = useToast();
-
-    axios.interceptors.request.use(
-        (config) => {
-            config.params = { ...config.params, application: APPLICATION };
-            return config;
-        },
-        (error) => {
-            return Promise.reject(error);
-        }
-    );
 
     axios.interceptors.response.use(
         (response) => {
