@@ -160,11 +160,11 @@ export const UserSettingsModal = ({
                 ...changedSettings,
                 [name]: convertToNumberIfNumeric(value as string),
             };
-            settings &&
-                setSettings({
-                    ...settings,
-                    ...changedSettings,
-                });
+
+            setSettings({
+                ...settings,
+                ...changedSettings,
+            });
         },
         [settings, groupedSettings]
     );
@@ -194,9 +194,6 @@ export const UserSettingsModal = ({
     if (!settings) {
         return <></>;
     }
-
-    // eslint-disable-next-line no-console
-    console.log(settings);
 
     return (
         <>
@@ -232,7 +229,7 @@ export const UserSettingsModal = ({
                                                 name={key}
                                                 title={title}
                                                 group={groupName as SettingKey}
-                                                currentValue={Number(value)}
+                                                currentValue={Number(settings[key])}
                                                 action={handleChangeUserSettings}
                                             />
                                         )}

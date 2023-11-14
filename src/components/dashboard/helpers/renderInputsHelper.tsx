@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { SettingKey } from 'common/interfaces/users/UserConsts';
+import { SettingGroup } from 'common/interfaces/users/UserGroups';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 interface CustomInputProps {
@@ -91,10 +92,10 @@ export const CustomTextInput = ({
 }: CustomTextInputProps): JSX.Element => {
     const [inputValue, setInputValue] = useState(currentValue);
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const newValue = Number(event.target.value);
+        const newValue = String(event.target.value).replace(/[^0-9.,]/g, '');
         if (action) {
-            setInputValue(String(newValue));
-            action([name, String(newValue)]);
+            setInputValue(newValue);
+            action([name, newValue]);
         }
     };
     return (
@@ -126,11 +127,9 @@ export const CustomRadioButton = ({
     title,
     action,
 }: CustomRadioButtonProps) => {
-    const [inputValue, setInputValue] = useState(currentValue);
     const handleRadioChange = (event: ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value ? 1 : 0;
         if (action) {
-            setInputValue(newValue);
             action([name, newValue, group]);
         }
     };
@@ -142,8 +141,7 @@ export const CustomRadioButton = ({
                         <input
                             className='form-check-input cursor-pointer'
                             type='radio'
-                            value={inputValue}
-                            checked={inputValue === 1}
+                            checked={currentValue === 1}
                             name={group}
                             id={`radio-${id}-${currentValue}`}
                             onChange={handleRadioChange}
