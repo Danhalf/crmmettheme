@@ -6,11 +6,15 @@ import { PrimaryButton } from '../smallComponents/buttons/PrimaryButton';
 import { UsersListSearchComponent } from '../smallComponents/search/Search';
 import { UserModal } from './UserModal/parts/UserModal';
 import { UsersTable } from './table/UsersTable';
+import { STORAGE_USER } from 'app-consts';
 
 export const Users = () => {
     const [addUserModalEnabled, setAddUserModalEnabled] = useState<boolean>(false);
-
     const handleAddUserModalOpen = () => setAddUserModalEnabled(!addUserModalEnabled);
+
+    const userStorage = localStorage.getItem(STORAGE_USER);
+
+    const { isadmin } = userStorage && JSON.parse(userStorage);
 
     return (
         <QueryRequestProvider>
@@ -25,12 +29,14 @@ export const Users = () => {
                         <div className='tab-content' id='myTabContentInner'>
                             <div className='d-flex w-100 justify-content-between my-4'>
                                 <UsersListSearchComponent />
-                                <PrimaryButton
-                                    icon='plus'
-                                    buttonClickAction={handleAddUserModalOpen}
-                                >
-                                    Add User
-                                </PrimaryButton>
+                                {!!isadmin && (
+                                    <PrimaryButton
+                                        icon='plus'
+                                        buttonClickAction={handleAddUserModalOpen}
+                                    >
+                                        Add User
+                                    </PrimaryButton>
+                                )}
                             </div>
                             <UsersTable />
                         </div>
