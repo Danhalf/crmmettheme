@@ -14,7 +14,8 @@ export const Users = () => {
 
     const userStorage = localStorage.getItem(STORAGE_USER);
 
-    const { isadmin } = userStorage && JSON.parse(userStorage);
+    const { isadmin, ismanager } = userStorage && JSON.parse(userStorage);
+    const permissions = isadmin || ismanager;
 
     return (
         <QueryRequestProvider>

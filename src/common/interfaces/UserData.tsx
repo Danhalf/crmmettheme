@@ -6,6 +6,14 @@ export interface UserInputData {
     password: string;
 }
 
+export enum UserPermissions {
+    USER = 'user',
+    SALES_PERSON = 'sales_person',
+    MANAGER = 'manager',
+    LOCAL_ADMIN = 'localadmin',
+    ADMIN = 'admin',
+}
+
 export interface User {
     created?: string;
     createdbyuid?: string;
