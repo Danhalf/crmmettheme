@@ -7,6 +7,7 @@ import { UsersListSearchComponent } from '../smallComponents/search/Search';
 import { UserModal } from './UserModal/parts/UserModal';
 import { UsersTable } from './table/UsersTable';
 import { UserContext } from 'Content';
+import { UserPermissions } from 'common/interfaces/UserData';
 
 export const Users = () => {
     const [addUserModalEnabled, setAddUserModalEnabled] = useState<boolean>(false);
@@ -20,8 +21,10 @@ export const Users = () => {
         setPermission(userPermission);
     }, [userPermission]);
 
-    // eslint-disable-next-line no-console
-    console.log(permission);
+    const isUserPermission =
+        permission === UserPermissions.ADMIN ||
+        permission === UserPermissions.LOCAL_ADMIN ||
+        permission === UserPermissions.MANAGER;
 
     return (
         <QueryRequestProvider>
@@ -36,14 +39,14 @@ export const Users = () => {
                         <div className='tab-content' id='myTabContentInner'>
                             <div className='d-flex w-100 justify-content-between my-4'>
                                 <UsersListSearchComponent />
-                                {
+                                {isUserPermission && (
                                     <PrimaryButton
                                         icon='plus'
                                         buttonClickAction={handleAddUserModalOpen}
                                     >
                                         Add User
                                     </PrimaryButton>
-                                }
+                                )}
                             </div>
                             <UsersTable />
                         </div>

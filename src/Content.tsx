@@ -32,13 +32,20 @@ type UserPermissionsContext = {
 
 const userLocalStorage = localStorage.getItem(STORAGE_USER);
 
+const savedPermission =
+    (userLocalStorage &&
+        (!!JSON.parse(userLocalStorage)?.isadmin
+            ? UserPermissions.ADMIN
+            : !!JSON.parse(userLocalStorage)?.ismanager && UserPermissions.MANAGER)) ||
+    UserPermissions.USER;
+
 export const UserContext = createContext<UserPermissionsContext>({
-    userPermission: !!userLocalStorage ? JSON.parse(userLocalStorage)?.a : null,
+    userPermission: savedPermission,
     setUserPermission: () => {},
 });
 
 const Content = () => {
-    const [userPermission, setUserPermission] = useState<UserPermissions>(UserPermissions.USER);
+    const [userPermission, setUserPermission] = useState<UserPermissions>(savedPermission);
 
     useAuthInterceptor();
     return (
