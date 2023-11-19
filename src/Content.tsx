@@ -1,6 +1,6 @@
 import { Billing } from 'components/dashboard/Billing';
 import { Reports } from 'components/dashboard/Reports';
-import { createContext, useContext, useEffect } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Login } from './components/Login';
 import { UserCard } from './components/dashboard/users/UserCard';
@@ -9,6 +9,7 @@ import { MenuComponent } from '_metronic/assets/ts/components/MenuComponent';
 import { useAuthInterceptor } from 'services/auth.interceptor';
 import { PrivateRoute } from 'router/privateRouter';
 import { UserPermissions } from 'common/interfaces/UserData';
+import { STORAGE_USER } from 'app-consts';
 
 export function MasterInit() {
     const pluginsInitialization = () => {
@@ -25,21 +26,24 @@ export function MasterInit() {
 }
 
 type UserPermissionsContext = {
-    userPermissions: UserPermissions[];
-    setUserPermissions: (permissions: UserPermissions[]) => void;
+    userPermission: UserPermissions;
+    setUserPermission: React.Dispatch<React.SetStateAction<UserPermissions>>;
 };
 
+const userLocalStorage = localStorage.getItem(STORAGE_USER);
+
 export const UserContext = createContext<UserPermissionsContext>({
-    userPermissions: [UserPermissions.USER],
-    setUserPermissions: () => {},
+    userPermission: !!userLocalStorage ? JSON.parse(userLocalStorage)?.a : null,
+    setUserPermission: () => {},
 });
 
 const Content = () => {
-    const { userPermissions, setUserPermissions } = useContext(UserContext);
+    const [userPermission, setUserPermission] = useState<UserPermissions>(UserPermissions.USER);
+
     useAuthInterceptor();
     return (
         <div className='d-flex flex-column flex-lg-row flex-column-fluid h-100'>
-            <UserContext.Provider value={{ userPermissions, setUserPermissions }}>
+            <UserContext.Provider value={{ userPermission, setUserPermission }}>
                 <MasterInit />
                 <Routes>
                     <Route path='/' element={<Login />} />

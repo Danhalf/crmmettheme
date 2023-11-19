@@ -2,7 +2,6 @@ import clsx from 'clsx';
 import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, useContext, useEffect, useState } from 'react';
 import * as Yup from 'yup';
-
 import { login } from '../services/auth.service';
 import { useNavigate } from 'react-router-dom';
 import { STORAGE_USER } from 'app-consts';
@@ -10,14 +9,7 @@ import { getToken } from 'services/utils';
 import { useTokenValidation } from 'common/hooks/useTokenValidation';
 import { Status } from 'common/interfaces/ActionStatus';
 import { UserContext } from 'Content';
-import { UserPermissions } from 'common/interfaces/UserData';
-
-const permissionMappings = {
-    isadmin: UserPermissions.ADMIN,
-    islocaladmin: UserPermissions.LOCAL_ADMIN,
-    ismanager: UserPermissions.MANAGER,
-    issalesperson: UserPermissions.SALES_PERSON,
-};
+import { responseMappings } from 'common/interfaces/UserData';
 
 interface LoginCredentials {
     username: string;
@@ -42,7 +34,7 @@ export function Login() {
     const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
     const [passwordFieldIcon, setPasswordFieldIcon] = useState<PasswordFieldIcon>('ki-eye');
 
-    const { setUserPermissions } = useContext(UserContext);
+    const { setUserPermission } = useContext(UserContext);
 
     const navigate = useNavigate();
     const token = getToken();
@@ -77,15 +69,15 @@ export function Login() {
                 .then((response) => {
                     if (response && response?.status === Status.OK) {
                         setStatus(false);
-                        const updatedPermissions = [];
 
-                        for (const key in permissionMappings) {
-                            if (Number(response[key]) === 1) {
-                                //@ts-ignore
-                                updatedPermissions.push(permissionMappings[key]);
+                        Object.entries(responseMappings).some(([field, role]) => {
+                            if (!!response[field]) {
+                                setUserPermission(role);
+                                return true;
                             }
-                        }
-                        setUserPermissions(updatedPermissions);
+                            return false;
+                        });
+
                         localStorage.setItem(STORAGE_USER, JSON.stringify(response));
                         navigate('/dashboard');
                     }

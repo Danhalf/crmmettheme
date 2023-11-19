@@ -12,16 +12,16 @@ export const Users = () => {
     const [addUserModalEnabled, setAddUserModalEnabled] = useState<boolean>(false);
     const handleAddUserModalOpen = () => setAddUserModalEnabled(!addUserModalEnabled);
 
-    const { userPermissions } = useContext(UserContext);
+    const { userPermission } = useContext(UserContext);
 
-    const [user, setUser] = useState(['']);
+    const [permission, setPermission] = useState('');
 
     useEffect(() => {
-        setUser([...userPermissions]);
-    }, []);
+        setPermission(userPermission);
+    }, [userPermission]);
 
     // eslint-disable-next-line no-console
-    console.log(user);
+    console.log(permission);
 
     return (
         <QueryRequestProvider>
