@@ -211,6 +211,7 @@ export const UserSettingsModal = ({
                                                 id={key}
                                                 name={key}
                                                 title={title}
+                                                mask={'double'}
                                                 action={handleChangeUserSettings}
                                             />
                                         )}
