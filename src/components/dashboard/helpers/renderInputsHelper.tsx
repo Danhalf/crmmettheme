@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { SettingKey } from 'common/interfaces/users/UserConsts';
-import { SettingGroup } from 'common/interfaces/users/UserGroups';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 interface CustomInputProps {
