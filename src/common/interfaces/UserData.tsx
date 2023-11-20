@@ -6,6 +6,21 @@ export interface UserInputData {
     password: string;
 }
 
+export enum UserPermissions {
+    USER = 'user',
+    SALES_PERSON = 'sales_person',
+    MANAGER = 'manager',
+    LOCAL_ADMIN = 'localadmin',
+    ADMIN = 'admin',
+}
+
+export const responseMappings = {
+    isadmin: UserPermissions.ADMIN,
+    islocaladmin: UserPermissions.LOCAL_ADMIN,
+    ismanager: UserPermissions.MANAGER,
+    issalesperson: UserPermissions.SALES_PERSON,
+};
+
 export interface User {
     created?: string;
     createdbyuid?: string;
