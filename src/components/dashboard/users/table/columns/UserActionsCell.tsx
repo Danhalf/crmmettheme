@@ -114,7 +114,7 @@ export const UserActionsCell = ({ useruid, username }: User) => {
             {userPermissionsModalEnabled && (
                 <CustomModal
                     onClose={() => setUserPermissionsModalEnabled(false)}
-                    title={`${username} user permissions: `}
+                    title={`Set ${username} permissions: `}
                 >
                     <UserPermissionsModal
                         onClose={() => setUserPermissionsModalEnabled(false)}
@@ -127,7 +127,7 @@ export const UserActionsCell = ({ useruid, username }: User) => {
             {userSettingsModalEnabled && (
                 <CustomModal
                     onClose={() => setUserSettingssModalEnabled(false)}
-                    title={`${username} user settings: `}
+                    title={`Set ${username} settings: `}
                 >
                     <UserSettingsModal
                         onClose={() => setUserSettingssModalEnabled(false)}
@@ -139,7 +139,7 @@ export const UserActionsCell = ({ useruid, username }: User) => {
             {userOptionalModalEnabled && (
                 <CustomModal
                     onClose={() => setUserOptionalsModalEnabled(false)}
-                    title={`${username} user settings: `}
+                    title={`Set ${username} optional data: `}
                 >
                     <UserOptionalModal
                         onClose={() => setUserOptionalsModalEnabled(false)}
