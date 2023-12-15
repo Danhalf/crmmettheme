@@ -4,7 +4,7 @@ import * as Yup from 'yup';
 import { TOAST_DURATION, useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, useState } from 'react';
-import { createOrUpdateUser } from 'services/user.service';
+import { createOrUpdateUser, getIsUsernameValid } from 'services/user.service';
 import { User, UserInputData } from 'common/interfaces/UserData';
 import { useQueryResponse } from 'common/core/QueryResponseProvider';
 
@@ -78,6 +78,11 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
 
     const formik = useFormik({
         initialValues: initialUserData,
+        validate: (values) => {
+            const errors: any = {};
+            getIsUsernameValid(values.username).then((res) => {});
+            return errors;
+        },
         validationSchema: addUserSchema,
         onSubmit: async ({ username, password, confirmPassword }, { setSubmitting }) => {
             if (password !== confirmPassword) {

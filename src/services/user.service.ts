@@ -137,3 +137,7 @@ export const listSalesPersons = (uid: string): Promise<string> => {
 export const getUserShortInfo = (uid: string): Promise<ShortUserInfo> => {
     return fetchApiData<ShortUserInfo>('GET', `user/${uid}/username`);
 };
+
+export const getIsUsernameValid = (username: string): Promise<ShortUserInfo> => {
+    return fetchApiData<ShortUserInfo>('POST', `user/checkuser`, { data: { username } });
+};
