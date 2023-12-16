@@ -4,21 +4,15 @@ import { API_URL } from '../app-consts';
 import {
     ShortUserInfo,
     User,
+    UserCreateValidationResponse,
     UserPermissionsData,
     UserPermissionsRecord,
 } from 'common/interfaces/UserData';
 import { UserQuery } from 'common/interfaces/QueriesParams';
-
-export enum Status {
-    // eslint-disable-next-line no-unused-vars
-    OK = 'OK',
-}
+import { ActionStatus } from 'common/interfaces/ActionStatus';
+export { Status } from 'common/interfaces/ActionStatus';
 
 type Method = 'GET' | 'POST';
-
-type ActionStatus = {
-    status: Status;
-};
 
 const fetchApiData = async <T>(
     method: Method,
@@ -138,6 +132,8 @@ export const getUserShortInfo = (uid: string): Promise<ShortUserInfo> => {
     return fetchApiData<ShortUserInfo>('GET', `user/${uid}/username`);
 };
 
-export const getIsUsernameValid = (username: string): Promise<ShortUserInfo> => {
-    return fetchApiData<ShortUserInfo>('POST', `user/checkuser`, { data: { username } });
+export const getIsUsernameValid = (username: string): Promise<UserCreateValidationResponse> => {
+    return fetchApiData<UserCreateValidationResponse>('POST', `user/checkuser`, {
+        data: { username },
+    });
 };

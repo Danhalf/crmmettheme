@@ -1,12 +1,13 @@
-import { AxiosError } from 'axios';
 import clsx from 'clsx';
 import * as Yup from 'yup';
-import { TOAST_DURATION, useToast } from 'components/dashboard/helpers/renderToastHelper';
+import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, useState } from 'react';
 import { createOrUpdateUser, getIsUsernameValid } from 'services/user.service';
 import { User, UserInputData } from 'common/interfaces/UserData';
 import { useQueryResponse } from 'common/core/QueryResponseProvider';
+import { useDebounce } from '_metronic/helpers';
+import { Status } from 'common/interfaces/ActionStatus';
 
 interface UserModalProps {
     onClose: () => void;
@@ -27,6 +28,7 @@ enum PassIcon {
 
 export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+    const [username, setUsername] = useState<string>(user?.username || '');
     const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
     const [confirmPasswordFieldType, setConfirmPasswordFieldType] =
@@ -34,37 +36,31 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
     const { refetch } = useQueryResponse();
 
     const initialUserData: UserModalData = {
-        username: user?.username || '',
+        username,
         password: '',
         confirmPassword: '',
     };
 
+    const debouncedUsername = useDebounce(username, 500);
+
     const { handleShowToast } = useToast();
 
+    const togglePasswordVisibility = (isVisible, setIsVisible, setFieldType) => {
+        const newFieldType = isVisible ? 'password' : 'text';
+        setFieldType(newFieldType);
+        setIsVisible(!isVisible);
+    };
+
     const handleChangePasswordVisible = () => {
-        switch (isPasswordVisible) {
-            case true:
-                setPasswordFieldType('password');
-                setIsPasswordVisible(false);
-                break;
-            case false:
-                setPasswordFieldType('text');
-                setIsPasswordVisible(true);
-                break;
-        }
+        togglePasswordVisibility(isPasswordVisible, setIsPasswordVisible, setPasswordFieldType);
     };
 
     const handleChangeConfirmPasswordVisible = () => {
-        switch (isConfirmPasswordVisible) {
-            case true:
-                setConfirmPasswordFieldType('password');
-                setIsConfirmPasswordVisible(false);
-                break;
-            case false:
-                setConfirmPasswordFieldType('text');
-                setIsConfirmPasswordVisible(true);
-                break;
-        }
+        togglePasswordVisibility(
+            isConfirmPasswordVisible,
+            setIsConfirmPasswordVisible,
+            setConfirmPasswordFieldType
+        );
     };
 
     const addUserSchema = Yup.object().shape({
@@ -76,12 +72,39 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
             .required('Password confirmation is required'),
     });
 
+    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
     const formik = useFormik({
         initialValues: initialUserData,
-        validate: (values) => {
-            const errors: any = {};
-            getIsUsernameValid(values.username).then((res) => {});
-            return errors;
+        validate: async (values): Promise<Partial<UserModalData>> => {
+            // const errors: Partial<UserModalData> = {};
+            // setUsername(values.username);
+            // await debouncedUsername;
+            // if (debouncedUsername) {
+            //     getIsUsernameValid(debouncedUsername).then((response) => {
+            //         if (response.status === Status.OK && response.exists) {
+            //             errors.username = `The ${response.username} is already exists!`;
+            //         }
+            //         if (response.status === Status.ERROR) {
+            //             errors.username = response.error;
+            //         }
+            //     });
+            // }
+            // return errors;
+            return sleep(800).then(async () => {
+                const errors: Partial<UserModalData> = {};
+
+                await getIsUsernameValid(values.username).then((response) => {
+                    if (response.status === Status.OK && response.exists === true) {
+                        errors.username = `The ${response.username} is already exists!`;
+                    }
+                    if (response.status === Status.ERROR) {
+                        errors.username = response.error;
+                    }
+                });
+
+                return errors;
+            });
         },
         validationSchema: addUserSchema,
         onSubmit: async ({ username, password, confirmPassword }, { setSubmitting }) => {
@@ -126,7 +149,7 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
 
     return (
         <>
-            <form className='form' onSubmit={formik.handleSubmit} noValidate>
+            <form className='form' onSubmit={formik.handleSubmit}>
                 <div className='d-flex flex-column scroll-y me-n7 pe-7'>
                     <div className='fv-row mb-8'>
                         <label className='form-label fs-6 fw-bolder text-dark'>Username</label>
@@ -242,8 +265,8 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
                         <span className='indicator-label'>Submit</span>
                         {formik.isSubmitting && (
                             <span className='indicator-progress'>
-                                Please wait...{' '}
-                                <span className='spinner-border spinner-border-sm align-middle ms-2'></span>
+                                Please wait...
+                                <span className='spinner-border spinner-border-sm align-middle ms-2' />
                             </span>
                         )}
                     </button>
