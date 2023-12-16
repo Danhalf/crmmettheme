@@ -2,12 +2,12 @@ import clsx from 'clsx';
 import * as Yup from 'yup';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { useFormik } from 'formik';
-import { HTMLInputTypeAttribute, useState } from 'react';
+import { HTMLInputTypeAttribute, SetStateAction, useState } from 'react';
 import { createOrUpdateUser, getIsUsernameValid } from 'services/user.service';
 import { User, UserInputData } from 'common/interfaces/UserData';
 import { useQueryResponse } from 'common/core/QueryResponseProvider';
-import { useDebounce } from '_metronic/helpers';
 import { Status } from 'common/interfaces/ActionStatus';
+import { throttle } from '_metronic/helpers/crud-helper/helpers';
 
 interface UserModalProps {
     onClose: () => void;
@@ -28,24 +28,36 @@ enum PassIcon {
 
 export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-    const [username, setUsername] = useState<string>(user?.username || '');
     const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
+
+    const [username, setUsername] = useState<string>('');
+    const [usernameError, setUsernameError] = useState<string>('');
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
     const [confirmPasswordFieldType, setConfirmPasswordFieldType] =
         useState<HTMLInputTypeAttribute>('password');
     const { refetch } = useQueryResponse();
 
     const initialUserData: UserModalData = {
-        username,
+        username: user?.username || '',
         password: '',
         confirmPassword: '',
     };
 
-    const debouncedUsername = useDebounce(username, 500);
-
     const { handleShowToast } = useToast();
 
-    const togglePasswordVisibility = (isVisible, setIsVisible, setFieldType) => {
+    const togglePasswordVisibility = (
+        isVisible: boolean,
+        setIsVisible: {
+            (value: SetStateAction<boolean>): void;
+            (value: SetStateAction<boolean>): void;
+            (arg0: boolean): void;
+        },
+        setFieldType: {
+            (value: SetStateAction<HTMLInputTypeAttribute>): void;
+            (value: SetStateAction<HTMLInputTypeAttribute>): void;
+            (arg0: string): void;
+        }
+    ) => {
         const newFieldType = isVisible ? 'password' : 'text';
         setFieldType(newFieldType);
         setIsVisible(!isVisible);
@@ -72,28 +84,26 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
             .required('Password confirmation is required'),
     });
 
+    const isUserNameValid = () => {
+        getIsUsernameValid(username).then((response) => {
+            if (response.status === Status.OK && response.exists === true) {
+                setUsernameError(`The ${response.username} is already exists!`);
+            }
+            if (response.status === Status.ERROR) {
+                setUsernameError(response.info);
+            }
+        });
+    };
+
+    const throttledValidation = throttle(isUserNameValid, 1500);
+
     const formik = useFormik({
         initialValues: initialUserData,
         validate: async (values): Promise<Partial<UserModalData>> => {
-            const errors: Partial<UserModalData> = {};
-
             setUsername(values.username);
-            await debouncedUsername;
-            if (debouncedUsername) {
-                await getIsUsernameValid(debouncedUsername).then((response) => {
-                    try {
-                        if (response.status === Status.OK && response.exists === true) {
-                            errors.username = `The ${response.username} is already exists!`;
-                        }
-                    } catch (error) {
-                        if (response.status === Status.ERROR) {
-                            errors.username = response.error;
-                        }
-                    }
-                });
-            }
+            await throttledValidation();
 
-            return errors;
+            return { username: usernameError };
         },
         validationSchema: addUserSchema,
         onSubmit: async ({ username, password, confirmPassword }, { setSubmitting }) => {

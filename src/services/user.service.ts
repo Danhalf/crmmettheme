@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getToken } from './utils';
 import { API_URL } from '../app-consts';
 import {
@@ -21,6 +21,7 @@ const fetchApiData = async <T>(
 ): Promise<T> => {
     const headers = { Authorization: `Bearer ${getToken()}` };
     const { data, params } = options || {};
+
     try {
         const response: AxiosResponse<T> = await axios({
             method,
@@ -30,8 +31,8 @@ const fetchApiData = async <T>(
             headers,
         });
         return response.data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        return error?.data;
     }
 };
 
