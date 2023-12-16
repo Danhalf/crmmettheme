@@ -72,39 +72,28 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
             .required('Password confirmation is required'),
     });
 
-    const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
     const formik = useFormik({
         initialValues: initialUserData,
         validate: async (values): Promise<Partial<UserModalData>> => {
-            // const errors: Partial<UserModalData> = {};
-            // setUsername(values.username);
-            // await debouncedUsername;
-            // if (debouncedUsername) {
-            //     getIsUsernameValid(debouncedUsername).then((response) => {
-            //         if (response.status === Status.OK && response.exists) {
-            //             errors.username = `The ${response.username} is already exists!`;
-            //         }
-            //         if (response.status === Status.ERROR) {
-            //             errors.username = response.error;
-            //         }
-            //     });
-            // }
-            // return errors;
-            return sleep(800).then(async () => {
-                const errors: Partial<UserModalData> = {};
+            const errors: Partial<UserModalData> = {};
 
-                await getIsUsernameValid(values.username).then((response) => {
-                    if (response.status === Status.OK && response.exists === true) {
-                        errors.username = `The ${response.username} is already exists!`;
-                    }
-                    if (response.status === Status.ERROR) {
-                        errors.username = response.error;
+            setUsername(values.username);
+            await debouncedUsername;
+            if (debouncedUsername) {
+                await getIsUsernameValid(debouncedUsername).then((response) => {
+                    try {
+                        if (response.status === Status.OK && response.exists === true) {
+                            errors.username = `The ${response.username} is already exists!`;
+                        }
+                    } catch (error) {
+                        if (response.status === Status.ERROR) {
+                            errors.username = response.error;
+                        }
                     }
                 });
+            }
 
-                return errors;
-            });
+            return errors;
         },
         validationSchema: addUserSchema,
         onSubmit: async ({ username, password, confirmPassword }, { setSubmitting }) => {
