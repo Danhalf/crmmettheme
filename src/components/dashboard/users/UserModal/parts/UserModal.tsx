@@ -25,16 +25,17 @@ enum PassIcon {
 }
 
 export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
-    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
-    const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
-
     const [username, setUsername] = useState<string>(user?.username || '');
     const [usernameError, setUsernameError] = useState<string>('');
+    const [debouncedInputValue, setDebouncedInputValue] = useState<string>('');
+
+    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+    const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
     const [confirmPasswordFieldType, setConfirmPasswordFieldType] =
         useState<HTMLInputTypeAttribute>('password');
+
     const { refetch } = useQueryResponse();
-    const [debouncedInputValue, setDebouncedInputValue] = useState('');
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
