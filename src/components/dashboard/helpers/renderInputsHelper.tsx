@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
 import { SettingKey } from 'common/interfaces/users/UserConsts';
-import { SettingGroup } from 'common/interfaces/users/UserGroups';
 import { ChangeEvent, useEffect, useState } from 'react';
 
 interface CustomInputProps {
@@ -63,7 +62,7 @@ export const CustomCheckbox = ({ currentValue, id, name, title, action }: Custom
     }, [name, value, currentValue, action]);
 
     return (
-        <div className='mb-4'>
+        <div className='mb-4 fw-bolder fs-6'>
             <div className='form-check form-check-custom form-check-solid'>
                 <input
                     className='form-check-input cursor-pointer'
