@@ -82,7 +82,7 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
     };
 
     const addUserSchema = Yup.object().shape({
-        username: Yup.string().trim().required('Username is required'),
+        username: Yup.string().min(5).max(64).trim().required('Username is required'),
         password: Yup.string().trim().required('Password is required'),
         confirmPassword: Yup.string()
             .trim()
