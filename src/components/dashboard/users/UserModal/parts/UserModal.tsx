@@ -1,13 +1,14 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable no-unused-vars */
 import clsx from 'clsx';
 import * as Yup from 'yup';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { useFormik } from 'formik';
-import { HTMLInputTypeAttribute, SetStateAction, useState } from 'react';
+import { HTMLInputTypeAttribute, SetStateAction, useEffect, useState } from 'react';
 import { createOrUpdateUser, getIsUsernameValid } from 'services/user.service';
 import { User, UserInputData } from 'common/interfaces/UserData';
 import { useQueryResponse } from 'common/core/QueryResponseProvider';
 import { Status } from 'common/interfaces/ActionStatus';
-import { throttle } from '_metronic/helpers/crud-helper/helpers';
 
 interface UserModalProps {
     onClose: () => void;
@@ -18,11 +19,8 @@ interface UserModalData extends UserInputData {
     confirmPassword: '';
 }
 
-// eslint-disable-next-line no-unused-vars
 enum PassIcon {
-    // eslint-disable-next-line no-unused-vars
     SHOW = 'ki-eye',
-    // eslint-disable-next-line no-unused-vars
     HIDDEN = 'ki-eye-slash',
 }
 
@@ -30,15 +28,23 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
     const [passwordFieldType, setPasswordFieldType] = useState<HTMLInputTypeAttribute>('password');
 
-    const [username, setUsername] = useState<string>('');
+    const [username, setUsername] = useState<string>(user?.username || '');
     const [usernameError, setUsernameError] = useState<string>('');
     const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState<boolean>(false);
     const [confirmPasswordFieldType, setConfirmPasswordFieldType] =
         useState<HTMLInputTypeAttribute>('password');
     const { refetch } = useQueryResponse();
+    const [debouncedInputValue, setDebouncedInputValue] = useState('');
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => {
+            setDebouncedInputValue(username);
+        }, 500);
+        return () => clearTimeout(timeoutId);
+    }, [username]);
 
     const initialUserData: UserModalData = {
-        username: user?.username || '',
+        username,
         password: '',
         confirmPassword: '',
     };
@@ -84,25 +90,23 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
             .required('Password confirmation is required'),
     });
 
-    const isUserNameValid = () => {
+    useEffect(() => {
         getIsUsernameValid(username).then((response) => {
             if (response.status === Status.OK && response.exists === true) {
-                setUsernameError(`The ${response.username} is already exists!`);
+                setUsernameError(`The username ${response.username} is already exists!`);
+            } else {
+                setUsernameError('');
             }
             if (response.status === Status.ERROR) {
                 setUsernameError(response.info);
             }
         });
-    };
-
-    const throttledValidation = throttle(isUserNameValid, 1500);
+    }, [debouncedInputValue]);
 
     const formik = useFormik({
         initialValues: initialUserData,
         validate: async (values): Promise<Partial<UserModalData>> => {
-            setUsername(values.username);
-            await throttledValidation();
-
+            await setUsername(values.username);
             return { username: usernameError };
         },
         validationSchema: addUserSchema,
