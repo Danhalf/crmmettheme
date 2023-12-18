@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { useFormik } from 'formik';
 import { HTMLInputTypeAttribute, SetStateAction, useEffect, useState } from 'react';
-import { createOrUpdateUser, getIsUsernameValid } from 'services/user.service';
+import { createOrUpdateUser, checkUser } from 'services/user.service';
 import { User, UserInputData } from 'common/interfaces/UserData';
 import { useQueryResponse } from 'common/core/QueryResponseProvider';
 import { Status } from 'common/interfaces/ActionStatus';
@@ -105,7 +105,7 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
             );
         }
         if (username) {
-            getIsUsernameValid(username).then((response) => {
+            checkUser(username).then((response) => {
                 if (response.status === Status.OK && response.exists === true) {
                     setUsernameError(`The username ${response.username} is already exists!`);
                 } else {
@@ -284,7 +284,7 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
                         {formik.isSubmitting && (
                             <span className='indicator-progress'>
                                 Please wait...
-                                <span className='spinner-border spinner-border-sm align-middle ms-2' />
+                                <span className='spinner-border spinner-border-sm align-middle ms-2'></span>
                             </span>
                         )}
                     </button>

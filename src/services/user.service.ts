@@ -133,7 +133,7 @@ export const getUserShortInfo = (uid: string): Promise<ShortUserInfo> => {
     return fetchApiData<ShortUserInfo>('GET', `user/${uid}/username`);
 };
 
-export const getIsUsernameValid = (username: string): Promise<UserCreateValidationResponse> => {
+export const checkUser = (username: string): Promise<UserCreateValidationResponse> => {
     return fetchApiData<UserCreateValidationResponse>('POST', `user/checkuser`, {
         data: { username },
     });
