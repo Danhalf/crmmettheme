@@ -107,7 +107,7 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
         if (username) {
             getIsUsernameValid(username).then((response) => {
                 if (response.status === Status.OK && response.exists === true) {
-                    return setUsernameError(`The username ${response.username} is already exists!`);
+                    setUsernameError(`The username ${response.username} is already exists!`);
                 } else {
                     setUsernameError('');
                 }
