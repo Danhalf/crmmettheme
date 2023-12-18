@@ -15,6 +15,9 @@ interface UserModalProps {
     user?: User;
 }
 
+const MIN_LENGTH = 5;
+const MAX_LENGTH = 64;
+
 interface UserModalData extends UserInputData {
     confirmPassword: '';
 }
@@ -83,7 +86,11 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
     };
 
     const addUserSchema = Yup.object().shape({
-        username: Yup.string().min(5).max(64).trim().required('Username is required'),
+        username: Yup.string()
+            .min(MIN_LENGTH)
+            .max(MAX_LENGTH)
+            .trim()
+            .required('Username is required'),
         password: Yup.string().trim().required('Password is required'),
         confirmPassword: Yup.string()
             .trim()
@@ -92,16 +99,23 @@ export const UserModal = ({ onClose, user }: UserModalProps): JSX.Element => {
     });
 
     useEffect(() => {
-        getIsUsernameValid(username).then((response) => {
-            if (response.status === Status.OK && response.exists === true) {
-                setUsernameError(`The username ${response.username} is already exists!`);
-            } else {
-                setUsernameError('');
-            }
-            if (response.status === Status.ERROR) {
-                setUsernameError(response.info);
-            }
-        });
+        if (username.length < MIN_LENGTH || username.length > MAX_LENGTH) {
+            return setUsernameError(
+                `Username must be between ${MIN_LENGTH} and ${MAX_LENGTH} characters.`
+            );
+        }
+        if (username) {
+            getIsUsernameValid(username).then((response) => {
+                if (response.status === Status.OK && response.exists === true) {
+                    return setUsernameError(`The username ${response.username} is already exists!`);
+                } else {
+                    setUsernameError('');
+                }
+                if (response.status === Status.ERROR) {
+                    setUsernameError(response.info);
+                }
+            });
+        }
     }, [debouncedInputValue]);
 
     const formik = useFormik({
