@@ -20,6 +20,7 @@ import {
 import { AxiosError } from 'axios';
 import { sortPermissions, filterObjectValues } from './data/permissions';
 import { useToast } from '../helpers/renderToastHelper';
+import { ApiKeys } from './ApiKeys/ApiKeys';
 
 enum UserCardTabs {
     PROFILE = 'Profile',
@@ -32,6 +33,7 @@ enum UserCardTabs {
     LOGINS = 'Logins',
     SUBUSERS = 'Subusers',
     SALESPERSONS = 'Sales persons',
+    API_KEYS = 'API keys',
 }
 
 const userCardTabsArray: string[] = Object.values(UserCardTabs) as string[];
@@ -200,6 +202,11 @@ export function UserCard() {
                     <TabPanel activeTab={activeTab} tabName={UserCardTabs.SALESPERSONS}>
                         <TabDataWrapper data={userSalesPersonsJSON} />
                     </TabPanel>
+                    {id && (
+                        <TabPanel activeTab={activeTab} tabName={UserCardTabs.API_KEYS}>
+                            <ApiKeys useruid={id} />
+                        </TabPanel>
+                    )}
                 </div>
             </div>
         </div>
