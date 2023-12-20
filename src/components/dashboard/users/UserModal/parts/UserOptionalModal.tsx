@@ -58,12 +58,12 @@ export const UserOptionalModal = ({
     const UserOptionalSchema = Yup.object().shape({
         locEmail1: Yup.string().email('Please enter valid email address'),
         locEmail2: Yup.string().email('Please enter valid email address'),
-        locPhone1: Yup.string().matches(/^[\d-]{10,16}$/, {
-            message: 'Please enter a valid number with only digits/dashes.',
+        locPhone1: Yup.string().matches(/^[\d]{10,13}$/, {
+            message: 'Please enter a valid number.',
             excludeEmptyString: false,
         }),
-        locPhone2: Yup.string().matches(/^[\d-]{10,16}$/, {
-            message: 'Please enter a valid number with only digits/dashes.',
+        locPhone2: Yup.string().matches(/d{10,13}$/, {
+            message: 'Please enter a valid number.',
             excludeEmptyString: false,
         }),
         locZIP: Yup.string().matches(/^\d{5}$/, 'Please enter a valid 5-digit ZIP'),
@@ -110,7 +110,11 @@ export const UserOptionalModal = ({
     const handleChangeUserOptional = useCallback(
         (event: ChangeEvent<HTMLInputElement>, index: number) => {
             const { name, value } = event.target;
-            optional[index][name] = value;
+            let newValue = value;
+            if (name === 'locPhone1' || name === 'locPhone2') {
+                newValue = value.replace(/[^0-9]/g, '');
+            }
+            optional[index][name] = newValue;
 
             setOptional([...optional]);
         },
