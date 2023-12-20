@@ -5,6 +5,7 @@ type CustomModalProps = {
     onClose: () => void;
     title?: string;
     footerAction?: () => void;
+    width?: number;
 };
 
 const UserModalHeader = ({ onClose, title }: CustomModalProps): JSX.Element => {
@@ -37,6 +38,7 @@ export const CustomModal = ({
     title,
     onClose,
     footerAction,
+    width,
     children,
 }: PropsWithChildren<CustomModalProps>): JSX.Element => {
     const handleKeyDown = useCallback(
@@ -67,7 +69,7 @@ export const CustomModal = ({
                 tabIndex={-1}
                 aria-modal='true'
             >
-                <div className='modal-dialog modal-dialog-centered mw-650px'>
+                <div className={`modal-dialog modal-dialog-centered mw-${width || 650}px`}>
                     <div className='modal-content'>
                         <UserModalHeader onClose={onClose} title={title} />
                         <div className='modal-body scroll-y my-7 z-index-1'>{children}</div>

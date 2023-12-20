@@ -16,11 +16,11 @@ export enum Status {
 
 type Method = 'GET' | 'POST';
 
-type ActionStatus = {
+export type ActionStatus = {
     status: Status;
 };
 
-const fetchApiData = async <T>(
+export const fetchApiData = async <T>(
     method: Method,
     url: string,
     options?: { data?: unknown; params?: UserQuery }
