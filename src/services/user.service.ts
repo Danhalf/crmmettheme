@@ -1,24 +1,18 @@
-import axios, { AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosResponse } from 'axios';
 import { getToken } from './utils';
 import { API_URL } from '../app-consts';
 import {
     ShortUserInfo,
     User,
+    UserCreateValidationResponse,
     UserPermissionsData,
     UserPermissionsRecord,
 } from 'common/interfaces/UserData';
 import { UserQuery } from 'common/interfaces/QueriesParams';
-
-export enum Status {
-    // eslint-disable-next-line no-unused-vars
-    OK = 'OK',
-}
+import { ActionStatus } from 'common/interfaces/ActionStatus';
+export { Status } from 'common/interfaces/ActionStatus';
 
 type Method = 'GET' | 'POST';
-
-type ActionStatus = {
-    status: Status;
-};
 
 const fetchApiData = async <T>(
     method: Method,
@@ -27,6 +21,7 @@ const fetchApiData = async <T>(
 ): Promise<T> => {
     const headers = { Authorization: `Bearer ${getToken()}` };
     const { data, params } = options || {};
+
     try {
         const response: AxiosResponse<T> = await axios({
             method,
@@ -36,8 +31,8 @@ const fetchApiData = async <T>(
             headers,
         });
         return response.data;
-    } catch (error) {
-        throw error;
+    } catch (error: any) {
+        return error?.data;
     }
 };
 
@@ -136,4 +131,10 @@ export const listSalesPersons = (uid: string): Promise<string> => {
 
 export const getUserShortInfo = (uid: string): Promise<ShortUserInfo> => {
     return fetchApiData<ShortUserInfo>('GET', `user/${uid}/username`);
+};
+
+export const checkUser = (username: string): Promise<UserCreateValidationResponse> => {
+    return fetchApiData<UserCreateValidationResponse>('POST', `user/checkuser`, {
+        data: { username },
+    });
 };

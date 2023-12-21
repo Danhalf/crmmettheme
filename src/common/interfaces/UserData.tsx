@@ -44,6 +44,20 @@ export interface ShortUserInfo {
     warning: string;
 }
 
+export interface UserCreateValidationError {
+    error: string;
+    info: string;
+    status: Status.ERROR;
+}
+
+export interface UserCreateValidationExists {
+    exists: boolean;
+    status: Status.OK;
+    username: string;
+}
+
+export type UserCreateValidationResponse = UserCreateValidationError | UserCreateValidationExists;
+
 export interface UserPermissionsRecord {
     [key: string]: number;
 }
