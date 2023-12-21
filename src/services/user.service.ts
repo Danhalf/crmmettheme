@@ -1,4 +1,4 @@
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { getToken } from './utils';
 import { API_URL } from '../app-consts';
 import {
@@ -13,11 +13,6 @@ import { ActionStatus } from 'common/interfaces/ActionStatus';
 export { Status } from 'common/interfaces/ActionStatus';
 
 type Method = 'GET' | 'POST';
-
-
-export type ActionStatus = {
-    status: Status;
-};
 
 export const fetchApiData = async <T>(
     method: Method,

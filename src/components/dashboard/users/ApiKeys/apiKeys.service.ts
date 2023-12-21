@@ -1,5 +1,6 @@
+import { ActionStatus } from 'common/interfaces/ActionStatus';
 import { ApiKeyRecord, ApiTypesResponse } from 'common/interfaces/UserApiKeys';
-import { fetchApiData, ActionStatus, Status } from 'services/user.service';
+import { fetchApiData, Status } from 'services/user.service';
 
 export const getUserApiKeysList = (useruid: string): Promise<ApiKeyRecord[]> => {
     return fetchApiData<ApiKeyRecord[]>('GET', `user/${useruid}/apikeys`);
