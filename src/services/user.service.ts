@@ -14,7 +14,12 @@ export { Status } from 'common/interfaces/ActionStatus';
 
 type Method = 'GET' | 'POST';
 
-const fetchApiData = async <T>(
+
+export type ActionStatus = {
+    status: Status;
+};
+
+export const fetchApiData = async <T>(
     method: Method,
     url: string,
     options?: { data?: unknown; params?: UserQuery }
