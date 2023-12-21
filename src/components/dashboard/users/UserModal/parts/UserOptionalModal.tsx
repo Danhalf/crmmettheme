@@ -58,12 +58,12 @@ export const UserOptionalModal = ({
     const UserOptionalSchema = Yup.object().shape({
         locEmail1: Yup.string().email('Please enter valid email address'),
         locEmail2: Yup.string().email('Please enter valid email address'),
-        locPhone1: Yup.string().matches(/^[\d-]{10,16}$/, {
-            message: 'Please enter a valid number with only digits/dashes.',
+        locPhone1: Yup.string().matches(/^[\d]{10,13}$/, {
+            message: 'Please enter a valid number.',
             excludeEmptyString: false,
         }),
-        locPhone2: Yup.string().matches(/^[\d-]{10,16}$/, {
-            message: 'Please enter a valid number with only digits/dashes.',
+        locPhone2: Yup.string().matches(/d{10,13}$/, {
+            message: 'Please enter a valid number.',
             excludeEmptyString: false,
         }),
         locZIP: Yup.string().matches(/^\d{5}$/, 'Please enter a valid 5-digit ZIP'),
@@ -110,7 +110,11 @@ export const UserOptionalModal = ({
     const handleChangeUserOptional = useCallback(
         (event: ChangeEvent<HTMLInputElement>, index: number) => {
             const { name, value } = event.target;
-            optional[index][name] = value;
+            let newValue = value;
+            if (name === 'locPhone1' || name === 'locPhone2') {
+                newValue = value.replace(/[^0-9]/g, '');
+            }
+            optional[index][name] = newValue;
 
             setOptional([...optional]);
         },
@@ -175,29 +179,15 @@ export const UserOptionalModal = ({
                                             return (
                                                 <div className='fv-row mb-4' key={setting}>
                                                     <div className='row'>
-                                                        <div className='col-6 d-flex align-items-center'>
+                                                        <div className='col-4 d-flex pt-4'>
                                                             <label
                                                                 htmlFor={setting}
                                                                 className='fs-6 fw-bolder text-dark'
                                                             >
                                                                 {settingName}
-                                                                {touched[setting] &&
-                                                                    errors[setting] && (
-                                                                        <div className='fv-plugins-message-container position-absolute'>
-                                                                            <div className='fv-help-block'>
-                                                                                <span role='alert'>
-                                                                                    {String(
-                                                                                        errors[
-                                                                                            setting
-                                                                                        ]
-                                                                                    )}
-                                                                                </span>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
                                                             </label>
                                                         </div>
-                                                        <div className='col-6 d-flex align-items-center'>
+                                                        <div className='col-8 d-flex flex-column'>
                                                             <Field
                                                                 key={setting}
                                                                 autoComplete='off'
@@ -222,13 +212,27 @@ export const UserOptionalModal = ({
                                                                     }
                                                                 )}
                                                                 name={setting}
-                                                                onChange={(event) =>
+                                                                onChange={(
+                                                                    event: ChangeEvent<HTMLInputElement>
+                                                                ) =>
                                                                     handleChangeUserOptional(
                                                                         event,
                                                                         index
                                                                     )
                                                                 }
                                                             />
+                                                            {touched[setting] &&
+                                                                errors[setting] && (
+                                                                    <div className='fv-plugins-message-container'>
+                                                                        <div className='fv-help-block'>
+                                                                            <span role='alert'>
+                                                                                {String(
+                                                                                    errors[setting]
+                                                                                )}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
                                                         </div>
                                                     </div>
                                                 </div>
