@@ -13,8 +13,12 @@ interface CustomInputProps {
 interface CustomCheckboxProps extends CustomInputProps {
     action?: (value: [string, number]) => void;
 }
+
+type Mask = 'double' | 'currency';
+
 interface CustomTextInputProps extends Omit<CustomInputProps, 'currentValue'> {
     currentValue: string;
+    mask?: Mask;
     action?: (inputData: [string, string]) => void;
 }
 
@@ -40,6 +44,16 @@ export enum InputType {
     SELECT = 'selectInput',
     DEFAULT = 'defaultInput',
 }
+
+export const getMaskedValue = (value: string, mask: Mask): string => {
+    if (mask === 'double') {
+        return value.replace(/([^\d]*)(\d*(\.\d*)?)(.*)/, '$2');
+    }
+    if (mask === 'currency') {
+        return value.replace(/([^\d]*)(\d*(\.\d{0,2})?)(.*)/, '$2');
+    }
+    return value;
+};
 
 export const CustomCheckbox = ({ currentValue, id, name, title, action }: CustomCheckboxProps) => {
     const [value, setValue] = useState<number>(Number(currentValue));
@@ -88,10 +102,14 @@ export const CustomTextInput = ({
     title,
     action,
     disabled,
+    mask,
 }: CustomTextInputProps): JSX.Element => {
     const [inputValue, setInputValue] = useState(currentValue);
     const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const newValue = String(event.target.value).replace(/[^0-9.,]/g, '');
+        const newValue =
+            mask && !id.includes('fix')
+                ? getMaskedValue(event.target.value, mask)
+                : event.target.value;
         if (action) {
             setInputValue(newValue);
             action([name, newValue]);
