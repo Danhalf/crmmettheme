@@ -9,7 +9,7 @@ export type ID = undefined | null | number;
 
 export type PaginationState = {
     currentpage: number;
-    count: 10 | 30 | 50 | 100;
+    count: 5 | 10 | 15 | 20;
 };
 
 export type SortState = {

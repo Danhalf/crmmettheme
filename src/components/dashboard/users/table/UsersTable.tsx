@@ -4,34 +4,44 @@ import { useTable, ColumnInstance, Row } from 'react-table';
 import { CustomHeaderColumn } from './columns/CustomHeaderColumn';
 import { CustomRow } from './columns/CustomRow';
 import { usersColumns } from './columns/_columns';
-import { UsersListPagination } from 'components/dashboard/helpers/pagination/renderPagination';
 import { User } from 'common/interfaces/UserData';
 import { getTotalUsersRecords } from 'services/user.service';
+import { CustomPagination } from 'components/dashboard/helpers/pagination/renderPagination';
+import { DefaultRecordsPerPage, RecordsPerPage } from 'common/settings/settings';
+import { useQueryRequest } from 'common/core/QueryRequestProvider';
 
 export const UsersTable = () => {
-    const [totalRecords, setTotalRecords] = useState<number>(0);
-
+    const [listLength, setListLength] = useState<number>(0);
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const [currentCount, setCurrentCount] = useState<RecordsPerPage>(DefaultRecordsPerPage);
     const users = useQueryResponseData();
 
-    const isLoading = useQueryResponseLoading();
+    const { state, updateState } = useQueryRequest();
 
     useEffect(() => {
-        getTotalUsersRecords()
-            .then(({ total }) => {
-                setTotalRecords(total);
-            })
-            .catch(() => {
-                setTotalRecords(0);
-            });
-    }, []);
+        if (state.search) {
+            return setListLength(users.length);
+        }
+        getTotalUsersRecords().then((response) => setListLength(response.total));
+    }, [state.search, users.length]);
 
+    const handlePageChange = async (page: number) => {
+        await setCurrentPage(page);
+        updateState({ ...state, count: currentCount, currentpage: page * currentCount });
+    };
+
+    const handleCountChange = async (count: RecordsPerPage) => {
+        await setCurrentCount(count);
+        updateState({ ...state, count, currentpage: (Math.ceil(currentPage / count) + 1) * count });
+    };
+
+    const isLoading = useQueryResponseLoading();
     const usersData = useMemo(() => users, [users]);
     const columns = useMemo(() => usersColumns(), []);
     const { getTableProps, getTableBodyProps, headers, rows, prepareRow } = useTable({
         columns,
         data: usersData,
     });
-
     return (
         <>
             <div className='table-responsive position-relative '>
@@ -70,7 +80,12 @@ export const UsersTable = () => {
                     </tbody>
                 </table>
             </div>
-            <UsersListPagination totalRecords={totalRecords} />
+            <CustomPagination
+                records={listLength}
+                onPageChange={handlePageChange}
+                count={state.count}
+                onCountChange={handleCountChange}
+            />
         </>
     );
 };
