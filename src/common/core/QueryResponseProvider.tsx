@@ -7,13 +7,13 @@ import {
     initialQueryResponse,
     stringifyRequestQuery,
     Response,
-    initialQueryState,
 } from '_metronic/helpers';
 import { User, UsersType } from 'common/interfaces/UserData';
 import { UserQuery } from 'common/interfaces/QueriesParams';
 import { getUsers } from 'services/user.service';
 
 const QueryResponseContext = createResponseContext<User>(initialQueryResponse);
+
 export const QueryResponseProvider = ({ children }: PropsWithChildren<{}>) => {
     const { state } = useQueryRequest();
     const [query, setQuery] = useState<string>(stringifyRequestQuery(state));
@@ -27,11 +27,11 @@ export const QueryResponseProvider = ({ children }: PropsWithChildren<{}>) => {
         UsersType.ACTIVE,
         () => {
             const currentQuery: UserQuery = {
-                skip: state.currentpage || initialQueryState.currentpage,
-                top: state.count || initialQueryState.count,
-                column: state.sort || initialQueryState.sort,
-                qry: state.search || initialQueryState.search,
-                type: state.order || initialQueryState.order,
+                skip: state.currentpage,
+                top: state.count,
+                column: state.sort,
+                qry: state.search && `${state.search}.${state.sort}`,
+                type: state.order,
             };
 
             return getUsers(currentQuery);
@@ -44,7 +44,7 @@ export const QueryResponseProvider = ({ children }: PropsWithChildren<{}>) => {
             setQuery(updatedQuery);
             refetch();
         }
-    }, [updatedQuery]);
+    }, [updatedQuery, state]);
 
     const response: Response<User[]> = {
         data: axiosResponse,
