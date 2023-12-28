@@ -22,7 +22,9 @@ export const UsersTable = () => {
         if (state.search) {
             return setListLength(users.length);
         }
-        getTotalUsersRecords().then((response) => setListLength(response.total));
+        getTotalUsersRecords()
+            .then((response) => setListLength(response.total))
+            .catch(() => {});
     }, [state.search, users.length]);
 
     const handlePageChange = async (page: number) => {
