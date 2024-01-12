@@ -1,32 +1,63 @@
-import { useDebounce } from '_metronic/helpers';
+import { initialQueryState, useDebounce } from '_metronic/helpers';
+import clsx from 'clsx';
 import { useQueryRequest } from 'common/core/QueryRequestProvider';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, KeyboardEvent } from 'react';
 
 export const UsersListSearchComponent = () => {
     const { state, updateState } = useQueryRequest();
     const [searchTerm, setSearchTerm] = useState<string>('');
-    const debouncedSearchTerm = useDebounce(searchTerm, 150);
+    const [isSearchUnchanged, setIsSearchUnchanged] = useState<boolean>(true);
+
     useEffect(() => {
-        if (debouncedSearchTerm !== undefined && searchTerm !== undefined) {
-            updateState({ ...state, search: debouncedSearchTerm });
+        setIsSearchUnchanged(searchTerm === state.search);
+    }, [searchTerm, state.search]);
+
+    const handleSearch = (): void => {
+        if (!isSearchUnchanged) {
+            setIsSearchUnchanged(true);
+            try {
+                updateState({ ...state, search: searchTerm, currentpage: 0 });
+            } catch (error) {}
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [debouncedSearchTerm]);
+    };
+
+    const handleClear = (): void => {
+        setSearchTerm('');
+        updateState(initialQueryState);
+    };
+
+    const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>): void => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            handleSearch();
+        }
+    };
 
     return (
         <div className='d-flex align-items-center position-relative my-1'>
-            <i className='ki-duotone ki-magnifier fs-1 position-absolute ms-6'>
-                <span className='path1'></span>
-                <span className='path2'></span>
-            </i>
             <input
                 type='text'
                 data-kt-user-table-filter='search'
-                className='form-control form-control-solid w-250px ps-14'
+                className='form-control rounded-0 rounded-start-2 form-control-solid pe-4'
                 placeholder='Search user'
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyUp={handleKeyPress}
             />
+            {searchTerm && (
+                <i
+                    onClick={handleClear}
+                    className='ki-outline ki-cross fs-1 end-0 position-absolute me-20 px-2 cursor-pointer'
+                />
+            )}
+            <button
+                className={clsx('btn btn-primary rounded-0 rounded-end-2', {
+                    disabled: isSearchUnchanged,
+                })}
+                onClick={handleSearch}
+            >
+                <i className='ki-outline ki-magnifier fs-2' />
+            </button>
         </div>
     );
 };

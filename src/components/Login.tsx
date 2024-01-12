@@ -83,7 +83,11 @@ export function Login() {
                     }
                 })
                 .catch((err) => {
-                    setStatus(err.response.data.error);
+                    if (err.response) {
+                        setStatus(err.response.data.error);
+                    } else {
+                        setStatus(err.message);
+                    }
                 })
                 .finally(() => {
                     setSubmitting(false);
