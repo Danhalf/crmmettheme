@@ -31,7 +31,7 @@ export function DashboardHeader() {
         }
     };
     return (
-        <div id='kt_app_header' className='app-header'>
+        <div id='kt_app_header' className='app-header sticky-top'>
             {editUserModalEnabled && (
                 <CustomModal
                     onClose={() => setEditUserModalEnabled(false)}
