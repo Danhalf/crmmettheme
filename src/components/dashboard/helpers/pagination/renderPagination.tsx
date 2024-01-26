@@ -88,19 +88,19 @@ export const CustomPagination = ({
                         <i className='ki-outline ki-left fs-4'></i>
                     </a>
                 </li>
-                {!pageNumbers.length && (
-                    <li
-                        className={clsx('page-item', {
-                            disabled: isLoading,
-                            active: true,
-                        })}
-                    >
-                        <a href='#' className='page-link'>
-                            {1}
-                        </a>
-                    </li>
-                )}
 
+                    {!pageNumbers.length && (
+                        <li
+                            className={clsx('page-item', {
+                                disabled: isLoading,
+                                active: true,
+                            })}
+                        >
+                            <a href='#' className='page-link'>
+                                {1}
+                            </a>
+                        </li>
+                    )}
                 {pageNumbers.map((pageNumber) => {
                     if (
                         currentPage + VisiblePageCount > pageNumber &&
