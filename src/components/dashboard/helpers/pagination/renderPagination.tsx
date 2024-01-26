@@ -64,31 +64,31 @@ export const CustomPagination = ({
     };
 
     return (
-        <div className='w-100 py-6 col-sm-12 col-md-7 d-flex align-items-center justify-content-center'>
-            <div id='kt_table_users_paginate'>
-                <ul className='pagination'>
-                    <li
-                        className={clsx('page-item first', {
-                            disabled: isLoading || currentPage === 0,
-                        })}
+        <div className='w-100 ps-20 pe-2 py-6 col-sm-12 col-md-7 d-flex align-items-center justify-content-center'>
+            <ul className='ms-auto pagination'>
+                <li
+                    className={clsx('page-item first', {
+                        disabled: isLoading || currentPage === 0,
+                    })}
+                >
+                    <a href='#' className='page-link' onClick={() => handlePageChange(0)}>
+                        <i className='ki-outline ki-double-left fs-4'></i>
+                    </a>
+                </li>
+                <li
+                    className={clsx('page-item previous me-2', {
+                        disabled: isLoading || currentPage === 0,
+                    })}
+                >
+                    <a
+                        href='#'
+                        className='page-link'
+                        onClick={() => handlePageChange(currentPage - 1)}
                     >
-                        <a href='#' className='page-link' onClick={() => handlePageChange(0)}>
-                            <i className='ki-outline ki-double-left fs-4'></i>
-                        </a>
-                    </li>
-                    <li
-                        className={clsx('page-item previous me-6', {
-                            disabled: isLoading || currentPage === 0,
-                        })}
-                    >
-                        <a
-                            href='#'
-                            className='page-link'
-                            onClick={() => handlePageChange(currentPage - 1)}
-                        >
-                            <i className='ki-outline ki-left fs-4'></i>
-                        </a>
-                    </li>
+                        <i className='ki-outline ki-left fs-4'></i>
+                    </a>
+                </li>
+
                     {!pageNumbers.length && (
                         <li
                             className={clsx('page-item', {
@@ -101,80 +101,71 @@ export const CustomPagination = ({
                             </a>
                         </li>
                     )}
-
-                    {pageNumbers.map((pageNumber) => {
-                        if (
-                            currentPage + VisiblePageCount > pageNumber &&
-                            currentPage - VisiblePageCount < pageNumber
-                        ) {
-                            return (
-                                <li
-                                    key={pageNumber}
-                                    className={clsx('page-item', {
-                                        disabled: isLoading,
-                                        active: pageNumber === currentPage,
-                                    })}
+                {pageNumbers.map((pageNumber) => {
+                    if (
+                        currentPage + VisiblePageCount > pageNumber &&
+                        currentPage - VisiblePageCount < pageNumber
+                    ) {
+                        return (
+                            <li
+                                key={pageNumber}
+                                className={clsx('page-item', {
+                                    disabled: isLoading,
+                                    active: pageNumber === currentPage,
+                                })}
+                            >
+                                <a
+                                    href='#'
+                                    className='page-link'
+                                    onClick={() => handlePageChange(pageNumber)}
                                 >
-                                    <a
-                                        href='#'
-                                        className='page-link'
-                                        onClick={() => handlePageChange(pageNumber)}
-                                    >
-                                        {pageNumber + 1}
-                                    </a>
-                                </li>
-                            );
-                        } else return null;
-                    })}
+                                    {pageNumber + 1}
+                                </a>
+                            </li>
+                        );
+                    } else return null;
+                })}
 
-                    <li
-                        className={clsx('page-item next ms-6', {
-                            disabled: isLoading || currentPage >= totalPages - 1,
-                        })}
+                <li
+                    className={clsx('page-item next ms-2', {
+                        disabled: isLoading || currentPage >= totalPages - 1,
+                    })}
+                >
+                    <a
+                        href='#'
+                        className='page-link'
+                        onClick={() => handlePageChange(currentPage + 1)}
                     >
-                        <a
-                            href='#'
-                            className='page-link'
-                            onClick={() => handlePageChange(currentPage + 1)}
-                        >
-                            <i className='ki-outline ki-right fs-4'></i>
-                        </a>
-                    </li>
-                    <li
-                        className={clsx('page-item last', {
-                            disabled: isLoading || currentPage >= totalPages - 1,
-                        })}
+                        <i className='ki-outline ki-right fs-4'></i>
+                    </a>
+                </li>
+                <li
+                    className={clsx('page-item last', {
+                        disabled: isLoading || currentPage >= totalPages - 1,
+                    })}
+                >
+                    <a
+                        href='#'
+                        className='page-link'
+                        onClick={() => handlePageChange(totalPages - 1)}
                     >
-                        <a
-                            href='#'
-                            className='page-link'
-                            onClick={() => handlePageChange(totalPages - 1)}
-                        >
-                            <i className='ki-outline ki-double-right fs-4'></i>
-                        </a>
-                    </li>
-                </ul>
-                <div className='mt-4 text-center fs-5'>
-                    <label className='d-flex w-100 align-items-center gap-4 justify-content-center '>
-                        <span className='text-nowrap'>Records per page</span>
-                        <Form.Select
-                            aria-label='records-per-page'
-                            className='w-50'
-                            value={recordsPerPage}
-                            onChange={({ target }) =>
-                                handleCountChange(Number(target.value) as RecordsPerPage)
-                            }
-                        >
-                            {RecordsPerPageSteps.map((value) => (
-                                <option key={value} value={value}>
-                                    {value}
-                                </option>
-                            ))}
-                        </Form.Select>
-                    </label>
-                    <div className='mt-4 text-center fs-5'>Total records: {records}</div>
-                </div>
-            </div>
+                        <i className='ki-outline ki-double-right fs-4'></i>
+                    </a>
+                </li>
+            </ul>
+            <Form.Select
+                aria-label='records-per-page'
+                className='w-auto ms-4'
+                value={recordsPerPage}
+                onChange={({ target }) => handleCountChange(Number(target.value) as RecordsPerPage)}
+            >
+                {RecordsPerPageSteps.map((value) => (
+                    <option key={value} value={value}>
+                        {value}
+                    </option>
+                ))}
+            </Form.Select>
+            <div className='ms-auto text-gray-500 fs-5'>Total records: {records}</div>
         </div>
     );
 };
