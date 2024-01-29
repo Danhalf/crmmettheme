@@ -103,30 +103,34 @@ export const ApiKeyModal = ({ apiKey, onClose, updateAction }: ApiKeyModalProps)
                         name='Updated API key'
                     />
                 </Form.Group>
+                <div className='d-flex w-100 gap-4'>
+                    <Form.Group className='flex-grow-1'>
+                        <Form.Label className='form-label mb-0'>Issue date API key</Form.Label>
+                        <Form.Control
+                            type='date'
+                            className='form-control'
+                            name='Issue API key'
+                            value={formatDateToInputString(new Date(apiKeyIssue))}
+                            onChange={({ target }) =>
+                                setApiKeyIssue(new Date(target.value).getTime())
+                            }
+                        />
+                    </Form.Group>
+                    <Form.Group className='flex-grow-1'>
+                        <Form.Label className='form-label mb-0'>Expiration date API key</Form.Label>
+                        <Form.Control
+                            type='date'
+                            className='form-control'
+                            name='Expiration API key'
+                            value={formatDateToInputString(new Date(apiKeyExpiration))}
+                            onChange={({ target }) =>
+                                setApiKeyExpiration(new Date(target.value).getTime())
+                            }
+                        />
+                    </Form.Group>
+                </div>
                 <Form.Group>
-                    <label className='form-label mb-0'>Issue date API key</label>
-                    <input
-                        type='date'
-                        className='form-control'
-                        name='Issue API key'
-                        value={formatDateToInputString(new Date(apiKeyIssue))}
-                        onChange={({ target }) => setApiKeyIssue(new Date(target.value).getTime())}
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <label className='form-label mb-0'>Expiration date API key</label>
-                    <input
-                        type='date'
-                        className='form-control'
-                        name='Expiration API key'
-                        value={formatDateToInputString(new Date(apiKeyExpiration))}
-                        onChange={({ target }) =>
-                            setApiKeyExpiration(new Date(target.value).getTime())
-                        }
-                    />
-                </Form.Group>
-                <Form.Group>
-                    <label className='form-label mb-0'>Last used date API key</label>
+                    <Form.Label className='form-label mb-0'>Last used date API key</Form.Label>
                     <Form.Control
                         value={apiKey?.lastused as string}
                         disabled
