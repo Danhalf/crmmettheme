@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
+import 'styles.scss';
 
 import './_metronic/assets/fonticon/fonticon.css';
 import './_metronic/assets/keenicons/duotone/style.css';
