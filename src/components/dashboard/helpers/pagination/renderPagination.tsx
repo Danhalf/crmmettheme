@@ -1,6 +1,6 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import clsx from 'clsx';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Form } from 'react-bootstrap';
 import {
     DefaultRecordsPerPage,
@@ -8,6 +8,7 @@ import {
     RecordsPerPageSteps,
     VisiblePageCount,
 } from 'common/settings/settings';
+import { useQueryRequest } from 'common/core/QueryRequestProvider';
 
 interface CustomPaginationProps {
     records: number;
@@ -28,6 +29,7 @@ export const CustomPagination = ({
     count = DefaultRecordsPerPage,
     onCountChange,
 }: CustomPaginationProps) => {
+    const { state } = useQueryRequest();
     const [currentPage, setCurrentPage] = useState<number>(initialCurrentPage);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [pageNumbers, setPageNumbers] = useState<number[]>([]);
@@ -44,6 +46,8 @@ export const CustomPagination = ({
         }
         setIsLoading(false);
     }, [records, count, recordsPerPage, totalPages, currentPage]);
+
+    useMemo(() => setRecordsPerPage(state.count), [state.count]);
 
     const handlePageChange = (pageNumber: number) => {
         setIsLoading(true);
@@ -89,18 +93,18 @@ export const CustomPagination = ({
                     </a>
                 </li>
 
-                    {!pageNumbers.length && (
-                        <li
-                            className={clsx('page-item', {
-                                disabled: isLoading,
-                                active: true,
-                            })}
-                        >
-                            <a href='#' className='page-link'>
-                                {1}
-                            </a>
-                        </li>
-                    )}
+                {!pageNumbers.length && (
+                    <li
+                        className={clsx('page-item', {
+                            disabled: isLoading,
+                            active: true,
+                        })}
+                    >
+                        <a href='#' className='page-link'>
+                            {1}
+                        </a>
+                    </li>
+                )}
                 {pageNumbers.map((pageNumber) => {
                     if (
                         currentPage + VisiblePageCount > pageNumber &&
