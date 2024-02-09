@@ -1,7 +1,6 @@
-import { initialQueryState, useDebounce } from '_metronic/helpers';
+import { initialQueryState } from '_metronic/helpers';
 import clsx from 'clsx';
 import { useQueryRequest } from 'common/core/QueryRequestProvider';
-import { DefaultRecordsPerPage } from 'common/settings/settings';
 import { useState, useEffect, KeyboardEvent } from 'react';
 
 export const UsersListSearchComponent = () => {
