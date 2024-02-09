@@ -1,6 +1,7 @@
 import { initialQueryState, useDebounce } from '_metronic/helpers';
 import clsx from 'clsx';
 import { useQueryRequest } from 'common/core/QueryRequestProvider';
+import { DefaultRecordsPerPage } from 'common/settings/settings';
 import { useState, useEffect, KeyboardEvent } from 'react';
 
 export const UsersListSearchComponent = () => {
@@ -14,16 +15,22 @@ export const UsersListSearchComponent = () => {
 
     const handleSearch = (): void => {
         if (!isSearchUnchanged) {
-            setIsSearchUnchanged(true);
             try {
-                updateState({ ...state, search: searchTerm, currentpage: 0 });
-            } catch (error) {}
+                updateState({
+                    ...state,
+                    search: searchTerm,
+                    currentpage: 0,
+                });
+            } catch (error) {
+            } finally {
+                setIsSearchUnchanged(true);
+            }
         }
     };
 
     const handleClear = (): void => {
         setSearchTerm('');
-        updateState(initialQueryState);
+        updateState({ ...initialQueryState, count: state.count });
     };
 
     const handleKeyPress = (e: KeyboardEvent<HTMLInputElement>): void => {
