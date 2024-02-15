@@ -57,7 +57,7 @@ export const UserOptionalModal = ({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
     const [locationKeys, setLocationKeys] = useState<string[]>([]);
-    const [companyName, setCompanyName] = useState<Record<string, string>>({ 'Company name': '' });
+    const [companyName, setCompanyName] = useState<Record<string, string>>({ companyName: '' });
 
     const { handleShowToast } = useToast();
 
@@ -106,7 +106,7 @@ export const UserOptionalModal = ({
             getUserExtendedInfo(useruid).then((response) => {
                 if (response) {
                     const { companyName } = response;
-                    setCompanyName({ 'Company name': companyName });
+                    setCompanyName({ companyName });
                 }
             });
         }
@@ -148,7 +148,7 @@ export const UserOptionalModal = ({
                 return filteredItem;
             });
             const newOptional = { locations: filteredOptional };
-            newOptional.locations.map((item) => (item.companyName = companyName['Company name']));
+            newOptional.locations.map((item) => (item.companyName = companyName['companyName']));
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === Status.OK) {
