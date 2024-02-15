@@ -1,7 +1,12 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react';
 import { deepEqual } from 'components/dashboard/helpers/common';
 import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/PrimaryButton';
-import { Status, getUserLocations, setUserOptionalData } from 'services/user.service';
+import {
+    Status,
+    getUserExtendedInfo,
+    getUserLocations,
+    setUserOptionalData,
+} from 'services/user.service';
 import { useToast } from 'components/dashboard/helpers/renderToastHelper';
 import { AxiosError } from 'axios';
 import { renamedKeys } from 'app-consts';
@@ -52,6 +57,7 @@ export const UserOptionalModal = ({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
     const [locationKeys, setLocationKeys] = useState<string[]>([]);
+    const [companyName, setCompanyName] = useState<Record<string, string>>({ 'Company name': '' });
 
     const { handleShowToast } = useToast();
 
@@ -74,26 +80,34 @@ export const UserOptionalModal = ({
     useEffect(() => {
         setIsLoading(true);
         if (useruid) {
-            getUserLocations(useruid).then(async (response: any) => {
-                const responseOptional: any[] = response.locations;
+            getUserLocations(useruid).then(async (response) => {
+                if (response) {
+                    const responseOptional = response;
 
-                const filteredOptional = responseOptional.map((option) => {
-                    const filteredOption = Object.keys(option).reduce((acc, key) => {
-                        if (key === locationuid) {
-                            setLocationKeys((keys) => [...keys, option[key]]);
-                        }
-                        if (!hiddenKeys.includes(key)) {
-                            acc[key] = option[key];
-                        }
-                        return acc;
-                    }, {});
+                    const filteredOptional = responseOptional.map((option) => {
+                        const filteredOption = Object.keys(option).reduce((acc, key) => {
+                            if (key === locationuid) {
+                                setLocationKeys((keys: any) => [...keys, option[key]]);
+                            }
+                            if (!hiddenKeys.includes(key)) {
+                                acc[key] = option[key];
+                            }
+                            return acc;
+                        }, {});
 
-                    return filteredOption;
-                });
-                setOptional(filteredOptional);
-                const deepClone = JSON.parse(JSON.stringify(filteredOptional));
-                setInitialUserOptional(deepClone);
-                setIsLoading(false);
+                        return filteredOption;
+                    });
+                    setOptional(filteredOptional);
+                    const deepClone = JSON.parse(JSON.stringify(filteredOptional));
+                    setInitialUserOptional(deepClone);
+                    setIsLoading(false);
+                }
+            });
+            getUserExtendedInfo(useruid).then((response) => {
+                if (response) {
+                    const { companyName } = response;
+                    setCompanyName({ 'Company name': companyName });
+                }
             });
         }
     }, [useruid]);
@@ -134,6 +148,7 @@ export const UserOptionalModal = ({
                 return filteredItem;
             });
             const newOptional = { locations: filteredOptional };
+            newOptional.locations.map((item) => (item.companyName = companyName['Company name']));
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === Status.OK) {
@@ -173,72 +188,70 @@ export const UserOptionalModal = ({
                         {({ errors, touched }) => (
                             <TabPanel activeTab={activeTab} tabName={`${index}`}>
                                 <Form>
-                                    {(Object.entries(option) as [string, string | number][]).map(
-                                        ([setting]) => {
-                                            const settingName = renamedKeys[setting] || setting;
-                                            return (
-                                                <div className='fv-row mb-4' key={setting}>
-                                                    <div className='row'>
-                                                        <div className='col-4 d-flex pt-4'>
-                                                            <label
-                                                                htmlFor={setting}
-                                                                className='fs-6 fw-bolder text-dark'
-                                                            >
-                                                                {settingName}
-                                                            </label>
-                                                        </div>
-                                                        <div className='col-8 d-flex flex-column'>
-                                                            <Field
-                                                                key={setting}
-                                                                autoComplete='off'
-                                                                disabled={disabledKeys.includes(
+                                    {[
+                                        ...(Object.entries(option) as [string, string | number][]),
+                                        ...Object.entries(companyName),
+                                    ].map(([setting]) => {
+                                        const settingName = renamedKeys[setting] || setting;
+                                        return (
+                                            <div className='fv-row mb-4' key={setting}>
+                                                <div className='row'>
+                                                    <div className='col-4 d-flex pt-4'>
+                                                        <label
+                                                            htmlFor={setting}
+                                                            className='fs-6 fw-bolder text-dark'
+                                                        >
+                                                            {settingName}
+                                                        </label>
+                                                    </div>
+                                                    <div className='col-8 d-flex flex-column'>
+                                                        <Field
+                                                            key={setting}
+                                                            autoComplete='off'
+                                                            disabled={disabledKeys.includes(
+                                                                setting
+                                                            )}
+                                                            className={clsx(
+                                                                'form-control bg-transparent',
+                                                                userOptionalValidateFields.includes(
                                                                     setting
-                                                                )}
-                                                                className={clsx(
-                                                                    'form-control bg-transparent',
-                                                                    userOptionalValidateFields.includes(
-                                                                        setting
-                                                                    ) && {
-                                                                        ...{
-                                                                            'border-danger':
-                                                                                touched[setting] &&
-                                                                                errors[setting],
-                                                                        },
-                                                                        ...{
-                                                                            'border-secondary':
-                                                                                touched[setting] &&
-                                                                                !errors[setting],
-                                                                        },
-                                                                    }
-                                                                )}
-                                                                name={setting}
-                                                                onChange={(
-                                                                    event: ChangeEvent<HTMLInputElement>
-                                                                ) =>
-                                                                    handleChangeUserOptional(
-                                                                        event,
-                                                                        index
-                                                                    )
+                                                                ) && {
+                                                                    ...{
+                                                                        'border-danger':
+                                                                            touched[setting] &&
+                                                                            errors[setting],
+                                                                    },
+                                                                    ...{
+                                                                        'border-secondary':
+                                                                            touched[setting] &&
+                                                                            !errors[setting],
+                                                                    },
                                                                 }
-                                                            />
-                                                            {touched[setting] &&
-                                                                errors[setting] && (
-                                                                    <div className='fv-plugins-message-container'>
-                                                                        <div className='fv-help-block'>
-                                                                            <span role='alert'>
-                                                                                {String(
-                                                                                    errors[setting]
-                                                                                )}
-                                                                            </span>
-                                                                        </div>
-                                                                    </div>
-                                                                )}
-                                                        </div>
+                                                            )}
+                                                            name={setting}
+                                                            onChange={(
+                                                                event: ChangeEvent<HTMLInputElement>
+                                                            ) =>
+                                                                handleChangeUserOptional(
+                                                                    event,
+                                                                    index
+                                                                )
+                                                            }
+                                                        />
+                                                        {touched[setting] && errors[setting] && (
+                                                            <div className='fv-plugins-message-container'>
+                                                                <div className='fv-help-block'>
+                                                                    <span role='alert'>
+                                                                        {String(errors[setting])}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
-                                            );
-                                        }
-                                    )}
+                                            </div>
+                                        );
+                                    })}
                                     <div className='text-center mt-8'>
                                         <PrimaryButton
                                             icon='check'
