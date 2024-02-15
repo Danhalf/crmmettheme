@@ -57,7 +57,6 @@ export const UserOptionalModal = ({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
     const [locationKeys, setLocationKeys] = useState<string[]>([]);
-    const [companyName, setCompanyName] = useState<string>('');
 
     const { handleShowToast } = useToast();
 
@@ -79,37 +78,50 @@ export const UserOptionalModal = ({
 
     useEffect(() => {
         setIsLoading(true);
-        if (useruid) {
-            getUserLocations(useruid).then(async (response) => {
-                if (response) {
-                    const responseOptional = response;
 
-                    const filteredOptional = responseOptional.map((option) => {
-                        const filteredOption = Object.keys(option).reduce((acc, key) => {
-                            if (key === locationuid) {
-                                setLocationKeys((keys: any) => [...keys, option[key]]);
-                            }
-                            if (!hiddenKeys.includes(key)) {
-                                acc[key] = option[key];
-                            }
-                            return acc;
-                        }, {});
+        const fetchData = async () => {
+            try {
+                if (useruid) {
+                    const extendedInfo = await getUserExtendedInfo(useruid);
+                    const companyName = extendedInfo?.companyName;
 
-                        return filteredOption;
-                    });
-                    setOptional(filteredOptional);
-                    const deepClone = JSON.parse(JSON.stringify(filteredOptional));
-                    setInitialUserOptional(deepClone);
-                    setIsLoading(false);
+                    const response = await getUserLocations(useruid);
+
+                    if (response) {
+                        const responseOptional = response;
+
+                        const filteredOptional: Record<string, string>[] = responseOptional.map(
+                            (option) => {
+                                const filteredOption = Object.keys(option).reduce((acc, key) => {
+                                    if (key === locationuid) {
+                                        setLocationKeys((keys: any) => [...keys, option[key]]);
+                                    }
+                                    if (!hiddenKeys.includes(key)) {
+                                        acc[key] = option[key];
+                                    }
+                                    return acc;
+                                }, {});
+
+                                return filteredOption;
+                            }
+                        );
+
+                        filteredOptional.forEach((item) => {
+                            item.companyName = companyName || '';
+                        });
+
+                        setOptional(filteredOptional);
+                        const deepClone = JSON.parse(JSON.stringify(filteredOptional));
+                        setInitialUserOptional(deepClone);
+                        setIsLoading(false);
+                    }
                 }
-            });
-            getUserExtendedInfo(useruid).then((response) => {
-                if (response) {
-                    const { companyName } = response;
-                    setCompanyName(companyName);
-                }
-            });
-        }
+            } catch (error) {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
     }, [useruid]);
 
     useEffect(() => {
@@ -148,7 +160,6 @@ export const UserOptionalModal = ({
                 return filteredItem;
             });
             const newOptional = { locations: filteredOptional };
-            newOptional.locations.map((item) => ({ ...item, companyName }));
             try {
                 const response = await setUserOptionalData(useruid, newOptional);
                 if (response.status === Status.OK) {
@@ -190,7 +201,6 @@ export const UserOptionalModal = ({
                                 <Form>
                                     {[
                                         ...(Object.entries(option) as [string, string | number][]),
-                                        ...Object.entries({ companyName }),
                                     ].map(([setting]) => {
                                         const settingName = renamedKeys[setting] || setting;
                                         return (
