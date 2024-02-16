@@ -3,6 +3,7 @@ export const STORAGE_USER = 'admss-crm-user';
 export const APPLICATION = 'crm';
 
 export const renamedKeys: Record<string, string> = {
+    companyName: 'Company Name',
     dealType: 'Deal Type',
     dealStatus: 'Deal Status',
     feeDefDocumentation: 'Documentation Fee',

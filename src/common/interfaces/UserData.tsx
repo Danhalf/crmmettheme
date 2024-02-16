@@ -75,3 +75,44 @@ export interface UserPermissionsData {
 export enum UsersType {
     ACTIVE = 'Users',
 }
+
+export interface Location {
+    created: string;
+    index: number;
+    locEmail1: string;
+    locEmail2: string;
+    locManager1: string;
+    locManager2: string;
+    locName: string;
+    locPhone1: string;
+    locPhone2: string;
+    locState: string;
+    locStreetAddress: string;
+    locWeb: string;
+    locZIP: string;
+    locationuid: string;
+    updated: string;
+    useruid: string;
+}
+
+export interface UserInfo {
+    ZIP: string;
+    companyName: string;
+    created: string;
+    email1: string;
+    email2: string;
+    firstName: string;
+    index: number;
+    lastName: string;
+    locations: Location[];
+    messager1: string;
+    messager2: string;
+    phone1: string;
+    phone2: string;
+    state: string;
+    status: Status;
+    streetAddress: string;
+    updated: string;
+    userName: string;
+    useruid: string;
+}

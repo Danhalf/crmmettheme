@@ -2,14 +2,16 @@ import axios, { AxiosResponse } from 'axios';
 import { getToken } from './utils';
 import { API_URL } from '../app-consts';
 import {
+    Location,
     ShortUserInfo,
     User,
     UserCreateValidationResponse,
+    UserInfo,
     UserPermissionsData,
     UserPermissionsRecord,
 } from 'common/interfaces/UserData';
 import { UserQuery } from 'common/interfaces/QueriesParams';
-import { ActionStatus } from 'common/interfaces/ActionStatus';
+import { ActionStatus, Status } from 'common/interfaces/ActionStatus';
 export { Status } from 'common/interfaces/ActionStatus';
 
 type Method = 'GET' | 'POST';
@@ -89,12 +91,31 @@ export const getUserPermissions = (uid: string): Promise<UserPermissionsRecord> 
     );
 };
 
-export const getUserExtendedInfo = (uid: string): Promise<string> => {
-    return fetchApiData<string>('GET', `user/${uid}/info`);
+export const getUserExtendedInfo = async (uid: string): Promise<UserInfo | undefined> => {
+    try {
+        const response = await fetchApiData<UserInfo>('GET', `user/${uid}/info`);
+        if (response.status === Status.OK) {
+            return response;
+        }
+    } catch (error) {
+        //TODO: add error handler
+        return undefined;
+    }
 };
 
-export const getUserLocations = (uid: string): Promise<string> => {
-    return fetchApiData<string>('GET', `user/${uid}/locations`);
+export const getUserLocations = async (uid: string): Promise<Location[] | undefined> => {
+    try {
+        const response = await fetchApiData<{
+            locations: Location[];
+            status: Status;
+        }>('GET', `user/${uid}/locations`);
+        if (response.status === Status.OK) {
+            return response.locations;
+        }
+    } catch (error) {
+        //TODO: add error handler
+        return undefined;
+    }
 };
 
 export const getUserProfile = (uid: string): Promise<string> => {
