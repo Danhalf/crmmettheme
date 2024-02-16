@@ -160,8 +160,12 @@ export const UserOptionalModal = ({
                 return filteredItem;
             });
             const newOptional = { locations: filteredOptional };
+            const [{ companyName }] = filteredOptional;
             try {
-                const response = await setUserOptionalData(useruid, newOptional);
+                const response = await setUserOptionalData(useruid, {
+                    ...newOptional,
+                    companyName,
+                });
                 if (response.status === Status.OK) {
                     handleShowToast({
                         message: `<strong>${username}</strong> optional data successfully saved`,
