@@ -40,6 +40,15 @@ export const CustomModal = ({
         [onClose]
     );
 
+    const handleBackdropClick = useCallback(
+        (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+            if (event.target === event.currentTarget) {
+                onClose();
+            }
+        },
+        [onClose]
+    );
+
     useEffect(() => {
         document.body.style.overflow = 'hidden';
         document.addEventListener('keydown', handleKeyDown);
@@ -61,11 +70,16 @@ export const CustomModal = ({
                 <div className={`modal-dialog modal-dialog-centered mw-${width || 650}px`}>
                     <div className='modal-content'>
                         <UserModalHeader onClose={onClose} title={title} />
-                        <div className='modal-body scroll-y mx-5 mx-xl-15 my-7'>{children}</div>
+                        <div
+                            className='modal-body scroll-y ms-5 ms-xl-15 pe-3 pe-xl-13 me-2 overflow-y-auto'
+                            style={{ maxHeight: 'calc(100vh - 180px)' }}
+                        >
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>
-            <div className='modal-backdrop fade show'></div>
+            <div className='modal-backdrop fade show' onClick={handleBackdropClick}></div>
         </>
     );
 };
