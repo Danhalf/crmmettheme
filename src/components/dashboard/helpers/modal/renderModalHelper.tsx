@@ -61,7 +61,12 @@ export const CustomModal = ({
                 <div className={`modal-dialog modal-dialog-centered mw-${width || 650}px`}>
                     <div className='modal-content'>
                         <UserModalHeader onClose={onClose} title={title} />
-                        <div className='modal-body scroll-y mx-5 mx-xl-15 my-7'>{children}</div>
+                        <div
+                            className='modal-body scroll-y ms-5 pe-3 pe-xl-13 me-2 overflow-y-auto'
+                            style={{ maxHeight: 'calc(100vh - 180px)' }}
+                        >
+                            {children}
+                        </div>
                     </div>
                 </div>
             </div>
