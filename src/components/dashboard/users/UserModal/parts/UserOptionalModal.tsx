@@ -3,6 +3,7 @@ import { deepEqual } from 'components/dashboard/helpers/common';
 import { PrimaryButton } from 'components/dashboard/smallComponents/buttons/PrimaryButton';
 import {
     Status,
+    addUserLocation,
     getUserExtendedInfo,
     getUserLocations,
     setUserOptionalData,
@@ -182,6 +183,15 @@ export const UserOptionalModal = ({
         }
     };
 
+    const handleAddUserLocation = () => {
+        setIsLoading(true);
+        if (useruid) {
+            addUserLocation(useruid).then(() => {
+                useruid && getUserLocations(useruid);
+            });
+        }
+    };
+
     const handleTabClick = (tab: string) => {
         setActiveTab(tab);
     };
@@ -192,6 +202,15 @@ export const UserOptionalModal = ({
 
     return (
         <>
+            <div className='d-flex justify-content-end my-3'>
+                <PrimaryButton
+                    className='align-self-end'
+                    icon='plus'
+                    buttonClickAction={handleAddUserLocation}
+                >
+                    Add Location
+                </PrimaryButton>
+            </div>
             <TabSwitcher tabs={optional} activeTab={activeTab} handleTabClick={handleTabClick} />
             {optional.map((option: any, index: number) => (
                 <div key={index} className='tab-content' id='myTabPanel'>
