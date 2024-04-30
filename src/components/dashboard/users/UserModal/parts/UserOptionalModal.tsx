@@ -15,6 +15,7 @@ import { TabPanel } from 'components/dashboard/helpers/helpers';
 import * as Yup from 'yup';
 import { Formik, Form, Field } from 'formik';
 import clsx from 'clsx';
+import { Location } from 'common/interfaces/UserData';
 
 interface UserOptionalModalProps {
     onClose: () => void;
@@ -186,7 +187,22 @@ export const UserOptionalModal = ({
     const handleAddUserLocation = () => {
         setIsLoading(true);
         if (useruid) {
-            addUserLocation(useruid).then(() => {
+            const emptyLocation: Partial<Location> = {
+                index: 0,
+                locEmail1: '',
+                locEmail2: '',
+                locManager1: '',
+                locManager2: '',
+                locName: '',
+                locPhone1: '',
+                locPhone2: '',
+                locState: '',
+                locStreetAddress: '',
+                locWeb: '',
+                locZIP: '',
+                useruid,
+            };
+            addUserLocation(useruid, emptyLocation).then(() => {
                 useruid && getUserLocations(useruid);
             });
         }

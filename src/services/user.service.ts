@@ -118,14 +118,15 @@ export const getUserLocations = async (uid: string): Promise<Location[] | undefi
     }
 };
 
-export const addUserLocation = async (uid: string): Promise<string | undefined> => {
+export const addUserLocation = async (
+    uid: string,
+    location: Partial<Location>
+): Promise<string | undefined> => {
     try {
         const response = await fetchApiData<{
             status: Status;
         }>('POST', `user/${uid}/locations`, {
-            data: {
-                useruid: uid,
-            },
+            data: location,
         });
         if (response.status === Status.OK) {
             return response.status;
