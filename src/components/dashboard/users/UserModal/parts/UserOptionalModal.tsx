@@ -74,6 +74,7 @@ export const UserOptionalModal = ({
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
     const [locationKeys, setLocationKeys] = useState<string[]>([]);
     const [newLocation, setNewLocation] = useState<Partial<Location> | null>(null);
+    const [formErrors, setFormErrors] = useState<boolean>(false);
 
     const { handleShowToast } = useToast();
 
@@ -239,6 +240,11 @@ export const UserOptionalModal = ({
                     <PrimaryButton
                         className='align-self-end'
                         icon='check'
+                        disabled={
+                            !Object.values(newLocation).some((value) => value !== '') ||
+                            formErrors ||
+                            !newLocation.locName
+                        }
                         buttonClickAction={handleSaveNewUserLocation}
                     >
                         Save Location
@@ -261,88 +267,97 @@ export const UserOptionalModal = ({
                         onSubmit={handleSetUserOptional}
                         validationSchema={UserOptionalSchema}
                     >
-                        {({ errors, touched }) => (
-                            <TabPanel activeTab={activeTab} tabName={`${index}`}>
-                                <Form>
-                                    {[
-                                        ...(Object.entries(option) as [string, string | number][]),
-                                    ].map(([setting]) => {
-                                        const settingName = renamedKeys[setting] || setting;
-                                        return (
-                                            <div className='fv-row mb-4' key={setting}>
-                                                <div className='row'>
-                                                    <div className='col-4 d-flex pt-4'>
-                                                        <label
-                                                            htmlFor={setting}
-                                                            className='fs-6 fw-bolder text-dark'
-                                                        >
-                                                            {settingName}
-                                                        </label>
-                                                    </div>
-                                                    <div className='col-8 d-flex flex-column'>
-                                                        <Field
-                                                            key={setting}
-                                                            autoComplete='off'
-                                                            disabled={disabledKeys.includes(
-                                                                setting
-                                                            )}
-                                                            className={clsx(
-                                                                'form-control bg-transparent',
-                                                                userOptionalValidateFields.includes(
+                        {({ errors, touched }) => {
+                            setFormErrors(!!Object.keys(errors).length);
+                            return (
+                                <TabPanel activeTab={activeTab} tabName={`${index}`}>
+                                    <Form>
+                                        {[
+                                            ...(Object.entries(option) as [
+                                                string,
+                                                string | number,
+                                            ][]),
+                                        ].map(([setting]) => {
+                                            const settingName = renamedKeys[setting] || setting;
+                                            return (
+                                                <div className='fv-row mb-4' key={setting}>
+                                                    <div className='row'>
+                                                        <div className='col-4 d-flex pt-4'>
+                                                            <label
+                                                                htmlFor={setting}
+                                                                className='fs-6 fw-bolder text-dark'
+                                                            >
+                                                                {settingName}
+                                                            </label>
+                                                        </div>
+                                                        <div className='col-8 d-flex flex-column'>
+                                                            <Field
+                                                                key={setting}
+                                                                autoComplete='off'
+                                                                disabled={disabledKeys.includes(
                                                                     setting
-                                                                ) && {
-                                                                    ...{
-                                                                        'border-danger':
-                                                                            touched[setting] &&
-                                                                            errors[setting],
-                                                                    },
-                                                                    ...{
-                                                                        'border-secondary':
-                                                                            touched[setting] &&
-                                                                            !errors[setting],
-                                                                    },
+                                                                )}
+                                                                className={clsx(
+                                                                    'form-control bg-transparent',
+                                                                    userOptionalValidateFields.includes(
+                                                                        setting
+                                                                    ) && {
+                                                                        ...{
+                                                                            'border-danger':
+                                                                                touched[setting] &&
+                                                                                errors[setting],
+                                                                        },
+                                                                        ...{
+                                                                            'border-secondary':
+                                                                                touched[setting] &&
+                                                                                !errors[setting],
+                                                                        },
+                                                                    }
+                                                                )}
+                                                                name={setting}
+                                                                onChange={(
+                                                                    event: ChangeEvent<HTMLInputElement>
+                                                                ) =>
+                                                                    handleChangeUserOptional(
+                                                                        event,
+                                                                        index
+                                                                    )
                                                                 }
-                                                            )}
-                                                            name={setting}
-                                                            onChange={(
-                                                                event: ChangeEvent<HTMLInputElement>
-                                                            ) =>
-                                                                handleChangeUserOptional(
-                                                                    event,
-                                                                    index
-                                                                )
-                                                            }
-                                                        />
-                                                        {touched[setting] && errors[setting] && (
-                                                            <div className='fv-plugins-message-container'>
-                                                                <div className='fv-help-block'>
-                                                                    <span role='alert'>
-                                                                        {String(errors[setting])}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
-                                                        )}
+                                                            />
+                                                            {touched[setting] &&
+                                                                errors[setting] && (
+                                                                    <div className='fv-plugins-message-container'>
+                                                                        <div className='fv-help-block'>
+                                                                            <span role='alert'>
+                                                                                {String(
+                                                                                    errors[setting]
+                                                                                )}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                )}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        );
-                                    })}
-                                    <div className='text-center mt-8'>
-                                        <PrimaryButton
-                                            icon='check'
-                                            disabled={
-                                                isButtonDisabled ||
-                                                !!Object.keys(errors).length ||
-                                                !!newLocation
-                                            }
-                                            type='submit'
-                                        >
-                                            Save user optional data
-                                        </PrimaryButton>
-                                    </div>
-                                </Form>
-                            </TabPanel>
-                        )}
+                                            );
+                                        })}
+                                        <div className='text-center mt-8'>
+                                            <PrimaryButton
+                                                icon='check'
+                                                disabled={
+                                                    isButtonDisabled ||
+                                                    !!Object.keys(errors).length ||
+                                                    !!newLocation
+                                                }
+                                                type='submit'
+                                            >
+                                                Save user optional data
+                                            </PrimaryButton>
+                                        </div>
+                                    </Form>
+                                </TabPanel>
+                            );
+                        }}
                     </Formik>
                 </div>
             ))}
