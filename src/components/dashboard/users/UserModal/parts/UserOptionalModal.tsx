@@ -208,15 +208,19 @@ export const UserOptionalModal = ({
     const handleSaveNewUserLocation = () => {
         setIsLoading(true);
         if (useruid && newLocation) {
-            addUserLocation(useruid, { ...newLocation, useruid }).then(() => {
-                setIsLoading(false);
-                setNewLocation(null);
-                handleShowToast({
-                    message: `<strong>${username}</strong> location successfully created`,
-                    type: 'success',
-                });
-                onClose();
-            });
+            addUserLocation(useruid, { ...newLocation, useruid }).then(
+                (response: Status | undefined) => {
+                    if (response === Status.OK) {
+                        setIsLoading(false);
+                        setNewLocation(null);
+                        handleShowToast({
+                            message: `<strong>${username}</strong> location successfully created`,
+                            type: 'success',
+                        });
+                        onClose();
+                    }
+                }
+            );
         }
     };
 

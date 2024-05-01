@@ -121,7 +121,7 @@ export const getUserLocations = async (uid: string): Promise<Location[] | undefi
 export const addUserLocation = async (
     uid: string,
     location: Partial<Location>
-): Promise<string | undefined> => {
+): Promise<Status | undefined> => {
     try {
         const response = await fetchApiData<{
             status: Status;
