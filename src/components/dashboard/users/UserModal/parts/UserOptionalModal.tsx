@@ -42,6 +42,20 @@ const TabSwitcher = ({ tabs, activeTab, handleTabClick }) => {
     );
 };
 
+const emptyLocation: Partial<Location> = {
+    locEmail1: '',
+    locEmail2: '',
+    locManager1: '',
+    locManager2: '',
+    locName: '',
+    locPhone1: '',
+    locPhone2: '',
+    locState: '',
+    locStreetAddress: '',
+    locWeb: '',
+    locZIP: '',
+};
+
 const hiddenKeys: readonly ['locationuid', ...string[]] = ['locationuid', 'useruid', 'index'];
 const disabledKeys: readonly string[] = ['useruid', 'created', 'updated'];
 
@@ -59,6 +73,7 @@ export const UserOptionalModal = ({
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isButtonDisabled, setIsButtonDisabled] = useState<boolean>(true);
     const [locationKeys, setLocationKeys] = useState<string[]>([]);
+    const [newLocation, setNewLocation] = useState<Partial<Location> | null>(null);
 
     const { handleShowToast } = useToast();
 
@@ -185,25 +200,22 @@ export const UserOptionalModal = ({
     };
 
     const handleAddUserLocation = () => {
+        setNewLocation(emptyLocation);
+        setOptional([...optional, emptyLocation]);
+        setActiveTab(optional.length.toString());
+    };
+
+    const handleSaveNewUserLocation = () => {
         setIsLoading(true);
-        if (useruid) {
-            const emptyLocation: Partial<Location> = {
-                index: 0,
-                locEmail1: '',
-                locEmail2: '',
-                locManager1: '',
-                locManager2: '',
-                locName: '',
-                locPhone1: '',
-                locPhone2: '',
-                locState: '',
-                locStreetAddress: '',
-                locWeb: '',
-                locZIP: '',
-                useruid,
-            };
-            addUserLocation(useruid, emptyLocation).then(() => {
-                useruid && getUserLocations(useruid);
+        if (useruid && newLocation) {
+            addUserLocation(useruid, { ...newLocation, useruid }).then(() => {
+                setIsLoading(false);
+                setNewLocation(null);
+                handleShowToast({
+                    message: `<strong>${username}</strong> location successfully created`,
+                    type: 'success',
+                });
+                onClose();
             });
         }
     };
@@ -219,13 +231,23 @@ export const UserOptionalModal = ({
     return (
         <>
             <div className='d-flex justify-content-end my-3'>
-                <PrimaryButton
-                    className='align-self-end'
-                    icon='plus'
-                    buttonClickAction={handleAddUserLocation}
-                >
-                    Add Location
-                </PrimaryButton>
+                {newLocation ? (
+                    <PrimaryButton
+                        className='align-self-end'
+                        icon='check'
+                        buttonClickAction={handleSaveNewUserLocation}
+                    >
+                        Save Location
+                    </PrimaryButton>
+                ) : (
+                    <PrimaryButton
+                        className='align-self-end'
+                        icon='plus'
+                        buttonClickAction={handleAddUserLocation}
+                    >
+                        Add Location
+                    </PrimaryButton>
+                )}
             </div>
             <TabSwitcher tabs={optional} activeTab={activeTab} handleTabClick={handleTabClick} />
             {optional.map((option: any, index: number) => (
@@ -305,7 +327,9 @@ export const UserOptionalModal = ({
                                         <PrimaryButton
                                             icon='check'
                                             disabled={
-                                                isButtonDisabled || !!Object.keys(errors).length
+                                                isButtonDisabled ||
+                                                !!Object.keys(errors).length ||
+                                                !!newLocation
                                             }
                                             type='submit'
                                         >
