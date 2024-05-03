@@ -235,19 +235,7 @@ export const UserOptionalModal = ({
     return (
         <>
             <div className='d-flex justify-content-end my-3'>
-                {newLocation ? (
-                    <PrimaryButton
-                        className='align-self-end'
-                        icon='check'
-                        disabled={
-                            !Object.values(newLocation).some((value) => value !== '') ||
-                            !newLocation.locName
-                        }
-                        buttonClickAction={handleSaveNewUserLocation}
-                    >
-                        Save Location
-                    </PrimaryButton>
-                ) : (
+                {!newLocation && (
                     <PrimaryButton
                         className='align-self-end'
                         icon='plus'
@@ -339,17 +327,31 @@ export const UserOptionalModal = ({
                                             );
                                         })}
                                         <div className='text-center mt-8'>
-                                            <PrimaryButton
-                                                icon='check'
-                                                disabled={
-                                                    isButtonDisabled ||
-                                                    !!Object.keys(errors).length ||
-                                                    !!newLocation
-                                                }
-                                                type='submit'
-                                            >
-                                                Save user optional data
-                                            </PrimaryButton>
+                                            {!newLocation ? (
+                                                <PrimaryButton
+                                                    icon='check'
+                                                    disabled={
+                                                        isButtonDisabled ||
+                                                        !!Object.keys(errors).length
+                                                    }
+                                                    type='submit'
+                                                >
+                                                    Save user optional data
+                                                </PrimaryButton>
+                                            ) : (
+                                                <PrimaryButton
+                                                    className='align-self-end'
+                                                    icon='check'
+                                                    disabled={
+                                                        !Object.values(newLocation).some(
+                                                            (value) => value !== ''
+                                                        ) || !newLocation.locName
+                                                    }
+                                                    buttonClickAction={handleSaveNewUserLocation}
+                                                >
+                                                    Save Location
+                                                </PrimaryButton>
+                                            )}
                                         </div>
                                     </Form>
                                 </TabPanel>
