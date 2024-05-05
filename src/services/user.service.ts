@@ -126,17 +126,7 @@ export const addUserLocation = async (
         const response = await fetchApiData<{
             status: Status;
         }>('POST', `user/${uid}/location`, {
-            data: {
-                ...location,
-                status: '',
-                error: '',
-                info: '',
-                message: '',
-                index: 442,
-                created: '',
-                updated: '',
-                locationuid: '',
-            },
+            data: location,
         });
         if (response.status === Status.OK) {
             return response.status;
