@@ -93,52 +93,52 @@ export const UserOptionalModal = ({
 
     const userOptionalValidateFields = Object.keys(UserOptionalSchema.fields);
 
+    const fetchData = async () => {
+        try {
+            if (useruid) {
+                const extendedInfo = await getUserExtendedInfo(useruid);
+                const companyName = extendedInfo?.companyName;
+
+                const response = await getUserLocations(useruid);
+
+                if (response) {
+                    const responseOptional = response;
+
+                    const filteredOptional: Record<string, string>[] = responseOptional.map(
+                        (option) => {
+                            const filteredOption = Object.keys(option).reduce((acc, key) => {
+                                if (key === locationuid) {
+                                    setLocationKeys((keys: any) => [...keys, option[key]]);
+                                }
+                                if (!hiddenKeys.includes(key)) {
+                                    acc[key] = option[key];
+                                }
+                                return acc;
+                            }, {});
+
+                            return filteredOption;
+                        }
+                    );
+
+                    filteredOptional.forEach((item) => {
+                        item.companyName = companyName || '';
+                    });
+
+                    setOptional(filteredOptional);
+                    const deepClone = JSON.parse(JSON.stringify(filteredOptional));
+                    setInitialUserOptional(deepClone);
+                    setIsLoading(false);
+                }
+            }
+        } catch (error) {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
         setIsLoading(true);
-
-        const fetchData = async () => {
-            try {
-                if (useruid) {
-                    const extendedInfo = await getUserExtendedInfo(useruid);
-                    const companyName = extendedInfo?.companyName;
-
-                    const response = await getUserLocations(useruid);
-
-                    if (response) {
-                        const responseOptional = response;
-
-                        const filteredOptional: Record<string, string>[] = responseOptional.map(
-                            (option) => {
-                                const filteredOption = Object.keys(option).reduce((acc, key) => {
-                                    if (key === locationuid) {
-                                        setLocationKeys((keys: any) => [...keys, option[key]]);
-                                    }
-                                    if (!hiddenKeys.includes(key)) {
-                                        acc[key] = option[key];
-                                    }
-                                    return acc;
-                                }, {});
-
-                                return filteredOption;
-                            }
-                        );
-
-                        filteredOptional.forEach((item) => {
-                            item.companyName = companyName || '';
-                        });
-
-                        setOptional(filteredOptional);
-                        const deepClone = JSON.parse(JSON.stringify(filteredOptional));
-                        setInitialUserOptional(deepClone);
-                        setIsLoading(false);
-                    }
-                }
-            } catch (error) {
-                setIsLoading(false);
-            }
-        };
-
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [useruid]);
 
     useEffect(() => {
@@ -209,7 +209,7 @@ export const UserOptionalModal = ({
         setIsLoading(true);
         if (useruid && newLocation) {
             addUserLocation(useruid, { ...newLocation, useruid }).then(
-                (response: Status | undefined) => {
+                (response: Status | string) => {
                     if (response === Status.OK) {
                         setIsLoading(false);
                         setNewLocation(null);
@@ -218,6 +218,9 @@ export const UserOptionalModal = ({
                             type: 'success',
                         });
                         onClose();
+                    } else {
+                        setIsLoading(false);
+                        handleShowToast({ message: response, type: 'danger' });
                     }
                 }
             );

@@ -7,6 +7,7 @@ import {
     User,
     UserCreateValidationResponse,
     UserInfo,
+    UserLocationError,
     UserPermissionsData,
     UserPermissionsRecord,
 } from 'common/interfaces/UserData';
@@ -121,7 +122,7 @@ export const getUserLocations = async (uid: string): Promise<Location[] | undefi
 export const addUserLocation = async (
     uid: string,
     location: Partial<Location>
-): Promise<Status | undefined> => {
+): Promise<Status.OK | string> => {
     try {
         const response = await fetchApiData<{
             status: Status;
@@ -130,10 +131,12 @@ export const addUserLocation = async (
         });
         if (response.status === Status.OK) {
             return response.status;
+        } else {
+            const { error } = response as UserLocationError;
+            throw new Error(error);
         }
-    } catch (error) {
-        //TODO: add error handler
-        return undefined;
+    } catch (error: unknown) {
+        return error as string;
     }
 };
 
