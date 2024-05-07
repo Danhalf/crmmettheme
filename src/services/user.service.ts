@@ -132,11 +132,15 @@ export const addUserLocation = async (
         if (response.status === Status.OK) {
             return response.status;
         } else {
-            const { error } = response as UserLocationError;
-            throw new Error(error);
+            throw response;
         }
-    } catch (error: unknown) {
-        return error as string;
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            return err.message;
+        } else {
+            const { error } = err as UserLocationError;
+            return error;
+        }
     }
 };
 
