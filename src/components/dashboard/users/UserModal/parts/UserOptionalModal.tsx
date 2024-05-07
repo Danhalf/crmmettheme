@@ -200,8 +200,9 @@ export const UserOptionalModal = ({
     };
 
     const handleAddUserLocation = () => {
-        setNewLocation(emptyLocation);
-        setOptional([...optional, emptyLocation]);
+        const newLocation = { ...emptyLocation };
+        setNewLocation(newLocation);
+        setOptional([...optional, newLocation]);
         setActiveTab(optional.length.toString());
     };
 
