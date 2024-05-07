@@ -139,7 +139,7 @@ export const addUserLocation = async (
             return err.message;
         } else {
             const { error } = err as UserLocationError;
-            return error;
+            return error || 'Network error: Unable to connect to the server';
         }
     }
 };
