@@ -117,3 +117,9 @@ export interface UserInfo {
     userName: string;
     useruid: string;
 }
+
+export interface UserLocationError {
+    error: string;
+    info: string;
+    status: Status.ERROR;
+}

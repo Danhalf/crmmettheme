@@ -7,6 +7,7 @@ import {
     User,
     UserCreateValidationResponse,
     UserInfo,
+    UserLocationError,
     UserPermissionsData,
     UserPermissionsRecord,
 } from 'common/interfaces/UserData';
@@ -115,6 +116,31 @@ export const getUserLocations = async (uid: string): Promise<Location[] | undefi
     } catch (error) {
         //TODO: add error handler
         return undefined;
+    }
+};
+
+export const addUserLocation = async (
+    uid: string,
+    location: Partial<Location>
+): Promise<Status.OK | string> => {
+    try {
+        const response = await fetchApiData<{
+            status: Status;
+        }>('POST', `user/${uid}/location`, {
+            data: location,
+        });
+        if (response.status === Status.OK) {
+            return response.status;
+        } else {
+            throw response;
+        }
+    } catch (err) {
+        if (axios.isAxiosError(err)) {
+            return err.message;
+        } else {
+            const { error } = err as UserLocationError;
+            return error || 'Network error: Unable to connect to the server';
+        }
     }
 };
 
