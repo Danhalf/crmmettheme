@@ -27,6 +27,7 @@ export interface User {
     index?: number;
     parentuid?: string;
     parentusername?: string;
+    creatorusername?: string;
     updated?: string;
     username: string;
     useruid: string;
